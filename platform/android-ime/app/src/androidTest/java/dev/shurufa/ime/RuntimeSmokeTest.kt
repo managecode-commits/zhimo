@@ -12,6 +12,17 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RuntimeSmokeTest {
     @Test
+    fun testBundledRimeInstallationRecoversFromCorruption() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val first = RimeAssets.prepare(context)
+        val defaultConfig = File(first.shared, "default.yaml")
+        assertTrue(defaultConfig.isFile)
+        assertTrue(defaultConfig.delete())
+        val recovered = RimeAssets.prepare(context)
+        assertTrue(File(recovered.shared, "default.yaml").isFile)
+    }
+
+    @Test
     fun testPlatformPolicyRequiresExplicitNetworkConsentAndProtectsPasswords() {
         assertFalse(PlatformPolicy.mayStartSpeech(true, true, true, true))
         assertFalse(PlatformPolicy.mayStartSpeech(false, true, false, false))
@@ -20,6 +31,14 @@ class RuntimeSmokeTest {
         assertEquals("rime", PlatformPolicy.engine(true, true))
         assertEquals("pinyin.reference", PlatformPolicy.engine(true, false))
         assertEquals("latin", PlatformPolicy.engine(false, true))
+        assertTrue(PlatformPolicy.shouldInsertLiteralSpace(false, true))
+        assertFalse(PlatformPolicy.shouldInsertLiteralSpace(true, true))
+        assertTrue(PlatformPolicy.shouldInsertLiteralSpace(true, false))
+        assertFalse(PlatformPolicy.shouldFallbackToEditor(true))
+        assertTrue(PlatformPolicy.shouldFallbackToEditor(false))
+        assertEquals(1, PlatformText.previousGraphemeUtf16Length("a"))
+        assertEquals(2, PlatformText.previousGraphemeUtf16Length("e\u0301"))
+        assertEquals(11, PlatformText.previousGraphemeUtf16Length("👨‍👩‍👧‍👦"))
     }
 
     @Test

@@ -6,6 +6,7 @@ import java.io.File
 object RimeAssets {
     data class Directories(val shared: File, val user: File)
 
+    @Synchronized
     fun prepare(context: Context): Directories {
         val root = File(context.filesDir, "rime")
         val shared = File(root, "shared")
@@ -14,7 +15,7 @@ object RimeAssets {
             it.readText().trim()
         }
         val installedVersion = File(shared, "version.txt").takeIf(File::isFile)?.readText()?.trim()
-        if (packagedVersion != installedVersion) {
+        if (packagedVersion != installedVersion || !File(shared, "default.yaml").isFile) {
             val staging = File(root, "shared-staging")
             val backup = File(root, "shared-backup")
             staging.deleteRecursively()

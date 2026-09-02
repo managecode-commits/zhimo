@@ -2,6 +2,7 @@ package dev.shurufa.ime
 
 import android.inputmethodservice.InputMethodService
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.speech.RecognitionListener
@@ -23,6 +24,7 @@ class ShurufaInputMethodService : InputMethodService() {
     private var acceptingSpeechResults = false
     private var passwordScope = false
     private var nativeRimeAvailable = false
+    private var hasComposition = false
 
     override fun onCreate() {
         super.onCreate()
@@ -80,12 +82,14 @@ class ShurufaInputMethodService : InputMethodService() {
         }
         NativeIme.setScope(handle, scope)
         NativeIme.command(handle, 3)
+        hasComposition = false
     }
 
     override fun onFinishInput() {
         acceptingSpeechResults = false
         speechRecognizer?.cancel()
         if (handle != 0L) NativeIme.command(handle, 3)
+        hasComposition = false
         super.onFinishInput()
     }
 
@@ -103,9 +107,9 @@ class ShurufaInputMethodService : InputMethodService() {
             orientation = LinearLayout.HORIZONTAL
             addView(key("中/En") { toggleEngine() })
             addView(key("🎤") { startSystemDictation() })
-            addView(key("Space") { command(2) })
-            addView(key("⌫") { command(0) })
-            addView(key("Enter") { command(1) })
+            addView(key("Space") { pressSpace() })
+            addView(key("⌫") { pressBackspace() })
+            addView(key("Enter") { pressEnter() })
         })
         return root
     }
@@ -113,8 +117,13 @@ class ShurufaInputMethodService : InputMethodService() {
     private var pinyin = false
 
     private fun toggleEngine() {
+        val previous = pinyin
         pinyin = !pinyin
-        NativeIme.switchEngine(handle, selectedEngine())
+        if (NativeIme.switchEngine(handle, selectedEngine()) != 0) {
+            pinyin = previous
+        } else {
+            hasComposition = false
+        }
         renderActions()
     }
 
@@ -131,6 +140,42 @@ class ShurufaInputMethodService : InputMethodService() {
         if (NativeIme.feed(handle, text) == 0) renderActions()
     }
 
+    private fun pressSpace() {
+        val wasComposing = hasComposition
+        command(2)
+        if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
+            currentInputConnection.commitText(" ", 1)
+        }
+    }
+
+    private fun pressBackspace() {
+        val wasComposing = hasComposition
+        command(0)
+        if (PlatformPolicy.shouldFallbackToEditor(wasComposing)) {
+            deletePreviousEditorGrapheme()
+        }
+    }
+
+    private fun deletePreviousEditorGrapheme() {
+        if (passwordScope) {
+            currentInputConnection.deleteSurroundingTextInCodePoints(1, 0)
+            return
+        }
+        val before = currentInputConnection.getTextBeforeCursor(64, 0)?.toString().orEmpty()
+        val utf16Length = PlatformText.previousGraphemeUtf16Length(before)
+        if (utf16Length > 0) currentInputConnection.deleteSurroundingText(utf16Length, 0)
+    }
+
+    private fun pressEnter() {
+        val wasComposing = hasComposition
+        command(1)
+        if (PlatformPolicy.shouldFallbackToEditor(wasComposing) &&
+            !sendDefaultEditorAction(false)
+        ) {
+            currentInputConnection.commitText("\n", 1)
+        }
+    }
+
     private fun command(value: Int) {
         if (NativeIme.command(handle, value) == 0) renderActions()
     }
@@ -141,20 +186,29 @@ class ShurufaInputMethodService : InputMethodService() {
         for (index in 0 until actions.length()) {
             val item = actions.get(index)
             if (item is String) {
-                if (item == "CloseComposition") currentInputConnection.finishComposingText()
+                if (item == "CloseComposition") {
+                    hasComposition = false
+                    currentInputConnection.finishComposingText()
+                }
                 continue
             }
             val action = item as org.json.JSONObject
             when {
-                action.has("CommitText") -> currentInputConnection.commitText(action.getString("CommitText"), 1)
+                action.has("CommitText") -> {
+                    hasComposition = false
+                    currentInputConnection.commitText(action.getString("CommitText"), 1)
+                }
                 action.has("UpdateComposition") -> {
                     val segments = action.getJSONObject("UpdateComposition").getJSONArray("segments")
                     val text = buildString {
                         for (segment in 0 until segments.length()) append(segments.getJSONObject(segment).getString("text"))
                     }
+                    hasComposition = text.isNotEmpty()
                     currentInputConnection.setComposingText(text, 1)
                 }
-                action.has("ShowCandidates") -> showCandidates(action.getJSONArray("ShowCandidates"))
+                action.has("ShowCandidates") -> {
+                    showCandidates(action.getJSONArray("ShowCandidates"))
+                }
             }
         }
     }

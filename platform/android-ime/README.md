@@ -29,8 +29,8 @@ export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
 ./tools/verify-android-beta.sh
 ```
 
-连接设备时脚本会安装 APK 并运行三项 instrumentation 测试：中文候选/提交、密码语音隔离，
-以及端侧优先和联网显式授权策略。手工启用组件可执行：
+连接设备时脚本会安装 APK 并运行四项 instrumentation 测试：中文候选/提交、Rime
+资源损坏恢复、密码语音隔离，以及端侧优先和联网显式授权策略。手工启用组件可执行：
 
 ```bash
 adb shell ime enable dev.shurufa.ime/.ShurufaInputMethodService
@@ -42,3 +42,16 @@ adb shell ime set dev.shurufa.ime/.ShurufaInputMethodService
 策略传入核心；`IME_FLAG_NO_PERSONALIZED_LEARNING` 也会覆盖用户设置。无端侧系统识别器时，
 必须由用户明确开启联网语音。发布前仍需真机完成输入连接、横竖屏、后台回收、无障碍、耗电、录音权限和
 Play 签名测试。
+
+Release 签名信息仅从进程环境读取，不得将 keystore 或口令写入仓库：
+
+```bash
+export SHURUFA_ANDROID_KEYSTORE=/secure/path/release.jks
+export SHURUFA_ANDROID_KEY_ALIAS=release
+export SHURUFA_ANDROID_STORE_PASSWORD='...'
+export SHURUFA_ANDROID_KEY_PASSWORD='...'
+./tools/verify-android-release.sh
+```
+
+脚本会验证 APK 签名证书、三种 ABI 的 JNI 库、生产构建中的 `librime.so`，并生成
+`app-release.apk.sha256`。口令应由本地机密管理器或 CI secret 在进程启动时注入。

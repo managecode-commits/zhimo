@@ -2,6 +2,21 @@ plugins {
     id("com.android.application")
 }
 
+val releaseStoreFile = providers.environmentVariable("SHURUFA_ANDROID_KEYSTORE").orNull
+val releaseKeyAlias = providers.environmentVariable("SHURUFA_ANDROID_KEY_ALIAS").orNull
+val releaseStorePassword = providers.environmentVariable("SHURUFA_ANDROID_STORE_PASSWORD").orNull
+val releaseKeyPassword = providers.environmentVariable("SHURUFA_ANDROID_KEY_PASSWORD").orNull
+val releaseSigningValues = listOf(
+    releaseStoreFile,
+    releaseKeyAlias,
+    releaseStorePassword,
+    releaseKeyPassword,
+)
+val releaseSigningReady = releaseSigningValues.all { !it.isNullOrBlank() }
+check(releaseSigningValues.none { !it.isNullOrBlank() } || releaseSigningReady) {
+    "Android release signing variables must be provided together"
+}
+
 android {
     namespace = "dev.shurufa.ime"
     compileSdk = 37
@@ -15,6 +30,25 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild.cmake.arguments += "-DSHURUFA_ROOT=${rootDir.resolve("../..").absolutePath}"
+    }
+
+    signingConfigs {
+        if (releaseSigningReady) {
+            create("release") {
+                storeFile = file(requireNotNull(releaseStoreFile))
+                keyAlias = releaseKeyAlias
+                storePassword = releaseStorePassword
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            signingConfig = signingConfigs.findByName("release")
+            isMinifyEnabled = false
+            ndk.debugSymbolLevel = "SYMBOL_TABLE"
+        }
     }
 
     externalNativeBuild {

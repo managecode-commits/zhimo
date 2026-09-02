@@ -14,4 +14,9 @@ object PlatformPolicy {
         networkExplicitlyAllowed: Boolean,
     ): Boolean = !passwordScope && microphoneGranted &&
         (onDeviceAvailable || networkExplicitlyAllowed)
+
+    fun shouldInsertLiteralSpace(pinyin: Boolean, hadComposition: Boolean): Boolean =
+        !pinyin || !hadComposition
+
+    fun shouldFallbackToEditor(hadComposition: Boolean): Boolean = !hadComposition
 }
