@@ -40,8 +40,9 @@ export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
 ```
 
 上述环境变量可显式指定，也可省略：脚本会依次从 `ANDROID_SDK_ROOT`、Android
-Studio `local.properties`、常见安装目录和当前临时工具链中发现 SDK，并自动推导 NDK
-与 JDK。自动发现只读取现有许可证记录，不会代替用户接受许可证。
+Studio `local.properties`、标准用户安装目录和当前临时工具链中发现有效 SDK，
+并自动推导 NDK 与 JDK。候选目录必须同时包含许可证记录和所需 SDK Platform，
+空目录不会被误判为 SDK。自动发现只读取现有许可证记录，不会代替用户接受许可证。
 
 验证通过后的可安装 Debug APK 位于
 `platform/android-ime/app/build/outputs/apk/debug/app-debug.apk`；脚本同时编译 AndroidTest
@@ -60,6 +61,10 @@ adb shell ime set dev.shurufa.ime/.ShurufaInputMethodService
 策略传入核心；`IME_FLAG_NO_PERSONALIZED_LEARNING` 也会覆盖用户设置。无端侧系统识别器时，
 必须由用户明确开启联网语音。发布前仍需真机完成输入连接、横竖屏、后台回收、无障碍、耗电、录音权限和
 Play 签名测试。
+
+已验证的自动化设备基线是 Android 15 / API 35 AOSP ATD x86_64；
+`shurufa_api35` 模拟器上四项 instrumentation 测试全部通过，且输入法服务可正常
+启用和选中。模拟器验收不替代上述真机矩阵。
 
 Release 签名信息仅从进程环境读取，不得将 keystore 或口令写入仓库：
 

@@ -32,8 +32,8 @@ if [[ -z "${ANDROID_HOME:-}" ]]; then
   fi
 fi
 if [[ -z "${ANDROID_HOME:-}" ]]; then
-  for candidate in /tmp/shurufa-android-sdk "${HOME:-}/Android/Sdk" "${HOME:-}/Library/Android/sdk"; do
-    if [[ -d "$candidate" ]]; then
+  for candidate in "${HOME:-}/Android/Sdk" "${HOME:-}/Library/Android/sdk" /tmp/shurufa-android-sdk; do
+    if [[ -f "$candidate/licenses/android-sdk-license" && -f "$candidate/platforms/android-37.0/android.jar" ]]; then
       export ANDROID_HOME="$candidate"
       break
     fi
