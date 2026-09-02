@@ -206,7 +206,7 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun resetCompositionForModeChange() {
         if (handle != 0L) NativeIme.command(handle, 3)
-        if (hasComposition) currentInputConnection.finishComposingText()
+        currentInputConnection.finishComposingText()
         hasComposition = false
     }
 
@@ -369,6 +369,10 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun pressSpace() {
+        if (!PlatformPolicy.shouldRouteEditingToEngine(keyboardPage)) {
+            currentInputConnection.commitText(" ", 1)
+            return
+        }
         val wasComposing = hasComposition
         command(2)
         if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
@@ -377,6 +381,10 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun pressBackspace() {
+        if (!PlatformPolicy.shouldRouteEditingToEngine(keyboardPage)) {
+            deletePreviousEditorGrapheme()
+            return
+        }
         val wasComposing = hasComposition
         command(0)
         if (PlatformPolicy.shouldFallbackToEditor(wasComposing)) {
@@ -395,6 +403,10 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun pressEnter() {
+        if (!PlatformPolicy.shouldRouteEditingToEngine(keyboardPage)) {
+            if (!sendDefaultEditorAction(false)) currentInputConnection.commitText("\n", 1)
+            return
+        }
         val wasComposing = hasComposition
         command(1)
         if (PlatformPolicy.shouldFallbackToEditor(wasComposing) &&
