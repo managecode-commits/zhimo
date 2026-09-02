@@ -8,5 +8,8 @@
     <string name="allow_online_speech">无端侧识别器时允许系统语音服务联网</string>
     <string name="enable_ime">启用输入法</string>
     <string name="select_ime">选择输入法</string>
+    <string name="mode_pinyin">拼音</string>
+    <string name="mode_english">English</string>
+    <string name="candidate_description">候选词 %1$s</string>
     <color name="launcher_background">#2457D6</color>
 </resources>
