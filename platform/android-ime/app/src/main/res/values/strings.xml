@@ -11,6 +11,9 @@
     <string name="mode_pinyin_full_keyboard">拼音 · 26键</string>
     <string name="mode_pinyin_nine_key">拼音 · 9键</string>
     <string name="mode_english">English</string>
+    <string name="mode_numbers">数字</string>
+    <string name="mode_symbols_chinese">符号 · 中文</string>
+    <string name="mode_symbols_english">Symbols · English</string>
     <string name="candidate_description">候选词 %1$s</string>
     <color name="launcher_background">#2457D6</color>
 </resources>

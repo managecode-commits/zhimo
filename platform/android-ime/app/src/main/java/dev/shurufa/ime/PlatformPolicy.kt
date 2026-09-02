@@ -1,5 +1,13 @@
 package dev.shurufa.ime
 
+import android.text.InputType
+
+enum class KeyboardPage {
+    TEXT,
+    NUMBER,
+    SYMBOL,
+}
+
 object PlatformPolicy {
     fun engine(
         pinyin: Boolean,
@@ -24,4 +32,12 @@ object PlatformPolicy {
         !pinyin || !hadComposition
 
     fun shouldFallbackToEditor(hadComposition: Boolean): Boolean = !hadComposition
+
+    fun initialKeyboardPage(inputType: Int): KeyboardPage = when (inputType and InputType.TYPE_MASK_CLASS) {
+        InputType.TYPE_CLASS_NUMBER,
+        InputType.TYPE_CLASS_PHONE,
+        InputType.TYPE_CLASS_DATETIME,
+        -> KeyboardPage.NUMBER
+        else -> KeyboardPage.TEXT
+    }
 }

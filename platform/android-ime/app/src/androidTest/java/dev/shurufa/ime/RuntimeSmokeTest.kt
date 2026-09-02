@@ -1,5 +1,6 @@
 package dev.shurufa.ime
 
+import android.text.InputType
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
@@ -37,6 +38,9 @@ class RuntimeSmokeTest {
         assertTrue(PlatformPolicy.shouldInsertLiteralSpace(true, false))
         assertFalse(PlatformPolicy.shouldFallbackToEditor(true))
         assertTrue(PlatformPolicy.shouldFallbackToEditor(false))
+        assertEquals(KeyboardPage.TEXT, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_TEXT))
+        assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_NUMBER))
+        assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_PHONE))
         assertEquals(1, PlatformText.previousGraphemeUtf16Length("a"))
         assertEquals(2, PlatformText.previousGraphemeUtf16Length("e\u0301"))
         assertEquals(11, PlatformText.previousGraphemeUtf16Length("👨‍👩‍👧‍👦"))

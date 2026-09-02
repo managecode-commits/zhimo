@@ -35,6 +35,8 @@ class ShurufaInputMethodService : InputMethodService() {
     private var nativeRimeAvailable = false
     private var hasComposition = false
     private var nineKeyPinyin = false
+    private var keyboardPage = KeyboardPage.TEXT
+    private var chineseSymbols = true
 
     override fun onCreate() {
         super.onCreate()
@@ -68,6 +70,8 @@ class ShurufaInputMethodService : InputMethodService() {
         val preferences = getSharedPreferences("shurufa", MODE_PRIVATE)
         pinyin = preferences.getBoolean("default_pinyin", true)
         nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
+        keyboardPage = PlatformPolicy.initialKeyboardPage(attribute?.inputType ?: InputType.TYPE_CLASS_TEXT)
+        chineseSymbols = pinyin
         NativeIme.switchEngine(handle, selectedEngine())
         val personalizedLearningAllowed =
             ((attribute?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
@@ -171,6 +175,15 @@ class ShurufaInputMethodService : InputMethodService() {
         renderActions()
     }
 
+    private fun showKeyboardPage(page: KeyboardPage) {
+        if (keyboardPage == page) return
+        resetCompositionForModeChange()
+        keyboardPage = page
+        if (page == KeyboardPage.SYMBOL) chineseSymbols = pinyin
+        renderKeyboard()
+        renderActions()
+    }
+
     private fun selectedEngine(): String =
         PlatformPolicy.engine(pinyin, nativeRimeAvailable, nineKeyPinyin)
 
@@ -199,6 +212,15 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun renderKeyboard() {
         keyboardRows.removeAllViews()
+        when (keyboardPage) {
+            KeyboardPage.NUMBER -> renderNumberKeyboard()
+            KeyboardPage.SYMBOL -> renderSymbolKeyboard()
+            KeyboardPage.TEXT -> renderTextKeyboard()
+        }
+        keyboardRows.addView(functionRow())
+    }
+
+    private fun renderTextKeyboard() {
         if (pinyin && nineKeyPinyin) {
             keyboardRows.addView(t9KeyRow(listOf("1\n'" to "'", "2\nABC" to "2", "3\nDEF" to "3")))
             keyboardRows.addView(t9KeyRow(listOf("4\nGHI" to "4", "5\nJKL" to "5", "6\nMNO" to "6")))
@@ -208,7 +230,17 @@ class ShurufaInputMethodService : InputMethodService() {
             keyboardRows.addView(keyRow("asdfghjkl", sideWeight = 0.5f))
             keyboardRows.addView(keyRow("zxcvbnm", sideWeight = 1.5f))
         }
-        keyboardRows.addView(functionRow())
+    }
+
+    private fun renderNumberKeyboard() {
+        keyboardRows.addView(literalKeyRow(listOf("1", "2", "3", "4", "5")))
+        keyboardRows.addView(literalKeyRow(listOf("6", "7", "8", "9", "0")))
+        keyboardRows.addView(literalKeyRow(listOf(".", ",", "?", "!", "@", "#")))
+    }
+
+    private fun renderSymbolKeyboard() {
+        val rows = if (chineseSymbols) CHINESE_SYMBOL_ROWS else ENGLISH_SYMBOL_ROWS
+        rows.forEach { keyboardRows.addView(literalKeyRow(it)) }
     }
 
     private fun t9KeyRow(keys: List<Pair<String, String>>) = LinearLayout(this).apply {
@@ -220,24 +252,60 @@ class ShurufaInputMethodService : InputMethodService() {
         layoutParams = keyboardRowParams()
     }
 
+    private fun literalKeyRow(values: List<String>) = LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER
+        values.forEach { value ->
+            addView(key(value, labelSizeSp = 16f) { commitLiteral(value) })
+        }
+        layoutParams = keyboardRowParams()
+    }
+
     private fun functionRow() = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
+        when (keyboardPage) {
+            KeyboardPage.TEXT -> addTextFunctionKeys()
+            KeyboardPage.NUMBER -> {
+                addView(key("ABC", 1f, 13f) { showKeyboardPage(KeyboardPage.TEXT) })
+                addView(key("符号", 1f, 13f) { showKeyboardPage(KeyboardPage.SYMBOL) })
+                addView(key("空格", 2.2f, 14f) { pressSpace() })
+                addView(key("删除", 1.1f, 13f) { pressBackspace() })
+                addView(key("回车", 1.1f, 13f) { pressEnter() })
+            }
+            KeyboardPage.SYMBOL -> {
+                addView(key("ABC", 0.9f, 13f) { showKeyboardPage(KeyboardPage.TEXT) })
+                addView(key("123", 0.9f, 13f) { showKeyboardPage(KeyboardPage.NUMBER) })
+                addView(key(if (chineseSymbols) "英符" else "中符", 0.9f, 13f) {
+                    chineseSymbols = !chineseSymbols
+                    renderKeyboard()
+                    renderActions()
+                })
+                addView(key("空格", 1.8f, 14f) { pressSpace() })
+                addView(key("删除", 1f, 13f) { pressBackspace() })
+                addView(key("回车", 1f, 13f) { pressEnter() })
+            }
+        }
+        layoutParams = keyboardRowParams()
+    }
+
+    private fun LinearLayout.addTextFunctionKeys() {
         if (pinyin) {
-            addView(key(if (nineKeyPinyin) "26键" else "9键", 0.9f, 13f) { togglePinyinLayout() })
+            addView(key(if (nineKeyPinyin) "26键" else "9键", 0.8f, 12f) { togglePinyinLayout() })
+            addView(key("123", 0.7f, 12f) { showKeyboardPage(KeyboardPage.NUMBER) })
+            addView(key("中/英", 0.9f, 12f) { toggleEngine() })
+            addView(key("语音", 0.8f, 12f) { startSystemDictation() })
+            addView(key("空格", 1.8f, 14f) { pressSpace() })
+            addView(key("删除", 0.9f, 12f) { pressBackspace() })
+            addView(key("回车", 0.9f, 12f) { pressEnter() })
+        } else {
+            addView(key("123", 0.9f, 13f) { showKeyboardPage(KeyboardPage.NUMBER) })
             addView(key("中/英", 1f, 13f) { toggleEngine() })
             addView(key("语音", 0.9f, 13f) { startSystemDictation() })
             addView(key("空格", 2f, 14f) { pressSpace() })
             addView(key("删除", 1f, 13f) { pressBackspace() })
             addView(key("回车", 1f, 13f) { pressEnter() })
-        } else {
-            addView(key("中/英", 1.2f, 14f) { toggleEngine() })
-            addView(key("语音", 1f, 14f) { startSystemDictation() })
-            addView(key("空格", 2.4f, 14f) { pressSpace() })
-            addView(key("删除", 1.2f, 14f) { pressBackspace() })
-            addView(key("回车", 1.2f, 14f) { pressEnter() })
         }
-        layoutParams = keyboardRowParams()
     }
 
     private fun keyRow(keys: String, sideWeight: Float = 0f) = LinearLayout(this).apply {
@@ -293,6 +361,11 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun feed(text: String) {
         if (NativeIme.feed(handle, text) == 0) renderActions()
+    }
+
+    private fun commitLiteral(text: String) {
+        if (hasComposition) resetCompositionForModeChange()
+        currentInputConnection.commitText(text, 1)
     }
 
     private fun pressSpace() {
@@ -394,6 +467,9 @@ class ShurufaInputMethodService : InputMethodService() {
     private fun showModeIndicator() {
         candidates.addView(TextView(this).apply {
             text = when {
+                keyboardPage == KeyboardPage.NUMBER -> getString(R.string.mode_numbers)
+                keyboardPage == KeyboardPage.SYMBOL && chineseSymbols -> getString(R.string.mode_symbols_chinese)
+                keyboardPage == KeyboardPage.SYMBOL -> getString(R.string.mode_symbols_english)
                 !pinyin -> getString(R.string.mode_english)
                 nineKeyPinyin -> getString(R.string.mode_pinyin_nine_key)
                 else -> getString(R.string.mode_pinyin_full_keyboard)
@@ -487,6 +563,16 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private companion object {
+        val CHINESE_SYMBOL_ROWS = listOf(
+            listOf("，", "。", "？", "！", "：", "；"),
+            listOf("“", "”", "‘", "’", "（", "）"),
+            listOf("《", "》", "【", "】", "…", "—"),
+        )
+        val ENGLISH_SYMBOL_ROWS = listOf(
+            listOf("~", "!", "@", "#", "$", "%"),
+            listOf("^", "&", "*", "(", ")", "_"),
+            listOf("+", "-", "=", "/", "\\", ":", ";"),
+        )
         const val KEYBOARD_BACKGROUND = 0xFFF1F3F6.toInt()
         const val CANDIDATE_BACKGROUND = 0xFFFFFFFF.toInt()
         const val KEY_BACKGROUND = 0xFFFFFFFF.toInt()
