@@ -3,6 +3,7 @@
 #include "shurufa_ime.h"
 
 #include <cstdlib>
+#include <cctype>
 #include <filesystem>
 #include <memory>
 #include <stdexcept>
@@ -65,8 +66,19 @@ public:
     explicit ShurufaState(InputContext &inputContext) : ic_(&inputContext) {
         auto dataDirectory = userDataDirectory();
         std::filesystem::create_directories(dataDirectory);
-        handle_ = ime_runtime_new_with_data_dir("bilingual", dataDirectory.c_str());
-        if (!handle_ || ime_runtime_switch_engine(handle_, "pinyin.reference") != 0) {
+        const char *rimeShared = std::getenv("SHURUFA_RIME_SHARED_DIR");
+        const char *rimeUser = std::getenv("SHURUFA_RIME_USER_DIR");
+        if (rimeShared && *rimeShared && rimeUser && *rimeUser) {
+            handle_ = ime_runtime_new_with_rime("bilingual", dataDirectory.c_str(),
+                                                rimeShared, rimeUser);
+            pinyinEngine_ = "rime";
+        } else {
+            handle_ = ime_runtime_new_with_data_dir("bilingual",
+                                                    dataDirectory.c_str());
+        }
+        if (!handle_ || (ime_runtime_abi_version() >> 16) != 1 ||
+            !(ime_runtime_capabilities() & SHURUFA_CAP_TEXT_INPUT) ||
+            ime_runtime_switch_engine(handle_, pinyinEngine_.c_str()) != 0) {
             if (handle_) {
                 ime_runtime_free(handle_);
             }
@@ -98,6 +110,60 @@ public:
 
     bool composing() const { return composing_; }
 
+    bool acceptsInput() {
+        updateInputScope();
+        return scope_ != 1;
+    }
+
+    bool toggleMode() {
+        if (!acceptsInput()) {
+            return false;
+        }
+        if (composing_ && !command(3)) {
+            return false;
+        }
+        const char *engine = pinyin_ ? "latin" : pinyinEngine_.c_str();
+        if (ime_runtime_switch_engine(handle_, engine) != 0) {
+            return false;
+        }
+        pinyin_ = !pinyin_;
+        applyActions();
+        return true;
+    }
+
+    bool selectVisibleCandidate(int index) {
+        auto list = ic_->inputPanel().candidateList();
+        if (!list || index < 0 || index >= list->size()) {
+            return false;
+        }
+        list->candidate(index).select(ic_);
+        return true;
+    }
+
+    bool moveCandidate(bool previous) {
+        auto list = ic_->inputPanel().candidateList();
+        auto *movable = list ? list->toCursorMovable() : nullptr;
+        if (!movable) {
+            return false;
+        }
+        previous ? movable->prevCandidate() : movable->nextCandidate();
+        ic_->updateUserInterface(UserInterfaceComponent::InputPanel);
+        return true;
+    }
+
+    bool pageCandidates(bool previous) {
+        auto list = ic_->inputPanel().candidateList();
+        auto *pageable = list ? list->toPageable() : nullptr;
+        if (!pageable || (previous ? !pageable->hasPrev() : !pageable->hasNext())) {
+            return false;
+        }
+        previous ? pageable->prev() : pageable->next();
+        ic_->updateUserInterface(UserInterfaceComponent::InputPanel);
+        return true;
+    }
+
+    bool pinyin() const { return pinyin_; }
+
 private:
     void updateInputScope() {
         const auto flags = ic_->capabilityFlags();
@@ -111,7 +177,12 @@ private:
         } else if (flags.test(CapabilityFlag::Terminal)) {
             scope = 4;
         }
-        ime_runtime_set_input_scope(handle_, scope);
+        scope_ = scope;
+        (void)ime_runtime_set_input_scope(handle_, scope);
+        (void)ime_runtime_set_privacy_policy(handle_, scope == 1 ? 0 : 1, 0);
+        const auto &program = ic_->program();
+        (void)ime_runtime_set_application_id(handle_,
+                                             program.empty() ? nullptr : program.c_str());
     }
 
     bool applyActions() {
@@ -181,6 +252,9 @@ private:
     InputContext *ic_;
     ImeHandle *handle_ = nullptr;
     bool composing_ = false;
+    bool pinyin_ = true;
+    std::string pinyinEngine_ = "pinyin.reference";
+    unsigned scope_ = 0;
 };
 
 void ShurufaCandidate::select(InputContext * /*inputContext*/) const {
@@ -201,10 +275,44 @@ void ShurufaEngine::keyEvent(const InputMethodEntry & /*entry*/,
         return;
     }
     auto key = event.key();
-    if (key.states() != KeyState::NoState) {
+    auto *state = event.inputContext()->propertyFor(&stateFactory_);
+    if (key.check(FcitxKey_space, KeyState::Shift)) {
+        if (state->toggleMode()) {
+            event.filterAndAccept();
+        }
         return;
     }
-    auto *state = event.inputContext()->propertyFor(&stateFactory_);
+    if (!state->acceptsInput()) {
+        return;
+    }
+    if (key.states().testAny(KeyState::Ctrl) ||
+        key.states().testAny(KeyState::Alt) ||
+        key.states().testAny(KeyState::Super) ||
+        key.states().testAny(KeyState::Hyper) ||
+        key.states().testAny(KeyState::Meta)) {
+        return;
+    }
+    if (state->composing() && key.isDigit()) {
+        auto index = key.digitSelection();
+        if (state->selectVisibleCandidate(index)) {
+            event.filterAndAccept();
+            return;
+        }
+    }
+    if (state->composing() &&
+        (key.check(FcitxKey_Up) || key.check(FcitxKey_Down))) {
+        if (state->moveCandidate(key.check(FcitxKey_Up))) {
+            event.filterAndAccept();
+            return;
+        }
+    }
+    if (state->composing() &&
+        (key.check(FcitxKey_Page_Up) || key.check(FcitxKey_Page_Down))) {
+        if (state->pageCandidates(key.check(FcitxKey_Page_Up))) {
+            event.filterAndAccept();
+            return;
+        }
+    }
     if (key.check(FcitxKey_BackSpace) && state->composing()) {
         state->command(0);
         event.filterAndAccept();
@@ -230,8 +338,14 @@ void ShurufaEngine::keyEvent(const InputMethodEntry & /*entry*/,
     if (((symbol >= FcitxKey_a && symbol <= FcitxKey_z) ||
          (symbol >= FcitxKey_A && symbol <= FcitxKey_Z) ||
          symbol == FcitxKey_apostrophe)) {
-        state->feed(std::string(1, static_cast<char>(symbol)));
-        event.filterAndAccept();
+        char character = static_cast<char>(symbol);
+        if (state->pinyin()) {
+            character = static_cast<char>(std::tolower(
+                static_cast<unsigned char>(character)));
+        }
+        if (state->feed(std::string(1, character))) {
+            event.filterAndAccept();
+        }
     }
 }
 
