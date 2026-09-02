@@ -10,10 +10,11 @@ cd "$repo_dir"
 ./tools/build-android-core.sh
 
 cd platform/android-ime
-./gradlew --no-daemon --stacktrace :app:assembleDebug
+./gradlew --no-daemon --stacktrace :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest
 apk="app/build/outputs/apk/debug/app-debug.apk"
 test -s "$apk"
-sha256sum "$apk"
+ANDROID_HOME="$ANDROID_HOME" ANDROID_NDK_HOME="$ANDROID_NDK_HOME" JAVA_HOME="$JAVA_HOME" \
+  "$repo_dir/tools/verify-android-apk.sh" "$apk"
 
 if command -v adb >/dev/null 2>&1 && [[ "$(adb get-state 2>/dev/null || true)" == "device" ]]; then
   adb install -r "$apk"

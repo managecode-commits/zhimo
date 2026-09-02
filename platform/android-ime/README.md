@@ -4,10 +4,17 @@
 
 构建前先为 Android 目标编译 `ime-ffi`，并将各 ABI 的 `libime_ffi.so` 放入
 `app/src/main/jniLibs/<abi>/`。仓库已固定 Gradle Wrapper 9.5；使用 JDK 17、Android SDK
-37、NDK 28.2.13676358 与 AGP 9.3.2 执行：
+Platform 37.0、NDK 28.2.13676358、`cargo-ndk 4.1.2` 与 AGP 9.3.2 执行：
 
 ```bash
-./gradlew :app:assembleDebug
+rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+cargo install cargo-ndk --locked --version 4.1.2
+```
+
+之后在仓库根目录使用统一入口：
+
+```bash
+./tools/verify-android-beta.sh
 ```
 
 默认 `tools/build-android-core.sh` 构建参考拼音版本。生产型构建将
@@ -28,6 +35,10 @@ export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
 # 可选：export ANDROID_RIME_ROOT=/path/to/per-abi-librime-prefixes
 ./tools/verify-android-beta.sh
 ```
+
+验证通过后的可安装 Debug APK 位于
+`platform/android-ime/app/build/outputs/apk/debug/app-debug.apk`；脚本同时编译 AndroidTest
+APK，并阻断 JNI `DT_NEEDED` 中的构建机绝对路径。
 
 连接设备时脚本会安装 APK 并运行四项 instrumentation 测试：中文候选/提交、Rime
 资源损坏恢复、密码语音隔离，以及端侧优先和联网显式授权策略。手工启用组件可执行：
@@ -50,8 +61,9 @@ export SHURUFA_ANDROID_KEYSTORE=/secure/path/release.jks
 export SHURUFA_ANDROID_KEY_ALIAS=release
 export SHURUFA_ANDROID_STORE_PASSWORD='...'
 export SHURUFA_ANDROID_KEY_PASSWORD='...'
+export SHURUFA_ANDROID_CERT_SHA256='expected signing certificate SHA-256'
 ./tools/verify-android-release.sh
 ```
 
-脚本会验证 APK 签名证书、三种 ABI 的 JNI 库、生产构建中的 `librime.so`，并生成
+脚本会验证 APK 签名证书与登记的 SHA-256 指纹一致、三种 ABI 的 JNI 库、生产构建中的 `librime.so`，并生成
 `app-release.apk.sha256`。口令应由本地机密管理器或 CI secret 在进程启动时注入。

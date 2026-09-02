@@ -2,10 +2,21 @@
 set -euo pipefail
 
 if ! cargo ndk --version >/dev/null 2>&1; then
-  echo "cargo-ndk is required: cargo install cargo-ndk --locked" >&2
+  echo "cargo-ndk 4.1.2 is required: cargo install cargo-ndk --locked --version 4.1.2" >&2
   exit 2
 fi
+[[ "$(cargo ndk --version)" == "cargo-ndk 4.1.2" ]] || {
+  echo "cargo-ndk 4.1.2 is required for the reproducible Android build" >&2
+  exit 2
+}
 : "${ANDROID_NDK_HOME:?ANDROID_NDK_HOME must point to the Android NDK}"
+
+for target in aarch64-linux-android armv7-linux-androideabi x86_64-linux-android; do
+  rustup target list --installed | grep -Fx "$target" >/dev/null || {
+    echo "missing Rust target: $target" >&2
+    exit 2
+  }
+done
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 output="$repo_dir/platform/android-ime/app/src/main/jniLibs"

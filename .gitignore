@@ -5,6 +5,7 @@
 .idea/
 .vscode/
 **/.gradle/
+**/.cxx/
 **/build/
 platform/android-ime/local.properties
 platform/android-ime/app/src/main/jniLibs/

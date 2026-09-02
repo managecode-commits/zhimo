@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Shurufa</string>
     <string name="subtype_bilingual">中文 / English</string>
+    <string name="settings_summary">Shurufa 默认离线输入。系统语音 Provider 的离线能力由设备决定；也可安装本地模型。</string>
+    <string name="grant_microphone">授权语音输入</string>
+    <string name="default_pinyin">默认使用中文拼音</string>
+    <string name="local_learning">允许在本机学习候选习惯</string>
+    <string name="allow_online_speech">无端侧识别器时允许系统语音服务联网</string>
+    <string name="enable_ime">启用输入法</string>
+    <string name="select_ime">选择输入法</string>
+    <color name="launcher_background">#2457D6</color>
 </resources>

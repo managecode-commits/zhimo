@@ -19,40 +19,40 @@ class MainActivity : Activity() {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 48, 32, 32)
             addView(TextView(this@MainActivity).apply {
-                text = "Shurufa 默认离线输入。系统语音 Provider 的离线能力由设备决定；也可安装本地模型。"
+                setText(R.string.settings_summary)
                 textSize = 18f
             })
             addView(Button(this@MainActivity).apply {
-                text = "授权语音输入"
+                setText(R.string.grant_microphone)
                 setOnClickListener { requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 10) }
             })
             addView(Switch(this@MainActivity).apply {
-                text = "默认使用中文拼音"
+                setText(R.string.default_pinyin)
                 isChecked = preferences.getBoolean("default_pinyin", true)
                 setOnCheckedChangeListener { _, enabled ->
                     preferences.edit().putBoolean("default_pinyin", enabled).apply()
                 }
             })
             addView(Switch(this@MainActivity).apply {
-                text = "允许在本机学习候选习惯"
+                setText(R.string.local_learning)
                 isChecked = preferences.getBoolean("learning_enabled", true)
                 setOnCheckedChangeListener { _, enabled ->
                     preferences.edit().putBoolean("learning_enabled", enabled).apply()
                 }
             })
             addView(Switch(this@MainActivity).apply {
-                text = "无端侧识别器时允许系统语音服务联网"
+                setText(R.string.allow_online_speech)
                 isChecked = preferences.getBoolean("online_system_speech", false)
                 setOnCheckedChangeListener { _, enabled ->
                     preferences.edit().putBoolean("online_system_speech", enabled).apply()
                 }
             })
             addView(Button(this@MainActivity).apply {
-                text = "启用输入法"
+                setText(R.string.enable_ime)
                 setOnClickListener { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }
             })
             addView(Button(this@MainActivity).apply {
-                text = "选择输入法"
+                setText(R.string.select_ime)
                 setOnClickListener { getSystemService(android.view.inputmethod.InputMethodManager::class.java).showInputMethodPicker() }
             })
         })
