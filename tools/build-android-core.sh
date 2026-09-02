@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if ! cargo ndk --version >/dev/null 2>&1; then
+if ! command -v cargo >/dev/null 2>&1; then
+  cargo_bin_dir="${CARGO_HOME:-${HOME:?HOME is required}/.cargo}/bin"
+  if [[ -x "$cargo_bin_dir/cargo" ]]; then
+    export PATH="$cargo_bin_dir:$PATH"
+  else
+    echo "Rust Cargo is required; install Rust with rustup and reopen the shell" >&2
+    exit 2
+  fi
+fi
+if ! command -v cargo-ndk >/dev/null 2>&1; then
   echo "cargo-ndk 4.1.2 is required: cargo install cargo-ndk --locked --version 4.1.2" >&2
   exit 2
 fi

@@ -11,6 +11,9 @@ rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-and
 cargo install cargo-ndk --locked --version 4.1.2
 ```
 
+脚本会自动识别标准 `~/.cargo/bin`；若需手工激活当前终端，执行
+`source "$HOME/.cargo/env"`。
+
 之后在仓库根目录使用统一入口：
 
 ```bash
