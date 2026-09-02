@@ -2,9 +2,7 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-: "${JAVA_HOME:?JAVA_HOME must point to JDK 17}"
-: "${ANDROID_HOME:?ANDROID_HOME must point to the licensed Android SDK}"
-: "${ANDROID_NDK_HOME:?ANDROID_NDK_HOME must point to Android NDK 28.2.13676358}"
+source "$repo_dir/tools/android-env.sh"
 : "${SHURUFA_ANDROID_KEYSTORE:?SHURUFA_ANDROID_KEYSTORE must point to the release keystore}"
 : "${SHURUFA_ANDROID_KEY_ALIAS:?SHURUFA_ANDROID_KEY_ALIAS is required}"
 : "${SHURUFA_ANDROID_STORE_PASSWORD:?SHURUFA_ANDROID_STORE_PASSWORD is required}"

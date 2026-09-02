@@ -39,6 +39,10 @@ export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/28.2.13676358"
 ./tools/verify-android-beta.sh
 ```
 
+上述环境变量可显式指定，也可省略：脚本会依次从 `ANDROID_SDK_ROOT`、Android
+Studio `local.properties`、常见安装目录和当前临时工具链中发现 SDK，并自动推导 NDK
+与 JDK。自动发现只读取现有许可证记录，不会代替用户接受许可证。
+
 验证通过后的可安装 Debug APK 位于
 `platform/android-ime/app/build/outputs/apk/debug/app-debug.apk`；脚本同时编译 AndroidTest
 APK，并阻断 JNI `DT_NEEDED` 中的构建机绝对路径。

@@ -2,9 +2,7 @@
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-: "${JAVA_HOME:?JAVA_HOME must point to JDK 17}"
-: "${ANDROID_HOME:?ANDROID_HOME must point to an Android SDK whose licenses were accepted by its owner}"
-: "${ANDROID_NDK_HOME:?ANDROID_NDK_HOME must point to Android NDK 28.2.13676358}"
+source "$repo_dir/tools/android-env.sh"
 
 cd "$repo_dir"
 ./tools/build-android-core.sh
