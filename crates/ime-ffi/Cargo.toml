@@ -1,0 +1,26 @@
+[package]
+name = "ime-ffi"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lib]
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[features]
+default = []
+native-librime = ["dep:ime-engine-rime", "ime-engine-rime/native-librime"]
+
+[dependencies]
+ime-core = { path = "../ime-core" }
+ime-data = { path = "../ime-data" }
+ime-engine-latin = { path = "../ime-engine-latin" }
+ime-engine-pinyin = { path = "../ime-engine-pinyin" }
+ime-engine-router = { path = "../ime-engine-router" }
+ime-engine-rime = { path = "../ime-engine-rime", optional = true }
+ime-speech = { path = "../ime-speech" }
+serde_json.workspace = true
+
+[lints.rust]
+unsafe_code = "allow"

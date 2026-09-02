@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "dev.shurufa.lang.vi-telex",
+  "version": "0.1.0",
+  "languages": ["vi"],
+  "engine": "vietnamese.telex",
+  "offline": true,
+  "license": "Apache-2.0",
+  "minimumRuntimeVersion": "0.1.0",
+  "resources": []
+}

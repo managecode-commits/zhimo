@@ -1,0 +1,17 @@
+[package]
+name = "sync-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+axum = "0.8.9"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde.workspace = true
+sha2 = "0.11.0"
+subtle = "2.6.1"
+tokio = { version = "1.53.1", features = ["macros", "net", "rt-multi-thread", "signal"] }
+
+[lints]
+workspace = true

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "dev.shurufa.lang.en",
+  "version": "0.1.0",
+  "languages": ["en"],
+  "engine": "latin",
+  "offline": true,
+  "license": "Apache-2.0",
+  "minimumRuntimeVersion": "0.1.0",
+  "resources": []
+}

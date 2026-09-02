@@ -1,0 +1,4 @@
+module ShurufaCore [system] {
+  header "../../../include/shurufa_ime.h"
+  export *
+}

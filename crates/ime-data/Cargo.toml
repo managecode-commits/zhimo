@@ -1,0 +1,14 @@
+[package]
+name = "ime-data"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+
+[lints]
+workspace = true

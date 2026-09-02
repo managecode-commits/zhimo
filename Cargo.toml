@@ -1,0 +1,40 @@
+[workspace]
+members = [
+    "crates/ime-core",
+    "crates/ime-engine-latin",
+    "crates/ime-engine-pinyin",
+    "crates/ime-engine-router",
+    "crates/ime-engine-rime",
+    "crates/ime-engine-vietnamese",
+    "crates/ime-data",
+    "crates/ime-speech",
+    "crates/ime-security",
+    "crates/ime-package",
+    "crates/ime-ffi",
+    "apps/ime-cli",
+    "apps/transcribe-cli",
+    "apps/data-cli",
+    "apps/ime-bench",
+    "services/sync-server",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+rust-version = "1.85"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+unicode-segmentation = "1.13.3"

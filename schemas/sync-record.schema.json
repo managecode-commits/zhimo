@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shurufa.dev/schemas/sync-record-v1.json",
+  "title": "Shurufa logical sync record",
+  "type": "object",
+  "required": ["schemaVersion", "namespace", "language", "key", "clock", "deviceId", "deleted"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "namespace": { "enum": ["user-lexicon", "learned-lexicon", "settings", "transcript"] },
+    "language": { "type": "string" },
+    "key": { "type": "string" },
+    "value": { "type": ["string", "null"] },
+    "clock": { "type": "integer", "minimum": 0 },
+    "deviceId": { "type": "string", "minLength": 1 },
+    "deleted": { "type": "boolean" }
+  },
+  "additionalProperties": false
+}

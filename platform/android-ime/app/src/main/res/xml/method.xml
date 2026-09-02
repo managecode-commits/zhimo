@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:settingsActivity="">
+    <subtype
+        android:imeSubtypeLocale="zh_CN"
+        android:imeSubtypeMode="keyboard"
+        android:label="@string/subtype_bilingual" />
+    <subtype
+        android:imeSubtypeLocale="en_US"
+        android:imeSubtypeMode="keyboard"
+        android:label="@string/subtype_bilingual" />
+</input-method>

@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          components: rustfmt, clippy
+      - run: ./tools/verify.sh
+      - run: python3 -m py_compile platform/linux-ibus/shurufa_ibus.py
+      - run: bash -n platform/linux-ibus/install-user.sh tools/*.sh
+
+  portable-core:
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+      - run: cargo test -p ime-core -p ime-engine-latin -p ime-engine-pinyin -p ime-engine-router -p ime-engine-vietnamese -p ime-speech
+
+  linux-fcitx5:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+      - run: sudo apt-get update && sudo apt-get install -y libfcitx5core-dev cmake ninja-build
+      - run: cargo build -p ime-ffi
+      - run: >-
+          cmake -S platform/linux-fcitx5 -B target/fcitx5 -G Ninja
+          -DSHURUFA_IME_LIBRARY=${{ github.workspace }}/target/debug/libime_ffi.so
+      - run: cmake --build target/fcitx5

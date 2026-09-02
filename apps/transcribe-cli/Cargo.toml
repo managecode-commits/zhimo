@@ -1,0 +1,12 @@
+[package]
+name = "transcribe-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+ime-speech = { path = "../../crates/ime-speech" }
+
+[lints]
+workspace = true

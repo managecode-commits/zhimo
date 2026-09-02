@@ -1,0 +1,10 @@
+[Addon]
+Name=Shurufa Multilingual Input Method
+Category=InputMethod
+Version=@PROJECT_VERSION@
+Library=libshurufa
+Type=SharedLibrary
+OnDemand=True
+
+[Addon/Dependencies]
+0=core:@REQUIRED_FCITX_VERSION@

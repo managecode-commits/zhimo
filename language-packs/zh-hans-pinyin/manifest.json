@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "id": "dev.shurufa.lang.zh-hans-pinyin",
+  "version": "0.1.0",
+  "languages": ["zh-CN"],
+  "engine": "pinyin.reference",
+  "offline": true,
+  "license": "Apache-2.0",
+  "minimumRuntimeVersion": "0.1.0",
+  "resources": []
+}
