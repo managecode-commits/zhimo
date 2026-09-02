@@ -41,6 +41,34 @@ class RuntimeSmokeTest {
         assertTrue(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.TEXT))
         assertFalse(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.NUMBER))
         assertFalse(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.SYMBOL))
+        assertTrue(
+            PlatformPolicy.shouldInitializeKeyboardState(
+                restarting = false,
+                stateInitialized = true,
+                sameEditor = false,
+            ),
+        )
+        assertTrue(
+            PlatformPolicy.shouldInitializeKeyboardState(
+                restarting = true,
+                stateInitialized = false,
+                sameEditor = true,
+            ),
+        )
+        assertFalse(
+            PlatformPolicy.shouldInitializeKeyboardState(
+                restarting = true,
+                stateInitialized = true,
+                sameEditor = false,
+            ),
+        )
+        assertFalse(
+            PlatformPolicy.shouldInitializeKeyboardState(
+                restarting = false,
+                stateInitialized = true,
+                sameEditor = true,
+            ),
+        )
         assertEquals(KeyboardPage.TEXT, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_TEXT))
         assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_NUMBER))
         assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_PHONE))

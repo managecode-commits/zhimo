@@ -35,6 +35,12 @@ object PlatformPolicy {
 
     fun shouldRouteEditingToEngine(page: KeyboardPage): Boolean = page == KeyboardPage.TEXT
 
+    fun shouldInitializeKeyboardState(
+        restarting: Boolean,
+        stateInitialized: Boolean,
+        sameEditor: Boolean,
+    ): Boolean = !stateInitialized || (!restarting && !sameEditor)
+
     fun initialKeyboardPage(inputType: Int): KeyboardPage = when (inputType and InputType.TYPE_MASK_CLASS) {
         InputType.TYPE_CLASS_NUMBER,
         InputType.TYPE_CLASS_PHONE,

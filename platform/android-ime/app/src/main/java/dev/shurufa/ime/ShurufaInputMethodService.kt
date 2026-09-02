@@ -25,6 +25,12 @@ import android.widget.TextView
 import org.json.JSONArray
 
 class ShurufaInputMethodService : InputMethodService() {
+    private data class EditorIdentity(
+        val packageName: String?,
+        val fieldId: Int,
+        val inputType: Int,
+    )
+
     private var handle = 0L
     private lateinit var candidates: LinearLayout
     private lateinit var keyboardRows: LinearLayout
@@ -37,6 +43,8 @@ class ShurufaInputMethodService : InputMethodService() {
     private var nineKeyPinyin = false
     private var keyboardPage = KeyboardPage.TEXT
     private var chineseSymbols = true
+    private var keyboardStateInitialized = false
+    private var activeEditorIdentity: EditorIdentity? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -68,10 +76,25 @@ class ShurufaInputMethodService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         val preferences = getSharedPreferences("shurufa", MODE_PRIVATE)
-        pinyin = preferences.getBoolean("default_pinyin", true)
-        nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
-        keyboardPage = PlatformPolicy.initialKeyboardPage(attribute?.inputType ?: InputType.TYPE_CLASS_TEXT)
-        chineseSymbols = pinyin
+        val editorIdentity = EditorIdentity(
+            packageName = attribute?.packageName,
+            fieldId = attribute?.fieldId ?: 0,
+            inputType = attribute?.inputType ?: InputType.TYPE_CLASS_TEXT,
+        )
+        val initializeKeyboardState =
+            PlatformPolicy.shouldInitializeKeyboardState(
+                restarting = restarting,
+                stateInitialized = keyboardStateInitialized,
+                sameEditor = editorIdentity == activeEditorIdentity,
+            )
+        if (initializeKeyboardState) {
+            pinyin = preferences.getBoolean("default_pinyin", true)
+            nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
+            keyboardPage = PlatformPolicy.initialKeyboardPage(attribute?.inputType ?: InputType.TYPE_CLASS_TEXT)
+            chineseSymbols = pinyin
+            keyboardStateInitialized = true
+        }
+        activeEditorIdentity = editorIdentity
         NativeIme.switchEngine(handle, selectedEngine())
         val personalizedLearningAllowed =
             ((attribute?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
@@ -96,8 +119,10 @@ class ShurufaInputMethodService : InputMethodService() {
             else -> 0
         }
         NativeIme.setScope(handle, scope)
-        NativeIme.command(handle, 3)
-        hasComposition = false
+        if (initializeKeyboardState) {
+            NativeIme.command(handle, 3)
+            hasComposition = false
+        }
     }
 
     override fun onFinishInput() {
@@ -205,8 +230,9 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun resetCompositionForModeChange() {
-        if (handle != 0L) NativeIme.command(handle, 3)
+        if (hasComposition) currentInputConnection.setComposingText("", 1)
         currentInputConnection.finishComposingText()
+        if (handle != 0L) NativeIme.command(handle, 3)
         hasComposition = false
     }
 
