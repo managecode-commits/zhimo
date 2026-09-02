@@ -1,6 +1,7 @@
 //! Native librime backend enabled by the `native-librime` feature.
 
 use std::ffi::{c_char, c_int, c_ulonglong, CString};
+use std::path::Path;
 
 use crate::{RimeBackend, RimeSnapshot};
 
@@ -43,6 +44,12 @@ impl Drop for NativeRimeBackend {
 
 impl NativeRimeBackend {
     pub fn initialize(shared_dir: &str, user_dir: &str) -> Result<Self, String> {
+        if !Path::new(shared_dir).join("default.yaml").is_file() {
+            return Err("Rime shared directory does not contain default.yaml".to_owned());
+        }
+        if !Path::new(user_dir).is_dir() {
+            return Err("Rime user directory does not exist".to_owned());
+        }
         let shared = CString::new(shared_dir).map_err(|_| "shared directory contains NUL")?;
         let user = CString::new(user_dir).map_err(|_| "user directory contains NUL")?;
         // SAFETY: both strings are valid and retained for the duration of the call; the shim copies traits during initialization.
@@ -132,5 +139,21 @@ impl RimeBackend for NativeRimeBackend {
     fn clear(&mut self, session: Self::Session) -> Result<RimeSnapshot, String> {
         unsafe { shurufa_rime_clear(session) };
         Ok(Self::snapshot(session))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rejects_missing_shared_data_before_native_initialization() {
+        let missing =
+            std::env::temp_dir().join(format!("shurufa-missing-rime-{}", std::process::id()));
+        assert!(NativeRimeBackend::initialize(
+            missing.to_string_lossy().as_ref(),
+            missing.to_string_lossy().as_ref(),
+        )
+        .is_err());
     }
 }

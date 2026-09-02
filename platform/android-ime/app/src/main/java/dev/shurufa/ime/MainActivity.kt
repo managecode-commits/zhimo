@@ -40,6 +40,13 @@ class MainActivity : Activity() {
                     preferences.edit().putBoolean("learning_enabled", enabled).apply()
                 }
             })
+            addView(Switch(this@MainActivity).apply {
+                text = "无端侧识别器时允许系统语音服务联网"
+                isChecked = preferences.getBoolean("online_system_speech", false)
+                setOnCheckedChangeListener { _, enabled ->
+                    preferences.edit().putBoolean("online_system_speech", enabled).apply()
+                }
+            })
             addView(Button(this@MainActivity).apply {
                 text = "启用输入法"
                 setOnClickListener { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }

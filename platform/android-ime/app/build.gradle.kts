@@ -13,6 +13,7 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild.cmake.arguments += "-DSHURUFA_ROOT=${rootDir.resolve("../..").absolutePath}"
     }
 
@@ -22,4 +23,9 @@ android {
             version = "3.22.1"
         }
     }
+}
+
+dependencies {
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
 }

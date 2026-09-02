@@ -20,10 +20,23 @@ ImeHandle *handle(jlong value) {
 }  // namespace
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_dev_shurufa_ime_NativeIme_create(JNIEnv *env, jobject, jstring data_dir) {
+Java_dev_shurufa_ime_NativeIme_create(JNIEnv *env, jobject, jstring data_dir,
+                                     jstring rime_shared_dir, jstring rime_user_dir) {
   const std::string directory = utf8(env, data_dir);
-  ImeHandle *value = ime_runtime_new_with_data_dir("bilingual", directory.c_str());
+  const std::string shared = utf8(env, rime_shared_dir);
+  const std::string user = utf8(env, rime_user_dir);
+  ImeHandle *value = nullptr;
+  if ((ime_runtime_capabilities() & SHURUFA_CAP_NATIVE_LIBRIME) != 0) {
+    value = ime_runtime_new_with_rime("bilingual", directory.c_str(), shared.c_str(),
+                                      user.c_str());
+  }
+  if (!value) value = ime_runtime_new_with_data_dir("bilingual", directory.c_str());
   return static_cast<jlong>(reinterpret_cast<intptr_t>(value));
+}
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_dev_shurufa_ime_NativeIme_capabilities(JNIEnv *, jobject) {
+  return static_cast<jlong>(ime_runtime_capabilities());
 }
 
 extern "C" JNIEXPORT void JNICALL

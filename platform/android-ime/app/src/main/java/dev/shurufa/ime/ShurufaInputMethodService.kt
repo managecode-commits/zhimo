@@ -19,17 +19,30 @@ class ShurufaInputMethodService : InputMethodService() {
     private var handle = 0L
     private lateinit var candidates: LinearLayout
     private var speechRecognizer: SpeechRecognizer? = null
+    private var recognizerIsOnDevice: Boolean? = null
+    private var acceptingSpeechResults = false
     private var passwordScope = false
+    private var nativeRimeAvailable = false
 
     override fun onCreate() {
         super.onCreate()
-        handle = NativeIme.create(filesDir.absolutePath)
+        val rime = runCatching { RimeAssets.prepare(this) }.getOrElse {
+            RimeAssets.Directories(
+                java.io.File(filesDir, "rime/shared-unavailable"),
+                java.io.File(filesDir, "rime/user-unavailable"),
+            )
+        }
+        handle = NativeIme.create(filesDir.absolutePath, rime.shared.absolutePath, rime.user.absolutePath)
+        nativeRimeAvailable = NativeIme.capabilities() and NativeIme.CAP_NATIVE_LIBRIME != 0L &&
+            NativeIme.switchEngine(handle, "rime") == 0
     }
 
     override fun onDestroy() {
+        acceptingSpeechResults = false
         speechRecognizer?.cancel()
         speechRecognizer?.destroy()
         speechRecognizer = null
+        recognizerIsOnDevice = null
         if (handle != 0L) {
             NativeIme.flush(handle)
             NativeIme.destroy(handle)
@@ -42,17 +55,26 @@ class ShurufaInputMethodService : InputMethodService() {
         super.onStartInput(attribute, restarting)
         val preferences = getSharedPreferences("shurufa", MODE_PRIVATE)
         pinyin = preferences.getBoolean("default_pinyin", true)
-        NativeIme.switchEngine(handle, if (pinyin) "pinyin.reference" else "latin")
-        NativeIme.setPrivacy(handle, preferences.getBoolean("learning_enabled", true), false)
+        NativeIme.switchEngine(handle, selectedEngine())
+        val personalizedLearningAllowed =
+            ((attribute?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
+        NativeIme.setPrivacy(
+            handle,
+            preferences.getBoolean("learning_enabled", true) && personalizedLearningAllowed,
+            preferences.getBoolean("online_system_speech", false),
+        )
         NativeIme.setApplicationId(handle, attribute?.packageName ?: "")
         val variation = (attribute?.inputType ?: 0) and InputType.TYPE_MASK_VARIATION
         passwordScope = variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
             variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+            variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD ||
             variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
-        if (passwordScope) speechRecognizer?.cancel()
+        acceptingSpeechResults = false
+        speechRecognizer?.cancel()
         val scope = when {
             passwordScope -> 1
-            variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS -> 2
+            variation == InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS ||
+                variation == InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS -> 2
             variation == InputType.TYPE_TEXT_VARIATION_URI -> 3
             else -> 0
         }
@@ -61,6 +83,7 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     override fun onFinishInput() {
+        acceptingSpeechResults = false
         speechRecognizer?.cancel()
         if (handle != 0L) NativeIme.command(handle, 3)
         super.onFinishInput()
@@ -91,9 +114,12 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun toggleEngine() {
         pinyin = !pinyin
-        NativeIme.switchEngine(handle, if (pinyin) "pinyin.reference" else "latin")
+        NativeIme.switchEngine(handle, selectedEngine())
         renderActions()
     }
+
+    private fun selectedEngine(): String =
+        PlatformPolicy.engine(pinyin, nativeRimeAvailable)
 
     private fun key(label: String, action: (() -> Unit)? = null) = Button(this).apply {
         text = label
@@ -149,16 +175,27 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun startSystemDictation() {
-        if (passwordScope) return
-        val recognizer = speechRecognizer ?: createSpeechRecognizer().also {
-            speechRecognizer = it
-            it.setRecognitionListener(object : RecognitionListener {
+        val allowNetwork = getSharedPreferences("shurufa", MODE_PRIVATE)
+            .getBoolean("online_system_speech", false)
+        val onDeviceAvailable = Build.VERSION.SDK_INT >= 31 &&
+            SpeechRecognizer.isOnDeviceRecognitionAvailable(this)
+        if (!PlatformPolicy.mayStartSpeech(
+                passwordScope,
+                checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED,
+                onDeviceAvailable,
+                allowNetwork,
+            )
+        ) return
+        val recognizer = obtainSpeechRecognizer(allowNetwork) ?: return
+        if (speechRecognizer !== recognizer) {
+            speechRecognizer = recognizer
+            recognizer.setRecognitionListener(object : RecognitionListener {
                 override fun onReadyForSpeech(params: Bundle?) = Unit
                 override fun onBeginningOfSpeech() = Unit
                 override fun onRmsChanged(rmsdB: Float) = Unit
                 override fun onBufferReceived(buffer: ByteArray?) = Unit
                 override fun onEndOfSpeech() = Unit
-                override fun onError(error: Int) = Unit
+                override fun onError(error: Int) { acceptingSpeechResults = false }
                 override fun onEvent(eventType: Int, params: Bundle?) = Unit
                 override fun onPartialResults(results: Bundle?) = deliverSpeech(results, false)
                 override fun onResults(results: Bundle?) = deliverSpeech(results, true)
@@ -170,24 +207,40 @@ class ShurufaInputMethodService : InputMethodService() {
             putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
         }
         try {
+            acceptingSpeechResults = true
             recognizer.startListening(request)
         } catch (_: SecurityException) {
+            acceptingSpeechResults = false
             // The companion settings activity must obtain RECORD_AUDIO first.
+        } catch (_: IllegalStateException) {
+            acceptingSpeechResults = false
         }
     }
 
-    private fun createSpeechRecognizer(): SpeechRecognizer =
-        if (Build.VERSION.SDK_INT >= 31 && SpeechRecognizer.isOnDeviceRecognitionAvailable(this)) {
+    private fun obtainSpeechRecognizer(allowNetwork: Boolean): SpeechRecognizer? {
+        val useOnDevice = Build.VERSION.SDK_INT >= 31 &&
+            SpeechRecognizer.isOnDeviceRecognitionAvailable(this)
+        if (!useOnDevice && !allowNetwork) return null
+        if (speechRecognizer != null && recognizerIsOnDevice == useOnDevice) {
+            return speechRecognizer
+        }
+        acceptingSpeechResults = false
+        speechRecognizer?.destroy()
+        recognizerIsOnDevice = useOnDevice
+        return if (useOnDevice) {
             SpeechRecognizer.createOnDeviceSpeechRecognizer(this)
         } else {
             SpeechRecognizer.createSpeechRecognizer(this)
         }
+    }
 
     private fun deliverSpeech(results: Bundle?, finalResult: Boolean) {
+        if (!acceptingSpeechResults || passwordScope) return
         val values = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
         val text = values.firstOrNull() ?: return
         val confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES)?.firstOrNull() ?: Float.NaN
         NativeIme.speechResult(handle, text, java.util.Locale.getDefault().toLanguageTag(), confidence, finalResult)
         renderActions()
+        if (finalResult) acceptingSpeechResults = false
     }
 }

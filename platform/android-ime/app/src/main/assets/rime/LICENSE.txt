@@ -1,0 +1,7 @@
+Copyright 2026 Shurufa Contributors
+
+Licensed under the Apache License, Version 2.0. You may obtain a copy of the
+License at https://www.apache.org/licenses/LICENSE-2.0.
+
+This directory contains an original, deliberately small Beta validation
+schema and dictionary. It does not include third-party production lexicons.

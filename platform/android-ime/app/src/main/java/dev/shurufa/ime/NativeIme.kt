@@ -1,11 +1,18 @@
 package dev.shurufa.ime
 
 object NativeIme {
+    const val CAP_NATIVE_LIBRIME: Long = 1L shl 4
+
     init {
         System.loadLibrary("shurufa_android")
     }
 
-    external fun create(dataDirectory: String): Long
+    external fun create(
+        dataDirectory: String,
+        rimeSharedDirectory: String,
+        rimeUserDirectory: String,
+    ): Long
+    external fun capabilities(): Long
     external fun destroy(handle: Long)
     external fun feed(handle: Long, text: String): Int
     external fun command(handle: Long, command: Int): Int

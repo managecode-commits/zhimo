@@ -69,10 +69,10 @@ impl LanguageRouter {
         if previous == target {
             return Ok(ActionBatch(vec![Action::Ignored]));
         }
+        target_engine.create_session(session)?;
         if let Some(engine) = self.engines.get(&previous) {
             engine.close_session(session);
         }
-        target_engine.create_session(session)?;
         let mut sessions = self.sessions.lock().map_err(lock_error)?;
         let active_engine = &mut sessions
             .get_mut(session)
@@ -211,6 +211,35 @@ mod tests {
         language: &'static str,
     }
 
+    struct FailingEngine;
+
+    impl InputEngine for FailingEngine {
+        fn metadata(&self) -> EngineMetadata {
+            EngineMetadata {
+                id: "fail".to_owned(),
+                display_name: "Failing engine".to_owned(),
+                languages: vec!["xx".to_owned()],
+            }
+        }
+        fn create_session(&self, _: &SessionId) -> Result<(), EngineError> {
+            Err(EngineError {
+                message: "intentional startup failure".to_owned(),
+            })
+        }
+        fn process(
+            &self,
+            _: &SessionId,
+            _: &InputEvent,
+            _: &InputContext,
+        ) -> Result<ActionBatch, EngineError> {
+            unreachable!("failed engine must never become active")
+        }
+        fn apply_feedback(&self, _: &FeedbackEvent) -> Result<(), EngineError> {
+            Ok(())
+        }
+        fn close_session(&self, _: &SessionId) {}
+    }
+
     impl InputEngine for EchoEngine {
         fn metadata(&self) -> EngineMetadata {
             EngineMetadata {
@@ -273,5 +302,33 @@ mod tests {
             )
             .expect("chinese");
         assert_eq!(second.committed_text(), Some("zh"));
+    }
+
+    #[test]
+    fn failed_switch_keeps_the_previous_engine_active() {
+        let en: Arc<dyn InputEngine> = Arc::new(EchoEngine {
+            id: "en",
+            language: "en",
+        });
+        let failing: Arc<dyn InputEngine> = Arc::new(FailingEngine);
+        let router = LanguageRouter::new("router", "en", vec![en, failing]).expect("router");
+        let mut runtime = Runtime::new();
+        runtime.register_engine(Arc::new(router));
+        let session = runtime.create_session("router").expect("session");
+        assert!(runtime
+            .process(
+                &session,
+                &InputEvent::SwitchEngine("fail".to_owned()),
+                &InputContext::default(),
+            )
+            .is_err());
+        let result = runtime
+            .process(
+                &session,
+                &InputEvent::Key(KeyEvent::press(Key::Character('a'))),
+                &InputContext::default(),
+            )
+            .expect("previous engine remains available");
+        assert_eq!(result.committed_text(), Some("en"));
     }
 }
