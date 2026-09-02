@@ -62,13 +62,17 @@ impl PinyinEngine {
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         let mut candidates = ENTRIES
             .iter()
-            .filter(|(key, _)| key.starts_with(input) || input.starts_with(key))
+            .filter(|(key, _)| pinyin_matches_input(key, input))
             .flat_map(|(key, values)| {
                 values.iter().enumerate().map(|(index, value)| {
                     let learned_score = learning.score(input, value);
                     let bounded_index = u32::try_from(index).unwrap_or(u32::MAX);
                     let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
-                    let exact_match_bonus = if *key == input { 1_000.0 } else { 0.0 };
+                    let exact_match_bonus = if pinyin_exact_match(key, input) {
+                        1_000.0
+                    } else {
+                        0.0
+                    };
                     Candidate {
                         id: CandidateId(format!("pinyin:{value}")),
                         display_text: (*value).to_owned(),
@@ -134,7 +138,9 @@ impl InputEngine for PinyinEngine {
         match event {
             InputEvent::Key(key) if key.pressed => match key.key {
                 Key::Character(character)
-                    if character.is_ascii_alphabetic() || character == '\'' =>
+                    if character.is_ascii_alphabetic()
+                        || ('2'..='9').contains(&character)
+                        || character == '\'' =>
                 {
                     input.push(character.to_ascii_lowercase());
                 }
@@ -248,6 +254,56 @@ fn lock_error<T>(_: std::sync::PoisonError<T>) -> EngineError {
     }
 }
 
+fn pinyin_matches_input(pinyin: &str, input: &str) -> bool {
+    if let Some(digits) = normalized_t9_input(input) {
+        let signature = t9_signature(pinyin);
+        signature.starts_with(&digits) || digits.starts_with(&signature)
+    } else {
+        pinyin.starts_with(input) || input.starts_with(pinyin)
+    }
+}
+
+fn pinyin_exact_match(pinyin: &str, input: &str) -> bool {
+    if let Some(digits) = normalized_t9_input(input) {
+        t9_signature(pinyin) == digits
+    } else {
+        pinyin == input
+    }
+}
+
+fn normalized_t9_input(input: &str) -> Option<String> {
+    let is_t9 = !input.is_empty()
+        && input
+            .chars()
+            .all(|character| ('2'..='9').contains(&character) || character == '\'')
+        && input
+            .chars()
+            .any(|character| ('2'..='9').contains(&character));
+    is_t9.then(|| {
+        input
+            .chars()
+            .filter(|character| ('2'..='9').contains(character))
+            .collect()
+    })
+}
+
+fn t9_signature(pinyin: &str) -> String {
+    pinyin
+        .chars()
+        .filter_map(|character| match character.to_ascii_lowercase() {
+            'a' | 'b' | 'c' => Some('2'),
+            'd' | 'e' | 'f' => Some('3'),
+            'g' | 'h' | 'i' => Some('4'),
+            'j' | 'k' | 'l' => Some('5'),
+            'm' | 'n' | 'o' => Some('6'),
+            'p' | 'q' | 'r' | 's' => Some('7'),
+            't' | 'u' | 'v' => Some('8'),
+            'w' | 'x' | 'y' | 'z' => Some('9'),
+            _ => None,
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -274,6 +330,47 @@ mod tests {
             )
             .expect("commit");
         assert_eq!(actions.committed_text(), Some("你好"));
+    }
+
+    #[test]
+    fn t9_nihao_sequence_exposes_and_commits_chinese_candidate() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("t9-nihao".to_owned());
+        engine.create_session(&session).expect("session");
+        let actions = engine
+            .process(
+                &session,
+                &InputEvent::Text("64426".to_owned()),
+                &InputContext::default(),
+            )
+            .expect("t9 input");
+        let candidates = actions.0.iter().find_map(|action| match action {
+            Action::ShowCandidates(candidates) => Some(candidates),
+            _ => None,
+        });
+        assert_eq!(
+            candidates
+                .and_then(|items| items.first())
+                .map(|item| item.commit_text.as_str()),
+            Some("你好")
+        );
+
+        let committed = engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)),
+                &InputContext::default(),
+            )
+            .expect("commit");
+        assert_eq!(committed.committed_text(), Some("你好"));
+    }
+
+    #[test]
+    fn t9_signature_uses_standard_phone_mapping() {
+        assert_eq!(t9_signature("nihao"), "64426");
+        assert_eq!(t9_signature("shurufa"), "7487832");
+        assert_eq!(t9_signature("zhongwen"), "94664936");
+        assert!(pinyin_exact_match("nihao", "64'426"));
     }
 
     #[test]

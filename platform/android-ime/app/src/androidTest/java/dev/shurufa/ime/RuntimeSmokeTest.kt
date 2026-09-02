@@ -30,6 +30,7 @@ class RuntimeSmokeTest {
         assertTrue(PlatformPolicy.mayStartSpeech(false, true, false, true))
         assertEquals("rime", PlatformPolicy.engine(true, true))
         assertEquals("pinyin.reference", PlatformPolicy.engine(true, false))
+        assertEquals("pinyin.reference", PlatformPolicy.engine(true, true, nineKeyPinyin = true))
         assertEquals("latin", PlatformPolicy.engine(false, true))
         assertTrue(PlatformPolicy.shouldInsertLiteralSpace(false, true))
         assertFalse(PlatformPolicy.shouldInsertLiteralSpace(true, true))

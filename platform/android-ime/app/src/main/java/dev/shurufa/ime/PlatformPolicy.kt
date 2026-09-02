@@ -1,8 +1,13 @@
 package dev.shurufa.ime
 
 object PlatformPolicy {
-    fun engine(pinyin: Boolean, nativeRimeAvailable: Boolean): String = when {
+    fun engine(
+        pinyin: Boolean,
+        nativeRimeAvailable: Boolean,
+        nineKeyPinyin: Boolean = false,
+    ): String = when {
         !pinyin -> "latin"
+        nineKeyPinyin -> "pinyin.reference"
         nativeRimeAvailable -> "rime"
         else -> "pinyin.reference"
     }

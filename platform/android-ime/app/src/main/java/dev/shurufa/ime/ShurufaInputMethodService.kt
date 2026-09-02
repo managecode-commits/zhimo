@@ -27,12 +27,14 @@ import org.json.JSONArray
 class ShurufaInputMethodService : InputMethodService() {
     private var handle = 0L
     private lateinit var candidates: LinearLayout
+    private lateinit var keyboardRows: LinearLayout
     private var speechRecognizer: SpeechRecognizer? = null
     private var recognizerIsOnDevice: Boolean? = null
     private var acceptingSpeechResults = false
     private var passwordScope = false
     private var nativeRimeAvailable = false
     private var hasComposition = false
+    private var nineKeyPinyin = false
 
     override fun onCreate() {
         super.onCreate()
@@ -65,6 +67,7 @@ class ShurufaInputMethodService : InputMethodService() {
         super.onStartInput(attribute, restarting)
         val preferences = getSharedPreferences("shurufa", MODE_PRIVATE)
         pinyin = preferences.getBoolean("default_pinyin", true)
+        nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
         NativeIme.switchEngine(handle, selectedEngine())
         val personalizedLearningAllowed =
             ((attribute?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
@@ -107,6 +110,7 @@ class ShurufaInputMethodService : InputMethodService() {
             candidates.removeAllViews()
             showModeIndicator()
         }
+        if (::keyboardRows.isInitialized) renderKeyboard()
     }
 
     override fun onCreateInputView(): View {
@@ -144,18 +148,9 @@ class ShurufaInputMethodService : InputMethodService() {
             )
         }, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(candidateHeightDp())))
 
-        root.addView(keyRow("qwertyuiop"))
-        root.addView(keyRow("asdfghjkl", sideWeight = 0.5f))
-        root.addView(keyRow("zxcvbnm", sideWeight = 1.5f))
-        root.addView(LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            gravity = Gravity.CENTER
-            addView(key("中/英", 1.2f, 14f) { toggleEngine() })
-            addView(key("语音", 1f, 14f) { startSystemDictation() })
-            addView(key("空格", 2.4f, 14f) { pressSpace() })
-            addView(key("删除", 1.2f, 14f) { pressBackspace() })
-            addView(key("回车", 1.2f, 14f) { pressEnter() })
-        }, keyboardRowParams())
+        keyboardRows = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(keyboardRows)
+        renderKeyboard()
         showModeIndicator()
         root.requestApplyInsets()
         return root
@@ -165,17 +160,85 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun toggleEngine() {
         val previous = pinyin
+        resetCompositionForModeChange()
         pinyin = !pinyin
         if (NativeIme.switchEngine(handle, selectedEngine()) != 0) {
             pinyin = previous
         } else {
             hasComposition = false
         }
+        renderKeyboard()
         renderActions()
     }
 
     private fun selectedEngine(): String =
-        PlatformPolicy.engine(pinyin, nativeRimeAvailable)
+        PlatformPolicy.engine(pinyin, nativeRimeAvailable, nineKeyPinyin)
+
+    private fun togglePinyinLayout() {
+        if (!pinyin) return
+        resetCompositionForModeChange()
+        val previous = nineKeyPinyin
+        nineKeyPinyin = !nineKeyPinyin
+        if (NativeIme.switchEngine(handle, selectedEngine()) != 0) {
+            nineKeyPinyin = previous
+        } else {
+            getSharedPreferences("shurufa", MODE_PRIVATE)
+                .edit()
+                .putBoolean("pinyin_nine_key", nineKeyPinyin)
+                .apply()
+        }
+        renderKeyboard()
+        renderActions()
+    }
+
+    private fun resetCompositionForModeChange() {
+        if (handle != 0L) NativeIme.command(handle, 3)
+        if (hasComposition) currentInputConnection.finishComposingText()
+        hasComposition = false
+    }
+
+    private fun renderKeyboard() {
+        keyboardRows.removeAllViews()
+        if (pinyin && nineKeyPinyin) {
+            keyboardRows.addView(t9KeyRow(listOf("1\n'" to "'", "2\nABC" to "2", "3\nDEF" to "3")))
+            keyboardRows.addView(t9KeyRow(listOf("4\nGHI" to "4", "5\nJKL" to "5", "6\nMNO" to "6")))
+            keyboardRows.addView(t9KeyRow(listOf("7\nPQRS" to "7", "8\nTUV" to "8", "9\nWXYZ" to "9")))
+        } else {
+            keyboardRows.addView(keyRow("qwertyuiop"))
+            keyboardRows.addView(keyRow("asdfghjkl", sideWeight = 0.5f))
+            keyboardRows.addView(keyRow("zxcvbnm", sideWeight = 1.5f))
+        }
+        keyboardRows.addView(functionRow())
+    }
+
+    private fun t9KeyRow(keys: List<Pair<String, String>>) = LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER
+        keys.forEach { (label, value) ->
+            addView(key(label, labelSizeSp = 15f) { feed(value) })
+        }
+        layoutParams = keyboardRowParams()
+    }
+
+    private fun functionRow() = LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER
+        if (pinyin) {
+            addView(key(if (nineKeyPinyin) "26键" else "9键", 0.9f, 13f) { togglePinyinLayout() })
+            addView(key("中/英", 1f, 13f) { toggleEngine() })
+            addView(key("语音", 0.9f, 13f) { startSystemDictation() })
+            addView(key("空格", 2f, 14f) { pressSpace() })
+            addView(key("删除", 1f, 13f) { pressBackspace() })
+            addView(key("回车", 1f, 13f) { pressEnter() })
+        } else {
+            addView(key("中/英", 1.2f, 14f) { toggleEngine() })
+            addView(key("语音", 1f, 14f) { startSystemDictation() })
+            addView(key("空格", 2.4f, 14f) { pressSpace() })
+            addView(key("删除", 1.2f, 14f) { pressBackspace() })
+            addView(key("回车", 1.2f, 14f) { pressEnter() })
+        }
+        layoutParams = keyboardRowParams()
+    }
 
     private fun keyRow(keys: String, sideWeight: Float = 0f) = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
@@ -330,7 +393,11 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun showModeIndicator() {
         candidates.addView(TextView(this).apply {
-            text = if (pinyin) getString(R.string.mode_pinyin) else getString(R.string.mode_english)
+            text = when {
+                !pinyin -> getString(R.string.mode_english)
+                nineKeyPinyin -> getString(R.string.mode_pinyin_nine_key)
+                else -> getString(R.string.mode_pinyin_full_keyboard)
+            }
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
             setTextColor(MODE_TEXT)
             gravity = Gravity.CENTER
