@@ -18,6 +18,8 @@ class RuntimeSmokeTest {
         val first = RimeAssets.prepare(context)
         val defaultConfig = File(first.shared, "default.yaml")
         assertTrue(defaultConfig.isFile)
+        assertTrue(File(first.shared, "pinyin_simp.dict.yaml").length() > 1_000_000L)
+        assertTrue(defaultConfig.readText().contains("shurufa_pinyin"))
         assertTrue(defaultConfig.delete())
         val recovered = RimeAssets.prepare(context)
         assertTrue(File(recovered.shared, "default.yaml").isFile)
@@ -87,11 +89,73 @@ class RuntimeSmokeTest {
         try {
             val nativeRime = NativeIme.capabilities() and NativeIme.CAP_NATIVE_LIBRIME != 0L &&
                 NativeIme.switchEngine(handle, "rime") == 0
+            val requireNativeRime = InstrumentationRegistry.getArguments()
+                .getString("requireNativeRime") == "true"
+            if (requireNativeRime) {
+                assertTrue("native librime must initialize and select the rime engine", nativeRime)
+            }
             if (!nativeRime) {
                 assertEquals(0, NativeIme.switchEngine(handle, "pinyin.reference"))
             }
             assertEquals(0, NativeIme.feed(handle, "nihao"))
             assertTrue(NativeIme.actions(handle).contains("你好"))
+            assertEquals(0, NativeIme.command(handle, 2))
+            assertTrue(NativeIme.actions(handle).contains("CommitText"))
+            if (nativeRime) {
+                assertEquals(0, NativeIme.command(handle, 3))
+                assertEquals(0, NativeIme.feed(handle, "putao"))
+                assertTrue("production Rime dictionary must contain 葡萄", NativeIme.actions(handle).contains("葡萄"))
+            }
+        } finally {
+            NativeIme.destroy(handle)
+        }
+    }
+
+    @Test
+    fun testReferencePinyinCoversCommonPhrasesAndRejectsInvalidSuffixes() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val data = File(context.filesDir, "instrumentation-reference-lexicon").apply { mkdirs() }
+        val handle = NativeIme.create(data.absolutePath, "", "")
+        assertTrue("runtime handle", handle != 0L)
+        try {
+            assertEquals(0, NativeIme.switchEngine(handle, "pinyin.reference"))
+            for ((pinyin, expected) in listOf(
+                "women" to "我们",
+                "zhongguo" to "中国",
+                "beijing" to "北京",
+                "jintian" to "今天",
+                "tianqi" to "天气",
+                "xiexie" to "谢谢",
+                "zaijian" to "再见",
+                "putao" to "葡萄",
+                "dianshiju" to "电视剧",
+                "shurufa" to "输入法",
+                "rengongzhineng" to "人工智能",
+            )) {
+                assertEquals(0, NativeIme.feed(handle, pinyin))
+                assertTrue("missing $expected for $pinyin", NativeIme.actions(handle).contains(expected))
+                assertEquals(0, NativeIme.command(handle, 3))
+            }
+            assertEquals(0, NativeIme.feed(handle, "nihaox"))
+            val invalid = org.json.JSONArray(NativeIme.actions(handle))
+            val candidateAction = (0 until invalid.length())
+                .mapNotNull { invalid.optJSONObject(it) }
+                .first { it.has("ShowCandidates") }
+            assertEquals(0, candidateAction.getJSONArray("ShowCandidates").length())
+        } finally {
+            NativeIme.destroy(handle)
+        }
+    }
+
+    @Test
+    fun testReferenceNineKeyCommitsCommonPhrase() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val handle = NativeIme.create(context.filesDir.absolutePath, "", "")
+        assertTrue("runtime handle", handle != 0L)
+        try {
+            assertEquals(0, NativeIme.switchEngine(handle, "pinyin.reference"))
+            assertEquals(0, NativeIme.feed(handle, "94664486"))
+            assertTrue(NativeIme.actions(handle).contains("中国"))
             assertEquals(0, NativeIme.command(handle, 2))
             assertTrue(NativeIme.actions(handle).contains("CommitText"))
         } finally {

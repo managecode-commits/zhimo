@@ -1,5 +1,10 @@
 # Android IME
 
+全平台统一入口和 Debug/Release 产物索引参见
+[全平台构建、安装与验收手册](../../docs/构建与验收.md#3-android-输入法-app)。
+本轮拼音根因、按键矩阵、验收证据和剩余质量边界见
+[拼音输入与 Android 键盘评估](../../docs/拼音输入与Android键盘评估.md)。
+
 这是可安装的 `InputMethodService` 工程骨架，包含系统声明、安装/权限引导、触摸键盘、候选栏、密码框策略、JNI/C ABI 桥和 Android 系统/端侧 SpeechRecognizer Provider。语音结果也通过统一 Runtime 的 Partial/Final 事件提交。
 
 构建前先为 Android 目标编译 `ime-ffi`，并将各 ABI 的 `libime_ffi.so` 放入
@@ -23,11 +28,29 @@ cargo install cargo-ndk --locked --version 4.1.2
 默认 `tools/build-android-core.sh` 构建参考拼音版本。生产型构建将
 `ANDROID_RIME_ROOT` 指向包含 `arm64-v8a`、`armeabi-v7a`、`x86_64` 子前缀的目录；每个
 前缀需提供 `include/rime_api.h`、`lib/librime.so` 及它的动态依赖。脚本会启用
-`native-librime` 并复制各 ABI 依赖。APK 首次启动原子安装自带的 Apache-2.0 Beta schema，
+`native-librime` 并复制各 ABI 依赖。APK 首次启动原子安装自带的 Apache-2.0 全拼 schema，
 若 librime 初始化或语言包不可用则自动降级到参考拼音。
 
-内置词库只用于安装闭环和真机冒烟测试，不代表生产中文质量；正式发行仍须替换为完成许可
-审查、签名和质量验收的语言包。
+仓库提供完整的免 sudo 自动化入口。它会下载锁定版本的官方 librime 源码和
+fcitx5-android 预构建依赖，使用现有 Android SDK/NDK 为三个 ABI 编译、裁剪并校验
+`librime.so`，随后构建 APK，并在已连接设备上继续运行 instrumentation 测试：
+
+```bash
+./tools/verify-android-rime-beta.sh
+```
+
+默认 Rime 前缀输出到 `target/android-rime`，下载和中间编译文件缓存在
+`${XDG_CACHE_HOME:-$HOME/.cache}/shurufa-librime`。再次执行会复用源码、依赖和编译缓存。
+可通过 `ANDROID_RIME_ROOT` 改变前缀目录，通过 `SHURUFA_ANDROID_RIME_CACHE` 改变缓存目录。
+只构建 Rime 前缀而不打 APK 时执行 `./tools/build-android-librime.sh [输出目录]`。
+独立产物为 `app/build/outputs/apk/debug/app-debug-rime.apk` 及同目录 SHA-256 文件；Rime
+模式的设备测试会额外强制断言原生引擎初始化并成功选中，不能通过参考拼音降级掩盖失败。
+
+内置 `pinyin_simp` 来自官方 `rime/rime-pinyin-simp` 的锁定提交，包含 65,125 条词典记录；
+完整上游 Apache-2.0 许可文本随 APK 打包。它解决了原 Beta 约百条验证词典导致普通拼音无
+汉字候选的问题，但仍是基础词典，不代表已经完成整句模型、模糊音和行业词库质量验收。
+运行 `./tools/update-rime-pinyin-simp.sh` 可按固定提交和 SHA-256 重建 Android 资源及9键
+回退数据，哈希不一致时脚本会立即失败。
 
 完整验证入口不会自动接受任何许可证：
 
@@ -48,8 +71,10 @@ Studio `local.properties`、标准用户安装目录和当前临时工具链中�
 `platform/android-ime/app/build/outputs/apk/debug/app-debug.apk`；脚本同时编译 AndroidTest
 APK，并阻断 JNI `DT_NEEDED` 中的构建机绝对路径。
 
-连接设备时脚本会安装 APK 并运行四项 instrumentation 测试：中文候选/提交、Rime
-资源损坏恢复、密码语音隔离，以及端侧优先和联网显式授权策略。手工启用组件可执行：
+连接设备时脚本会安装 APK 并运行六项 instrumentation 测试：中文候选/提交、Rime
+资源损坏恢复、密码语音隔离、端侧优先和联网显式授权策略、完整词典词汇/非法后缀回归，
+以及9键常用词提交。Rime 强制模式还会要求 `putao` 返回“葡萄”，避免小验证词典冒充
+完整资源。手工启用组件可执行：
 
 ```bash
 adb shell ime enable dev.shurufa.ime/.ShurufaInputMethodService
@@ -65,7 +90,11 @@ Play 签名测试。
 中文模式的功能栏可在“26键”和“9键”间切换，选择会保存在本机；英文模式始终使用
 26键，再切回中文时恢复用户上次选择。9键采用标准手机键位映射（ABC=2、DEF=3、…、
 WXYZ=9），例如 `64426` 可得到“你好”。当前 Beta 的数字拼音匹配使用内置参考词库；
-正式发行还必须为9键接入经过许可与质量验收的生产词库，不能把参考词库当作完整中文能力。
+它现在与26键使用同一份 65,125 条上游词典数据，并叠加项目自有的常用词优先级。
+
+参考拼音回退包含 65,125 条上游词典记录和187条项目常用词覆盖，支持连续拼音、带撇号音节分隔、
+9键数字签名和精确输入习惯重排；非法后缀不会再错误匹配较短拼音。它仍是确定性离线
+回退，而不是生产级整句语言模型。
 
 主键盘的“123”按钮进入字面量数字页，支持 `0-9`、句点、逗号、问号、感叹号、
 `@` 和 `#`；“符号”按钮进入常用符号页，可在中文标点与英文/编程符号间切换。
@@ -75,9 +104,14 @@ WXYZ=9），例如 `64426` 可得到“你好”。当前 Beta 的数字拼音�
 拼音意外提交到输入框；“ABC”可回到之前的中文或英文键盘布局。当前键盘页和中英文符号
 状态在同一编辑器横竖屏重建时保持不变，切换到不同输入框时再按其输入类型初始化。
 
+键盘提供独立模式工具栏、英文大小写、中英文逗号/句号、拼音分隔符、随编辑器变化的
+搜索/发送/完成/下一项/前往键、深色配色和触觉反馈。候选栏显示拼音注释、高亮首选并
+支持本地翻页；语言按钮明确显示“切英/切中”，存在拼音组合时空格键显示“选词”，提交后
+恢复“空格”，避免把选词键误认为字面空格。选词、空格或回车提交组合后立即刷新SQLite学习数据。
+
 已验证的自动化设备基线是 Android 15 / API 35 AOSP ATD x86_64；
-`shurufa_api35` 模拟器上四项 instrumentation 测试全部通过，且输入法服务可正常
-启用和选中。模拟器验收不替代上述真机矩阵。
+`shurufa_visual_api35` 模拟器上六项 instrumentation 测试全部通过，且已可视化验证26键
+`putao → 葡萄`、空格选词提交，以及9键 `78826 → 葡萄`。模拟器验收不替代上述真机矩阵。
 
 Release 签名信息仅从进程环境读取，不得将 keystore 或口令写入仓库：
 

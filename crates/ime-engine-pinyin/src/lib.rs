@@ -4,7 +4,7 @@
 //! and segmentation will be supplied by the isolated librime adapter.
 
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 
 use ime_core::{
     Action, ActionBatch, Candidate, CandidateId, Composition, EngineError, EngineMetadata,
@@ -46,49 +46,49 @@ impl PinyinEngine {
     }
 
     fn lookup(&self, input: &str) -> Vec<Candidate> {
-        const ENTRIES: &[(&str, &[&str])] = &[
-            ("ni", &["你", "呢", "泥"]),
-            ("nihao", &["你好"]),
-            ("hao", &["好", "号", "浩"]),
-            ("shuru", &["输入"]),
-            ("shurufa", &["输入法"]),
-            ("zhongwen", &["中文"]),
-            ("yingwen", &["英文"]),
-            ("shijie", &["世界"]),
-        ];
+        let Some(lookup) = LookupInput::new(input) else {
+            return Vec::new();
+        };
         let learning = self
             .learning
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let mut candidates = ENTRIES
-            .iter()
-            .filter(|(key, _)| pinyin_matches_input(key, input))
-            .flat_map(|(key, values)| {
-                values.iter().enumerate().map(|(index, value)| {
-                    let learned_score = learning.score(input, value);
-                    let bounded_index = u32::try_from(index).unwrap_or(u32::MAX);
-                    let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
-                    let exact_match_bonus = if pinyin_exact_match(key, input) {
-                        1_000.0
-                    } else {
-                        0.0
-                    };
-                    Candidate {
-                        id: CandidateId(format!("pinyin:{value}")),
-                        display_text: (*value).to_owned(),
-                        commit_text: (*value).to_owned(),
-                        language: Some("zh-CN".to_owned()),
-                        source: "pinyin.reference".to_owned(),
-                        score: 100.0 - f64::from(bounded_index)
-                            + f64::from(bounded_score) * 10.0
-                            + exact_match_bonus,
-                        annotation: Some((*key).to_owned()),
-                        learning_allowed: true,
-                    }
-                })
-            })
-            .collect::<Vec<_>>();
-        candidates.sort_by(|left, right| right.score.total_cmp(&left.score));
+        let mut unique_candidates = HashMap::<String, Candidate>::new();
+        for entry in lexicon().iter().filter(|entry| lookup.matches(entry)) {
+            let learned_score = learning.score(input, &entry.text);
+            let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
+            let exact_match_bonus = if lookup.exact(entry) {
+                1_000_000.0
+            } else {
+                0.0
+            };
+            let candidate = Candidate {
+                id: CandidateId(format!("pinyin:{}", entry.text)),
+                display_text: entry.text.clone(),
+                commit_text: entry.text.clone(),
+                language: Some("zh-CN".to_owned()),
+                source: "pinyin.reference".to_owned(),
+                score: f64::from(entry.weight)
+                    + f64::from(bounded_score) * 10_000.0
+                    + exact_match_bonus,
+                annotation: Some(entry.display_pinyin.clone()),
+                learning_allowed: true,
+            };
+            let existing = unique_candidates
+                .entry(entry.text.clone())
+                .or_insert_with(|| candidate.clone());
+            if candidate.score > existing.score {
+                *existing = candidate;
+            }
+        }
+        let mut candidates = unique_candidates.into_values().collect::<Vec<_>>();
+        candidates.sort_by(|left, right| {
+            right
+                .score
+                .total_cmp(&left.score)
+                .then_with(|| left.commit_text.cmp(&right.commit_text))
+        });
+        candidates.truncate(50);
         candidates
     }
 
@@ -254,21 +254,129 @@ fn lock_error<T>(_: std::sync::PoisonError<T>) -> EngineError {
     }
 }
 
-fn pinyin_matches_input(pinyin: &str, input: &str) -> bool {
-    if let Some(digits) = normalized_t9_input(input) {
-        let signature = t9_signature(pinyin);
-        signature.starts_with(&digits) || digits.starts_with(&signature)
-    } else {
-        pinyin.starts_with(input) || input.starts_with(pinyin)
+#[cfg(test)]
+fn pinyin_exact_match(pinyin: &str, input: &str) -> bool {
+    LookupInput::new(input).is_some_and(|lookup| {
+        let entry = LexiconEntry::for_match(pinyin);
+        lookup.exact(&entry)
+    })
+}
+
+fn normalized_pinyin(value: &str) -> String {
+    value
+        .chars()
+        .filter(char::is_ascii_alphabetic)
+        .map(|character| character.to_ascii_lowercase())
+        .collect()
+}
+
+#[derive(Debug)]
+struct LexiconEntry {
+    pinyin: String,
+    t9: String,
+    display_pinyin: String,
+    text: String,
+    weight: i32,
+}
+
+impl LexiconEntry {
+    #[cfg(test)]
+    fn for_match(pinyin: &str) -> Self {
+        let normalized = normalized_pinyin(pinyin);
+        Self {
+            t9: t9_signature(&normalized),
+            pinyin: normalized,
+            display_pinyin: String::new(),
+            text: String::new(),
+            weight: 0,
+        }
     }
 }
 
-fn pinyin_exact_match(pinyin: &str, input: &str) -> bool {
-    if let Some(digits) = normalized_t9_input(input) {
-        t9_signature(pinyin) == digits
-    } else {
-        pinyin == input
+enum LookupInput {
+    Pinyin(String),
+    T9(String),
+}
+
+impl LookupInput {
+    fn new(input: &str) -> Option<Self> {
+        if let Some(digits) = normalized_t9_input(input) {
+            return Some(Self::T9(digits));
+        }
+        let pinyin = normalized_pinyin(input);
+        (!pinyin.is_empty()).then_some(Self::Pinyin(pinyin))
     }
+
+    fn matches(&self, entry: &LexiconEntry) -> bool {
+        match self {
+            Self::Pinyin(input) => entry.pinyin.starts_with(input),
+            Self::T9(input) => entry.t9.starts_with(input),
+        }
+    }
+
+    fn exact(&self, entry: &LexiconEntry) -> bool {
+        match self {
+            Self::Pinyin(input) => entry.pinyin == *input,
+            Self::T9(input) => entry.t9 == *input,
+        }
+    }
+}
+
+fn lexicon() -> &'static [LexiconEntry] {
+    static LEXICON: OnceLock<Vec<LexiconEntry>> = OnceLock::new();
+    LEXICON.get_or_init(|| {
+        let mut entries = HashMap::<(String, String), LexiconEntry>::new();
+        for (source, priority_bonus) in [
+            (include_str!("../data/pinyin_simp_lexicon.tsv"), 0),
+            (include_str!("../data/reference_lexicon.tsv"), 10_000_000),
+        ] {
+            for line in source
+                .lines()
+                .filter(|line| !line.is_empty() && !line.starts_with('#'))
+            {
+                let mut fields = line.split('\t');
+                let Some(display_pinyin) = fields
+                    .next()
+                    .map(str::trim)
+                    .filter(|value| !value.is_empty())
+                else {
+                    continue;
+                };
+                let Some(text) = fields
+                    .next()
+                    .map(str::trim)
+                    .filter(|value| !value.is_empty())
+                else {
+                    continue;
+                };
+                let Some(weight) = fields
+                    .next()
+                    .and_then(|value| value.trim().parse::<i32>().ok())
+                    .and_then(|weight| weight.checked_add(priority_bonus))
+                else {
+                    continue;
+                };
+                let pinyin = normalized_pinyin(display_pinyin);
+                if pinyin.is_empty() {
+                    continue;
+                }
+                let key = (pinyin.clone(), text.to_owned());
+                let candidate = LexiconEntry {
+                    t9: t9_signature(&pinyin),
+                    pinyin,
+                    display_pinyin: display_pinyin.to_owned(),
+                    text: text.to_owned(),
+                    weight,
+                };
+                let entry = entries.entry(key).or_insert_with(|| candidate);
+                if weight > entry.weight {
+                    entry.weight = weight;
+                    display_pinyin.clone_into(&mut entry.display_pinyin);
+                }
+            }
+        }
+        entries.into_values().collect()
+    })
 }
 
 fn normalized_t9_input(input: &str) -> Option<String> {
@@ -393,6 +501,81 @@ mod tests {
             )
             .expect("commit");
         assert_eq!(actions.committed_text(), Some("xyz"));
+    }
+
+    #[test]
+    fn invalid_suffix_does_not_match_a_shorter_valid_entry() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("invalid-suffix".to_owned());
+        engine.create_session(&session).expect("session");
+        let actions = engine
+            .process(
+                &session,
+                &InputEvent::Text("nihaox".to_owned()),
+                &InputContext::default(),
+            )
+            .expect("input");
+        assert!(actions.0.iter().any(
+            |action| matches!(action, Action::ShowCandidates(candidates) if candidates.is_empty())
+        ));
+    }
+
+    #[test]
+    fn empty_or_delimiter_only_input_has_no_candidates() {
+        let engine = PinyinEngine::new();
+        assert!(engine.lookup("").is_empty());
+        assert!(engine.lookup("'").is_empty());
+    }
+
+    #[test]
+    fn apostrophes_delimit_syllables_without_changing_lookup() {
+        assert!(pinyin_exact_match("xi an", "xi'an"));
+        assert!(pinyin_exact_match("ni hao", "nihao"));
+    }
+
+    #[test]
+    fn reference_lexicon_covers_common_beta_phrases() {
+        for (pinyin, expected) in [
+            ("women", "我们"),
+            ("zhongguo", "中国"),
+            ("beijing", "北京"),
+            ("jintian", "今天"),
+            ("tianqi", "天气"),
+            ("xiexie", "谢谢"),
+            ("zaijian", "再见"),
+        ] {
+            assert_eq!(
+                lexicon()
+                    .iter()
+                    .filter(|entry| pinyin_exact_match(&entry.pinyin, pinyin))
+                    .max_by_key(|entry| entry.weight)
+                    .map(|entry| entry.text.as_str()),
+                Some(expected),
+            );
+        }
+    }
+
+    #[test]
+    fn production_lexicon_covers_words_outside_the_beta_fixture() {
+        let engine = PinyinEngine::new();
+        for (pinyin, expected) in [
+            ("putao", "葡萄"),
+            ("dianshiju", "电视剧"),
+            ("shurufa", "输入法"),
+            ("rengongzhineng", "人工智能"),
+        ] {
+            assert!(
+                engine
+                    .lookup(pinyin)
+                    .iter()
+                    .any(|candidate| candidate.commit_text == expected),
+                "missing {expected} for {pinyin}",
+            );
+        }
+        assert!(engine
+            .lookup("78826")
+            .iter()
+            .any(|candidate| candidate.commit_text == "葡萄"));
     }
 
     #[test]

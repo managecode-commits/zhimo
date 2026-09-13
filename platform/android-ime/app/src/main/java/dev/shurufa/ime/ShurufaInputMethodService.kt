@@ -12,8 +12,13 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.HapticFeedbackConstants
 import android.view.View
 import android.view.WindowInsets
 import android.view.inputmethod.EditorInfo
@@ -34,6 +39,7 @@ class ShurufaInputMethodService : InputMethodService() {
     private var handle = 0L
     private lateinit var candidates: LinearLayout
     private lateinit var keyboardRows: LinearLayout
+    private var spaceKey: Button? = null
     private var speechRecognizer: SpeechRecognizer? = null
     private var recognizerIsOnDevice: Boolean? = null
     private var acceptingSpeechResults = false
@@ -45,6 +51,7 @@ class ShurufaInputMethodService : InputMethodService() {
     private var chineseSymbols = true
     private var keyboardStateInitialized = false
     private var activeEditorIdentity: EditorIdentity? = null
+    private var uppercase = false
 
     override fun onCreate() {
         super.onCreate()
@@ -92,6 +99,7 @@ class ShurufaInputMethodService : InputMethodService() {
             nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
             keyboardPage = PlatformPolicy.initialKeyboardPage(attribute?.inputType ?: InputType.TYPE_CLASS_TEXT)
             chineseSymbols = pinyin
+            uppercase = false
             keyboardStateInitialized = true
         }
         activeEditorIdentity = editorIdentity
@@ -146,7 +154,7 @@ class ShurufaInputMethodService : InputMethodService() {
         val basePadding = dp(4)
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(KEYBOARD_BACKGROUND)
+            setBackgroundColor(keyboardBackground())
             setPadding(basePadding, basePadding, basePadding, basePadding)
             setOnApplyWindowInsetsListener { view, insets ->
                 val navigationBottom = if (Build.VERSION.SDK_INT >= 30) {
@@ -167,7 +175,7 @@ class ShurufaInputMethodService : InputMethodService() {
         root.addView(HorizontalScrollView(this).apply {
             isHorizontalScrollBarEnabled = false
             isFillViewport = true
-            setBackgroundColor(CANDIDATE_BACKGROUND)
+            setBackgroundColor(candidateBackground())
             addView(
                 candidates,
                 FrameLayout.LayoutParams(
@@ -195,6 +203,7 @@ class ShurufaInputMethodService : InputMethodService() {
             pinyin = previous
         } else {
             hasComposition = false
+            uppercase = false
         }
         renderKeyboard()
         renderActions()
@@ -238,6 +247,7 @@ class ShurufaInputMethodService : InputMethodService() {
 
     private fun renderKeyboard() {
         keyboardRows.removeAllViews()
+        spaceKey = null
         when (keyboardPage) {
             KeyboardPage.NUMBER -> renderNumberKeyboard()
             KeyboardPage.SYMBOL -> renderSymbolKeyboard()
@@ -247,15 +257,42 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun renderTextKeyboard() {
+        keyboardRows.addView(textToolbar())
         if (pinyin && nineKeyPinyin) {
             keyboardRows.addView(t9KeyRow(listOf("1\n'" to "'", "2\nABC" to "2", "3\nDEF" to "3")))
             keyboardRows.addView(t9KeyRow(listOf("4\nGHI" to "4", "5\nJKL" to "5", "6\nMNO" to "6")))
             keyboardRows.addView(t9KeyRow(listOf("7\nPQRS" to "7", "8\nTUV" to "8", "9\nWXYZ" to "9")))
         } else {
-            keyboardRows.addView(keyRow("qwertyuiop"))
-            keyboardRows.addView(keyRow("asdfghjkl", sideWeight = 0.5f))
-            keyboardRows.addView(keyRow("zxcvbnm", sideWeight = 1.5f))
+            val transform: (Char) -> String = { character ->
+                if (!pinyin && uppercase) character.uppercase() else character.toString()
+            }
+            keyboardRows.addView(keyRow("qwertyuiop", transform = transform))
+            keyboardRows.addView(keyRow("asdfghjkl", sideWeight = 0.5f, transform = transform))
+            keyboardRows.addView(keyRow("zxcvbnm", sideWeight = 1.5f, transform = transform))
         }
+    }
+
+    private fun textToolbar() = LinearLayout(this).apply {
+        orientation = LinearLayout.HORIZONTAL
+        gravity = Gravity.CENTER
+        if (!pinyin) {
+            addView(key(if (uppercase) "⇧ 大写" else "⇧", 0.9f, 12f) {
+                uppercase = !uppercase
+                renderKeyboard()
+            })
+        } else {
+            addView(key(if (nineKeyPinyin) "26键" else "9键", 0.9f, 12f) { togglePinyinLayout() })
+        }
+        addView(key("123", 0.8f, 12f) { showKeyboardPage(KeyboardPage.NUMBER) })
+        addView(key("符号", 0.9f, 12f) { showKeyboardPage(KeyboardPage.SYMBOL) })
+        val languageTarget = if (pinyin) "切英" else "切中"
+        val languageDescription = if (pinyin) "切换到英文输入" else "切换到中文拼音"
+        addView(key(languageTarget, 0.9f, 14f, languageDescription) { toggleEngine() })
+        addView(key("语音", 0.9f, 12f) { startSystemDictation() })
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            dp(if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 40 else 44),
+        )
     }
 
     private fun renderNumberKeyboard() {
@@ -316,29 +353,38 @@ class ShurufaInputMethodService : InputMethodService() {
     }
 
     private fun LinearLayout.addTextFunctionKeys() {
-        if (pinyin) {
-            addView(key(if (nineKeyPinyin) "26键" else "9键", 0.8f, 12f) { togglePinyinLayout() })
-            addView(key("123", 0.7f, 12f) { showKeyboardPage(KeyboardPage.NUMBER) })
-            addView(key("中/英", 0.9f, 12f) { toggleEngine() })
-            addView(key("语音", 0.8f, 12f) { startSystemDictation() })
-            addView(key("空格", 1.8f, 14f) { pressSpace() })
-            addView(key("删除", 0.9f, 12f) { pressBackspace() })
-            addView(key("回车", 0.9f, 12f) { pressEnter() })
-        } else {
-            addView(key("123", 0.9f, 13f) { showKeyboardPage(KeyboardPage.NUMBER) })
-            addView(key("中/英", 1f, 13f) { toggleEngine() })
-            addView(key("语音", 0.9f, 13f) { startSystemDictation() })
-            addView(key("空格", 2f, 14f) { pressSpace() })
-            addView(key("删除", 1f, 13f) { pressBackspace() })
-            addView(key("回车", 1f, 13f) { pressEnter() })
-        }
+        addView(key(if (pinyin) "，" else ",", 0.75f, 15f) { commitLiteral(if (pinyin) "，" else ",") })
+        if (pinyin) addView(key("'", 0.65f, 16f) { feed("'") })
+        spaceKey = key(spaceKeyLabel(), 2.4f, 14f) { pressSpace() }
+        addView(spaceKey)
+        addView(key(if (pinyin) "。" else ".", 0.75f, 15f) { commitLiteral(if (pinyin) "。" else ".") })
+        addView(key("⌫", 0.8f, 18f) { pressBackspace() })
+        addView(key(enterKeyLabel(), 1f, 12f) { pressEnter() })
     }
 
-    private fun keyRow(keys: String, sideWeight: Float = 0f) = LinearLayout(this).apply {
+    private fun enterKeyLabel(): String = when (currentInputEditorInfo?.imeOptions?.and(EditorInfo.IME_MASK_ACTION)) {
+        EditorInfo.IME_ACTION_SEARCH -> "搜索"
+        EditorInfo.IME_ACTION_SEND -> "发送"
+        EditorInfo.IME_ACTION_DONE -> "完成"
+        EditorInfo.IME_ACTION_NEXT -> "下一项"
+        EditorInfo.IME_ACTION_GO -> "前往"
+        else -> "回车"
+    }
+
+    private fun spaceKeyLabel(): String = if (pinyin && hasComposition) "选词" else "空格"
+
+    private fun keyRow(
+        keys: String,
+        sideWeight: Float = 0f,
+        transform: (Char) -> String = { it.toString() },
+    ) = LinearLayout(this).apply {
         orientation = LinearLayout.HORIZONTAL
         gravity = Gravity.CENTER
         if (sideWeight > 0f) addView(keySpacer(sideWeight))
-        keys.forEach { character -> addView(key(character.toString())) }
+        keys.forEach { character ->
+            val value = transform(character)
+            addView(key(value) { feed(value) })
+        }
         if (sideWeight > 0f) addView(keySpacer(sideWeight))
         layoutParams = keyboardRowParams()
     }
@@ -347,10 +393,10 @@ class ShurufaInputMethodService : InputMethodService() {
         LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(keyHeightDp()))
 
     private fun keyHeightDp(): Int =
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 44 else 56
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 48 else 56
 
     private fun candidateHeightDp(): Int =
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 40 else 48
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) 44 else 48
 
     private fun keySpacer(weight: Float) = View(this).apply {
         layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, weight)
@@ -360,10 +406,11 @@ class ShurufaInputMethodService : InputMethodService() {
         label: String,
         weight: Float = 1f,
         labelSizeSp: Float = 18f,
+        description: String = label,
         action: (() -> Unit)? = null,
     ) = Button(this).apply {
         text = label
-        contentDescription = label
+        contentDescription = description
         isAllCaps = false
         gravity = Gravity.CENTER
         includeFontPadding = false
@@ -373,13 +420,16 @@ class ShurufaInputMethodService : InputMethodService() {
         minimumHeight = 0
         setPadding(0, 0, 0, 0)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSizeSp)
-        setTextColor(KEY_TEXT)
+        setTextColor(keyText())
         backgroundTintList = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_pressed), intArrayOf()),
-            intArrayOf(KEY_PRESSED, KEY_BACKGROUND),
+            intArrayOf(keyPressed(), keyBackground()),
         )
         stateListAnimator = null
-        setOnClickListener { action?.invoke() ?: feed(label) }
+        setOnClickListener {
+            performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            action?.invoke() ?: feed(label)
+        }
         layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, weight).apply {
             setMargins(dp(2), dp(3), dp(2), dp(3))
         }
@@ -401,6 +451,7 @@ class ShurufaInputMethodService : InputMethodService() {
         }
         val wasComposing = hasComposition
         command(2)
+        if (wasComposing) NativeIme.flush(handle)
         if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
             currentInputConnection.commitText(" ", 1)
         }
@@ -435,6 +486,7 @@ class ShurufaInputMethodService : InputMethodService() {
         }
         val wasComposing = hasComposition
         command(1)
+        if (wasComposing) NativeIme.flush(handle)
         if (PlatformPolicy.shouldFallbackToEditor(wasComposing) &&
             !sendDefaultEditorAction(false)
         ) {
@@ -478,20 +530,36 @@ class ShurufaInputMethodService : InputMethodService() {
                 }
             }
         }
+        spaceKey?.text = spaceKeyLabel()
+        spaceKey?.contentDescription = spaceKeyLabel()
     }
 
     private fun showCandidates(values: JSONArray) {
-        for (index in 0 until minOf(values.length(), 5)) {
+        showCandidatePage(values, 0)
+    }
+
+    private fun showCandidatePage(values: JSONArray, page: Int) {
+        val pageSize = 5
+        val safePage = page.coerceIn(0, ((values.length() - 1).coerceAtLeast(0)) / pageSize)
+        val start = safePage * pageSize
+        val end = minOf(values.length(), start + pageSize)
+        if (safePage > 0) addCandidatePager("‹") { redrawCandidatePage(values, safePage - 1) }
+        for (index in start until end) {
             val value = values.getJSONObject(index)
             candidates.addView(TextView(this).apply {
-                text = value.getString("display_text")
-                contentDescription = getString(R.string.candidate_description, text)
+                val display = value.getString("display_text")
+                val annotation = if (value.isNull("annotation")) "" else value.optString("annotation", "")
+                text = candidateLabel(display, annotation)
+                contentDescription = getString(R.string.candidate_description, display)
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
-                setTextColor(KEY_TEXT)
+                setTextColor(keyText())
                 gravity = Gravity.CENTER
                 setPadding(dp(14), 0, dp(14), 0)
+                if (index == start) setBackgroundColor(keyPressed())
                 setOnClickListener {
+                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                     NativeIme.select(handle, value.getString("id"))
+                    NativeIme.flush(handle)
                     renderActions()
                 }
                 layoutParams = LinearLayout.LayoutParams(
@@ -499,6 +567,38 @@ class ShurufaInputMethodService : InputMethodService() {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                 )
             })
+        }
+        if (end < values.length()) addCandidatePager("›") { redrawCandidatePage(values, safePage + 1) }
+    }
+
+    private fun redrawCandidatePage(values: JSONArray, page: Int) {
+        candidates.removeAllViews()
+        showModeIndicator()
+        showCandidatePage(values, page)
+    }
+
+    private fun addCandidatePager(label: String, action: () -> Unit) {
+        candidates.addView(TextView(this).apply {
+            text = label
+            contentDescription = label
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 24f)
+            setTextColor(keyText())
+            gravity = Gravity.CENTER
+            setPadding(dp(12), 0, dp(12), 0)
+            setOnClickListener { action() }
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.MATCH_PARENT,
+            )
+        })
+    }
+
+    private fun candidateLabel(display: String, annotation: String): CharSequence {
+        if (annotation.isBlank()) return display
+        return SpannableString("$display  $annotation").apply {
+            val start = display.length + 2
+            setSpan(RelativeSizeSpan(0.65f), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            setSpan(ForegroundColorSpan(modeText()), start, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
     }
 
@@ -513,7 +613,7 @@ class ShurufaInputMethodService : InputMethodService() {
                 else -> getString(R.string.mode_pinyin_full_keyboard)
             }
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
-            setTextColor(MODE_TEXT)
+            setTextColor(modeText())
             gravity = Gravity.CENTER
             setPadding(dp(10), 0, dp(10), 0)
             layoutParams = LinearLayout.LayoutParams(
@@ -529,6 +629,16 @@ class ShurufaInputMethodService : InputMethodService() {
             value.toFloat(),
             resources.displayMetrics,
         ).toInt()
+
+    private fun darkMode(): Boolean =
+        resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
+    private fun keyboardBackground(): Int = if (darkMode()) 0xFF202124.toInt() else 0xFFF1F3F6.toInt()
+    private fun candidateBackground(): Int = if (darkMode()) 0xFF292A2D.toInt() else Color.WHITE
+    private fun keyBackground(): Int = if (darkMode()) 0xFF3C4043.toInt() else Color.WHITE
+    private fun keyPressed(): Int = if (darkMode()) 0xFF536A9E.toInt() else 0xFFD8E3FF.toInt()
+    private fun keyText(): Int = if (darkMode()) Color.WHITE else Color.BLACK
+    private fun modeText(): Int = if (darkMode()) 0xFFAFC6FF.toInt() else 0xFF3454D1.toInt()
 
     private fun startSystemDictation() {
         val allowNetwork = getSharedPreferences("shurufa", MODE_PRIVATE)
@@ -611,11 +721,5 @@ class ShurufaInputMethodService : InputMethodService() {
             listOf("^", "&", "*", "(", ")", "_"),
             listOf("+", "-", "=", "/", "\\", ":", ";"),
         )
-        const val KEYBOARD_BACKGROUND = 0xFFF1F3F6.toInt()
-        const val CANDIDATE_BACKGROUND = 0xFFFFFFFF.toInt()
-        const val KEY_BACKGROUND = 0xFFFFFFFF.toInt()
-        const val KEY_PRESSED = 0xFFD8E3FF.toInt()
-        const val KEY_TEXT = Color.BLACK
-        const val MODE_TEXT = 0xFF3454D1.toInt()
     }
 }

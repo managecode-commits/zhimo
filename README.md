@@ -5,6 +5,8 @@
 当前仓库包含通用输入运行时、英文/拼音/越南语引擎、生产 librime Adapter、离线 whisper.cpp Provider、SQLite 学习、加密同步、签名语言包、C ABI、Linux IBus/Fcitx 5 以及 Android/Apple/Windows 平台工程边界。完整产品与架构范围参见 [项目总体方案](docs/项目总体方案.md)。
 
 当前实际完成度和外部验证条件参见 [实现状态](docs/实现状态.md)。
+所有 Android、Windows、Linux、macOS、iOS、命令行 App 和同步服务的环境准备、编译、
+安装及验收命令统一收录在 [全平台构建、安装与验收手册](docs/构建与验收.md)。
 需要项目所有者处理的许可证、签名、目标设备和发布服务条件参见
 [发布阻断与真机验收](docs/发布阻断与真机验收.md)。
 
@@ -15,6 +17,13 @@ cargo test --workspace
 cargo run -p ime-cli -- hello
 cargo run -p ime-cli -- pinyin nihao
 ./tools/verify.sh
+```
+
+Android 完整 Rime Beta（自动获取并编译三个 ABI 的 `librime.so`、打包 APK，并在已连接
+设备上运行测试）：
+
+```bash
+./tools/verify-android-rime-beta.sh
 ```
 
 真实离线转录：

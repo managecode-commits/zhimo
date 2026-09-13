@@ -1,0 +1,189 @@
+# Shurufa-owned Beta reference lexicon. Columns: pinyin, text, weight.
+# This remains a compact offline fallback; production packages use the isolated librime adapter.
+ni	你	10000
+ni	呢	7000
+ni	泥	5000
+ni hao	你好	20000
+hao	好	10000
+hao	号	7000
+hao	浩	5000
+wo	我	10000
+wo men	我们	20000
+ni men	你们	19000
+ta	他	10000
+ta	她	9500
+ta men	他们	18000
+shi	是	10000
+shi	时	8000
+shi	事	7500
+bu	不	10000
+le	了	10000
+de	的	10000
+zai	在	10000
+you	有	10000
+mei you	没有	18000
+ke yi	可以	18000
+bu ke yi	不可以	17000
+zhong guo	中国	20000
+zhong wen	中文	19000
+ying wen	英文	19000
+bei jing	北京	18000
+shang hai	上海	18000
+guang zhou	广州	17000
+shen zhen	深圳	17000
+jin tian	今天	19000
+ming tian	明天	18000
+zuo tian	昨天	17000
+xian zai	现在	19000
+shi jian	时间	18000
+tian qi	天气	18000
+shi jie	世界	18000
+xie xie	谢谢	20000
+zai jian	再见	19000
+dui bu qi	对不起	19000
+mei guan xi	没关系	18000
+qing	请	10000
+qing wen	请问	18000
+huan ying	欢迎	17000
+zao shang hao	早上好	17000
+wan shang hao	晚上好	17000
+wan an	晚安	17000
+chi fan	吃饭	16000
+he shui	喝水	15000
+gong zuo	工作	18000
+xue xi	学习	18000
+sheng huo	生活	17000
+jia ting	家庭	16000
+peng you	朋友	18000
+lao shi	老师	17000
+xue sheng	学生	17000
+gong si	公司	17000
+xiang mu	项目	18000
+jia gou	架构	17000
+kai fa	开发	18000
+ce shi	测试	18000
+dai ma	代码	18000
+ruan jian	软件	18000
+ying yong	应用	17000
+xi tong	系统	18000
+shu ru	输入	19000
+shu ru fa	输入法	20000
+pin yin	拼音	19000
+ci ku	词库	18000
+hou xuan	候选	17000
+an jian	按键	17000
+xian shi	显示	17000
+yu yin	语音	18000
+zhuan lu	转录	18000
+wen zi	文字	18000
+shu zi	数字	17000
+fu hao	符号	17000
+she zhi	设置	18000
+wen dang	文档	17000
+bian yi	编译	17000
+an zhuang	安装	18000
+geng xin	更新	18000
+ban ben	版本	17000
+shu ju	数据	18000
+an quan	安全	18000
+yin si	隐私	18000
+ben di	本地	17000
+li xian	离线	17000
+wang luo	网络	17000
+fu wu	服务	17000
+fu wu qi	服务器	18000
+tong bu	同步	18000
+bei fen	备份	17000
+hui fu	恢复	17000
+wen jian	文件	17000
+mu lu	目录	16000
+yong hu	用户	18000
+zhang hao	账号	17000
+mi ma	密码	18000
+deng lu	登录	17000
+tui chu	退出	17000
+da kai	打开	17000
+guan bi	关闭	17000
+que ren	确认	18000
+qu xiao	取消	18000
+shan chu	删除	18000
+bao cun	保存	18000
+fa song	发送	18000
+sou suo	搜索	18000
+xia zai	下载	17000
+shang chuan	上传	17000
+cheng gong	成功	18000
+shi bai	失败	18000
+cuo wu	错误	18000
+wen ti	问题	18000
+jie jue	解决	18000
+bang zhu	帮助	17000
+zhi chi	支持	18000
+wan cheng	完成	18000
+ji xu	继续	18000
+kai shi	开始	18000
+ting zhi	停止	17000
+yun xing	运行	18000
+lian jie	连接	17000
+she bei	设备	18000
+shou ji	手机	18000
+dian nao	电脑	18000
+an zhuo	安卓	17000
+ping guo	苹果	17000
+chuang kou	窗口	16000
+jian pan	键盘	18000
+ping mu	屏幕	17000
+heng ping	横屏	16000
+shu ping	竖屏	16000
+shang yi ye	上一页	15000
+xia yi ye	下一页	15000
+shang yi ge	上一个	15000
+xia yi ge	下一个	15000
+zhe ge	这个	18000
+na ge	那个	17000
+shen me	什么	19000
+wei shen me	为什么	18000
+zen me	怎么	18000
+zen me yang	怎么样	18000
+yin wei	因为	18000
+suo yi	所以	18000
+dan shi	但是	18000
+ru guo	如果	18000
+ran hou	然后	18000
+yi jing	已经	18000
+hai shi	还是	18000
+fei chang	非常	18000
+zhen de	真的	18000
+ke neng	可能	18000
+ying gai	应该	18000
+xu yao	需要	18000
+xiang yao	想要	17000
+zhi dao	知道	18000
+ming bai	明白	18000
+ren wei	认为	17000
+gan jue	感觉	17000
+xi huan	喜欢	18000
+ai	爱	10000
+gao xing	高兴	17000
+kai xin	开心	18000
+qing kuang	情况	17000
+dong xi	东西	17000
+di fang	地方	17000
+fang fa	方法	18000
+jie guo	结果	18000
+yuan yin	原因	17000
+nei rong	内容	17000
+gong neng	功能	18000
+xiao xi	消息	18000
+xin xi	信息	18000
+dian hua	电话	18000
+you jian	邮件	17000
+di zhi	地址	17000
+ming zi	名字	17000
+ri qi	日期	17000
+shang wu	上午	16000
+xia wu	下午	16000
+wan shang	晚上	17000
+yi dian	一点	17000
+liang dian	两点	16000
+xi an	西安	17000

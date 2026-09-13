@@ -9,6 +9,10 @@ cmake -S platform/windows-tsf -B build/windows-tsf -A x64
 cmake --build build/windows-tsf --config Debug
 ```
 
+执行上述 CMake 命令前必须先运行 `cargo build -p ime-ffi`，生成 MSVC import library 和
+Runtime DLL。Debug/Release 完整命令、探针、注册、刷新 `ctfmon` 和卸载顺序参见
+[全平台构建手册](../../docs/构建与验收.md#5-windows-tsf-输入法)。
+
 管理员或当前用户部署工具在安装目录中调用：
 
 ```powershell

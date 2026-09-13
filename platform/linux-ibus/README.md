@@ -1,5 +1,8 @@
 # Linux IBus adapter
 
+依赖安装、用户级部署、验证和卸载的统一步骤参见
+[全平台构建、安装与验收手册](../../docs/构建与验收.md#41-ibusubuntugnome-推荐)。
+
 该适配器通过 `ctypes` 调用与其他平台共用的 Runtime C ABI；Python 层只转换 IBus 事件和视图动作，不包含拼音逻辑。当前支持中英文模式、Shift+Space 切换、数字键/鼠标选词、上下移动、候选翻页，以及密码、邮箱、URL、终端输入域和应用身份策略；Runtime 不可用时按键安全透传。
 
 开发运行：

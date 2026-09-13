@@ -1,5 +1,8 @@
 # Fcitx 5 适配器
 
+Release 构建、用户级安装、桌面切换和诊断步骤参见
+[全平台构建、安装与验收手册](../../docs/构建与验收.md#42-fcitx5)。
+
 该原生插件把 Fcitx 5 的按键、预编辑、候选选择和提交映射到公共 C ABI，并将学习数据保存到
 `$XDG_DATA_HOME/shurufa/user`（可用 `SHURUFA_USER_DATA_DIR` 覆盖）。实现依据 Fcitx 5
 官方 addon/input-method engine 接口，要求 Fcitx5Core 开发包和已构建的 `libime_ffi.so`。
