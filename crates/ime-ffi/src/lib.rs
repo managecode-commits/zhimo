@@ -1,5 +1,7 @@
 //! Minimal C ABI proving ownership and UTF-8 transfer across platform bridges.
 
+mod handwriting;
+
 use std::ffi::{c_char, CStr, CString};
 use std::path::{Path, PathBuf};
 use std::ptr;
@@ -46,12 +48,13 @@ impl Drop for ImeSpeechHandle {
 
 #[no_mangle]
 pub const extern "C" fn ime_runtime_abi_version() -> u32 {
-    0x0001_0001
+    0x0001_0003
 }
 
 #[no_mangle]
 pub const extern "C" fn ime_runtime_capabilities() -> u64 {
-    let capabilities = (1_u64 << 0) | (1_u64 << 1) | (1_u64 << 2) | (1_u64 << 3) | (1_u64 << 5);
+    let capabilities =
+        (1_u64 << 0) | (1_u64 << 1) | (1_u64 << 2) | (1_u64 << 3) | (1_u64 << 5) | (1_u64 << 6);
     #[cfg(feature = "native-librime")]
     {
         capabilities | (1_u64 << 4)
@@ -421,7 +424,8 @@ pub unsafe extern "C" fn ime_runtime_set_application_id(
     0
 }
 
-/// Sends a non-text key command: 0 backspace, 1 enter, 2 space, 3 escape, 4 left, 5 right.
+/// Sends a non-text key command: 0 backspace, 1 enter, 2 space, 3 escape,
+/// 4 left, 5 right, 6 previous candidate page, 7 next candidate page.
 ///
 /// # Safety
 /// `handle` must be valid.
@@ -437,6 +441,8 @@ pub unsafe extern "C" fn ime_runtime_send_command(handle: *mut ImeHandle, comman
         3 => Key::Escape,
         4 => Key::Left,
         5 => Key::Right,
+        6 => Key::PageUp,
+        7 => Key::PageDown,
         _ => return -2,
     };
     handle
@@ -492,7 +498,7 @@ pub unsafe extern "C" fn ime_runtime_action_count(handle: *const ImeHandle) -> u
 }
 
 /// Returns an action kind: 1 composition, 2 candidates, 3 commit, 4 close,
-/// 5 ignored, or 0 for an invalid index.
+/// 5 ignored, 6 candidate page metadata (JSON), or 0 for an invalid index.
 ///
 /// # Safety
 /// `handle` must be valid.
@@ -513,6 +519,7 @@ pub unsafe extern "C" fn ime_runtime_action_kind(
         Action::CommitText(_) => 3,
         Action::CloseComposition => 4,
         Action::Ignored => 5,
+        Action::CandidatePage { .. } => 6,
     }
 }
 
@@ -919,7 +926,7 @@ mod tests {
 
     #[test]
     fn c_abi_round_trip() {
-        assert_eq!(ime_runtime_abi_version(), 0x0001_0001);
+        assert_eq!(ime_runtime_abi_version(), 0x0001_0003);
         assert_ne!(ime_runtime_capabilities() & 1, 0);
         let handle = ime_runtime_new();
         assert!(!handle.is_null());
@@ -947,7 +954,7 @@ mod tests {
                 .to_str()
                 .expect("json");
             assert!(actions.contains("你好"));
-            assert_eq!(ime_runtime_abi_version(), 0x0001_0001);
+            assert_eq!(ime_runtime_abi_version(), 0x0001_0003);
             assert_ne!(ime_runtime_capabilities() & (1_u64 << 5), 0);
             let action_count = ime_runtime_action_count(handle);
             assert!(action_count >= 2);

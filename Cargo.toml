@@ -8,6 +8,7 @@ members = [
     "crates/ime-engine-vietnamese",
     "crates/ime-data",
     "crates/ime-speech",
+    "crates/ime-handwriting",
     "crates/ime-security",
     "crates/ime-package",
     "crates/ime-ffi",

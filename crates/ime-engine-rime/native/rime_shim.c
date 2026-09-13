@@ -88,6 +88,24 @@ size_t shurufa_rime_candidate_count(uint64_t session) {
   return count;
 }
 
+size_t shurufa_rime_page_index(uint64_t session) {
+  if (!api) return 0;
+  RIME_STRUCT(RimeContext, context);
+  if (!api->get_context(session, &context)) return 0;
+  size_t page = (size_t)context.menu.page_no;
+  api->free_context(&context);
+  return page;
+}
+
+int shurufa_rime_has_next_page(uint64_t session) {
+  if (!api) return 0;
+  RIME_STRUCT(RimeContext, context);
+  if (!api->get_context(session, &context)) return 0;
+  int has_next = context.menu.num_candidates > 0 && !context.menu.is_last_page;
+  api->free_context(&context);
+  return has_next;
+}
+
 size_t shurufa_rime_copy_candidate(uint64_t session, size_t index, int comment, char *output, size_t capacity) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);

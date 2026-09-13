@@ -19,6 +19,8 @@ unsafe extern "C" {
         capacity: usize,
     ) -> usize;
     fn shurufa_rime_candidate_count(session: c_ulonglong) -> usize;
+    fn shurufa_rime_page_index(session: c_ulonglong) -> usize;
+    fn shurufa_rime_has_next_page(session: c_ulonglong) -> c_int;
     fn shurufa_rime_copy_candidate(
         session: c_ulonglong,
         index: usize,
@@ -102,6 +104,8 @@ impl NativeRimeBackend {
             preedit,
             candidates,
             commit: (!commit.is_empty()).then_some(commit),
+            page_index: unsafe { shurufa_rime_page_index(session) },
+            has_next_page: unsafe { shurufa_rime_has_next_page(session) } != 0,
         }
     }
 }

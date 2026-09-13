@@ -9,6 +9,7 @@ extern "C" {
 
 typedef struct ImeHandle ImeHandle;
 typedef struct ImeSpeechHandle ImeSpeechHandle;
+typedef struct ImeHandwritingHandle ImeHandwritingHandle;
 
 enum {
   SHURUFA_CAP_TEXT_INPUT = 1ULL << 0,
@@ -16,11 +17,23 @@ enum {
   SHURUFA_CAP_SYSTEM_SPEECH_EVENTS = 1ULL << 2,
   SHURUFA_CAP_WHISPER_CPP = 1ULL << 3,
   SHURUFA_CAP_NATIVE_LIBRIME = 1ULL << 4,
-  SHURUFA_CAP_STRUCTURED_ACTIONS = 1ULL << 5
+  SHURUFA_CAP_STRUCTURED_ACTIONS = 1ULL << 5,
+  SHURUFA_CAP_HANDWRITING = 1ULL << 6
 };
 
 unsigned int ime_runtime_abi_version(void);
 unsigned long long ime_runtime_capabilities(void);
+
+/* ABI 1.3. Bundled zh-CN single-character model. All calls on a handle must
+ * be serialized. Call off the input/UI thread. No network or editor access.
+ * JSON input: {width,height,strokes:[[{x,y,time_ms},...],...]}
+ * Whole-character bounds are centered and uniformly scaled before recognition.
+ * Output: up to 100 [{text,score},...]. Score is an uncalibrated SVM margin.
+ * Returned UTF-8 is borrowed until the next recognition or free; NULL on error.
+ * Hosts must implement editor/session/revision checks before text submission. */
+ImeHandwritingHandle *ime_handwriting_new(const char *model_path);
+const char *ime_handwriting_recognize_json(ImeHandwritingHandle *handle, const char *ink_json);
+void ime_handwriting_free(ImeHandwritingHandle *handle);
 
 ImeHandle *ime_runtime_new(void);
 ImeHandle *ime_runtime_new_with_engine(const char *engine_id);
@@ -36,10 +49,15 @@ int ime_runtime_set_input_scope(ImeHandle *handle, unsigned int scope);
 int ime_runtime_set_privacy_policy(ImeHandle *handle, int learning_allowed,
                                    int network_allowed);
 int ime_runtime_set_application_id(ImeHandle *handle, const char *application_id);
+/* Commands: 0 backspace, 1 enter, 2 space, 3 escape, 4 left, 5 right,
+ * 6 previous native candidate page, 7 next native candidate page. */
 int ime_runtime_send_command(ImeHandle *handle, unsigned int command);
 int ime_runtime_select_candidate(ImeHandle *handle, const char *candidate_id);
 const char *ime_runtime_last_actions_json(const ImeHandle *handle);
 size_t ime_runtime_action_count(const ImeHandle *handle);
+/* Kinds: 1 composition, 2 candidates, 3 commit, 4 close, 5 ignored,
+ * 6 candidate page metadata (index/has_next in last_actions_json).
+ * Hosts must ignore unknown action kinds for forward compatibility. */
 unsigned int ime_runtime_action_kind(const ImeHandle *handle, size_t action_index);
 const char *ime_runtime_action_text(ImeHandle *handle, size_t action_index);
 size_t ime_runtime_candidate_count(const ImeHandle *handle, size_t action_index);

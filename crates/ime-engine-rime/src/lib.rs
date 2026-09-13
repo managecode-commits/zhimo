@@ -13,6 +13,8 @@ pub struct RimeSnapshot {
     pub preedit: String,
     pub candidates: Vec<(String, Option<String>)>,
     pub commit: Option<String>,
+    pub page_index: usize,
+    pub has_next_page: bool,
 }
 
 pub trait RimeBackend: Send {
@@ -96,6 +98,10 @@ impl<B: RimeBackend> RimeEngine<B> {
             })
             .collect();
         actions.push(Action::ShowCandidates(candidates));
+        actions.push(Action::CandidatePage {
+            index: snapshot.page_index,
+            has_next: snapshot.has_next_page,
+        });
         if !visible {
             actions.push(Action::CloseComposition);
         }
@@ -141,9 +147,32 @@ impl<B: RimeBackend> InputEngine for RimeEngine<B> {
         &self,
         session: &SessionId,
         event: &InputEvent,
-        _: &InputContext,
+        context: &InputContext,
     ) -> Result<ActionBatch, EngineError> {
         let native = self.backend_session(session)?;
+        // Rime's built-in user dictionary learns on commit, independently of
+        // our feedback API. Never send restricted input to this backend.
+        // Hosts must select a policy-aware reference engine for these fields.
+        if !context.effective_learning_allowed() {
+            self.backend
+                .lock()
+                .map_err(lock_error)?
+                .clear(native)
+                .map_err(backend_error)?;
+            if matches!(
+                event,
+                InputEvent::Reset
+                    | InputEvent::Key(ime_core::KeyEvent {
+                        key: Key::Escape,
+                        ..
+                    })
+            ) {
+                return Ok(Self::actions(RimeSnapshot::default()));
+            }
+            return Err(backend_error(
+                "Rime learning cannot be disabled; select a privacy-safe engine".to_owned(),
+            ));
+        }
         let snapshot = match event {
             InputEvent::Key(key) if key.pressed => {
                 let keycode = match key.key {
@@ -155,6 +184,8 @@ impl<B: RimeBackend> InputEngine for RimeEngine<B> {
                     Key::Escape => 0xff1b,
                     Key::Left => 0xff51,
                     Key::Right => 0xff53,
+                    Key::PageUp => 0xff55,
+                    Key::PageDown => 0xff56,
                 };
                 self.backend
                     .lock()
@@ -268,6 +299,7 @@ mod tests {
                     preedit: self.input.clone(),
                     candidates: vec![("你好".to_owned(), Some("ni hao".to_owned()))],
                     commit: None,
+                    ..RimeSnapshot::default()
                 })
             }
         }
@@ -281,6 +313,45 @@ mod tests {
             self.input.clear();
             Ok(RimeSnapshot::default())
         }
+    }
+
+    #[test]
+    fn restricted_context_never_reaches_native_key_processing() {
+        let engine = RimeEngine::new(FakeRime::default());
+        let session = SessionId("private".to_owned());
+        engine.create_session(&session).expect("session");
+        for context in [
+            InputContext {
+                learning_allowed: false,
+                ..InputContext::default()
+            },
+            InputContext {
+                scope: ime_core::InputScope::Password,
+                ..InputContext::default()
+            },
+        ] {
+            assert!(engine
+                .process(
+                    &session,
+                    &InputEvent::Key(ime_core::KeyEvent::press(Key::Character('n'))),
+                    &context
+                )
+                .is_err());
+            assert!(engine.backend.lock().unwrap().input.is_empty());
+        }
+    }
+
+    #[test]
+    fn snapshot_preserves_native_page_metadata() {
+        let actions = RimeEngine::<FakeRime>::actions(RimeSnapshot {
+            page_index: 2,
+            has_next_page: true,
+            ..RimeSnapshot::default()
+        });
+        assert!(actions.0.contains(&Action::CandidatePage {
+            index: 2,
+            has_next: true
+        }));
     }
 
     #[test]

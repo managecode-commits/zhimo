@@ -7,6 +7,9 @@ final class KeyboardViewController: UIInputViewController {
         return ShurufaSession(dataDirectory: support)
     }()
     private let candidateRow = UIStackView()
+    private let preedit = UILabel()
+    private var composing = false
+    private var pinyin = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,6 +17,7 @@ final class KeyboardViewController: UIInputViewController {
         root.axis = .vertical
         root.translatesAutoresizingMaskIntoConstraints = false
         candidateRow.axis = .horizontal
+        root.addArrangedSubview(preedit)
         root.addArrangedSubview(candidateRow)
         for row in ["qwertyuiop", "asdfghjkl", "zxcvbnm"] {
             let keys = UIStackView()
@@ -24,6 +28,7 @@ final class KeyboardViewController: UIInputViewController {
         let commands = UIStackView()
         commands.distribution = .fillEqually
         commands.addArrangedSubview(button("🌐", #selector(advanceToNextInputMode)))
+        commands.addArrangedSubview(button("中/英", #selector(toggleLanguage)))
         commands.addArrangedSubview(button("Space", #selector(space)))
         commands.addArrangedSubview(button("⌫", #selector(backspace)))
         root.addArrangedSubview(commands)
@@ -47,14 +52,42 @@ final class KeyboardViewController: UIInputViewController {
         apply(session.feed(sender.currentTitle ?? ""))
     }
 
-    @objc private func space() { apply(session.command(2)) }
-    @objc private func backspace() { apply(session.command(0)) }
+    @objc private func space() {
+        if composing { apply(session.command(2)) }
+        else { textDocumentProxy.insertText(" ") }
+    }
+    @objc private func backspace() {
+        if composing { apply(session.command(0)) }
+        else { textDocumentProxy.deleteBackward() }
+    }
+    @objc private func toggleLanguage() {
+        if composing { apply(session.command(2)) }
+        pinyin.toggle()
+        session.switchEngine(pinyin ? "pinyin.reference" : "latin")
+        composing = false
+        preedit.text = ""
+        candidateRow.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    }
 
     private func apply(_ actions: [Any]) {
         candidateRow.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for item in actions {
+            if let name = item as? String, name == "CloseComposition" {
+                composing = false
+                preedit.text = ""
+            }
             if let action = item as? [String: Any] {
-                if let text = action["CommitText"] as? String { textDocumentProxy.insertText(text) }
+                if let text = action["CommitText"] as? String {
+                    textDocumentProxy.insertText(text)
+                    composing = false
+                    preedit.text = ""
+                }
+                if let composition = action["UpdateComposition"] as? [String: Any],
+                   let segments = composition["segments"] as? [[String: Any]] {
+                    let text = segments.compactMap { $0["text"] as? String }.joined()
+                    preedit.text = text
+                    composing = !text.isEmpty
+                }
                 if let values = action["ShowCandidates"] as? [[String: Any]] {
                     for value in values.prefix(5) {
                         guard let title = value["display_text"] as? String,

@@ -74,7 +74,7 @@ HRESULT RegisterProfile() {
       CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&profiles));
   if (FAILED(result)) return result;
   result = profiles->Register(CLSID_ShurufaTextService);
-  const wchar_t description[] = L"Shurufa 中英文输入法";
+  const wchar_t description[] = L"知墨输入法 · Zhimo";
   if (SUCCEEDED(result)) result = profiles->AddLanguageProfile(
       CLSID_ShurufaTextService, 0x0804, GUID_ShurufaProfile, description,
       static_cast<ULONG>(wcslen(description)), nullptr, 0, 0);

@@ -9,6 +9,8 @@ fi
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 build_dir="$repo_dir/target/apple-xcframework"
 mkdir -p "$build_dir"
+mkdir -p "$build_dir/Resources"
+cp -R "$repo_dir/models/handwriting" "$build_dir/Resources/"
 
 rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
 cargo build -p ime-ffi --release --target aarch64-apple-ios

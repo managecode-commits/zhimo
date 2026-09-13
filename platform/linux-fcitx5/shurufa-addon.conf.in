@@ -1,5 +1,6 @@
 [Addon]
-Name=Shurufa Multilingual Input Method
+Name=Zhimo Multilingual Input Method
+Name[zh_CN]=知墨多语种输入法
 Category=InputMethod
 Version=@PROJECT_VERSION@
 Library=libshurufa

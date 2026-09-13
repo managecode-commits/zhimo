@@ -154,7 +154,9 @@ impl InputEngine for LatinEngine {
                         Action::CloseComposition,
                     ]));
                 }
-                Key::Left | Key::Right => return Ok(ActionBatch(vec![Action::Ignored])),
+                Key::Left | Key::Right | Key::PageUp | Key::PageDown => {
+                    return Ok(ActionBatch(vec![Action::Ignored]))
+                }
             },
             InputEvent::Text(value) => text.push_str(value),
             InputEvent::SpeechPartial(hypothesis) => {

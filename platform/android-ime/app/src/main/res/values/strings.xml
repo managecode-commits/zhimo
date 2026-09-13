@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">Shurufa</string>
+    <string name="handwriting_privacy">内置离线手写：安装后无需联网，笔迹不上传、不保存，无手写遥测服务。默认轨迹模型支持简体中文单字，采用 BSD 授权 Zinnia 算法及 LGPL-2.1 Tegaki/Tomoe 模型，源数据和许可证随包附带。可选实验性字形模型为 PP-OCRv5，相关 Apache-2.0、ONNX Runtime MIT 许可和第三方声明也随包附带；它仍是单字实验功能，不代表多语言、连续或重叠手写已验收。默认模型来源：https://tegaki.github.io/</string>
+    <string name="keyboard_text_size">按键文字大小：%1$s</string>
+    <string name="app_name">知墨输入法 · Zhimo</string>
     <string name="subtype_bilingual">中文 / English</string>
-    <string name="settings_summary">Shurufa 默认离线输入。系统语音 Provider 的离线能力由设备决定；也可安装本地模型。</string>
+    <string name="settings_summary">知墨输入法（Zhimo）默认离线输入。系统语音 Provider 的离线能力由设备决定；也可安装本地模型。</string>
     <string name="grant_microphone">授权语音输入</string>
     <string name="default_pinyin">默认使用中文拼音</string>
     <string name="local_learning">允许在本机学习候选习惯</string>

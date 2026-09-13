@@ -16,3 +16,15 @@ platform/android-ime/app/src/main/jniLibs/
 *.sqlite3-wal
 __pycache__/
 *.pyc
+/platform/android-ime/.kotlin/
+
+# Local credentials and release artifacts are not source distributions.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.apk
+*.aab

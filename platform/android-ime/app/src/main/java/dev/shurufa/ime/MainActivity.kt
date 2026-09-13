@@ -28,6 +28,22 @@ class MainActivity : Activity() {
                 setText(R.string.grant_microphone)
                 setOnClickListener { requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 10) }
             })
+            addView(TextView(this@MainActivity).apply {
+                setText(R.string.handwriting_privacy)
+                textSize = 16f
+                android.text.util.Linkify.addLinks(this, android.text.util.Linkify.WEB_URLS)
+            })
+            addView(Switch(this@MainActivity).apply {
+                text = "实验性离线字形识别（重新打开手写生效）"
+                isChecked = preferences.getBoolean("handwriting_image_experimental", true)
+                setOnCheckedChangeListener { _, enabled ->
+                    preferences.edit().putBoolean("handwriting_image_experimental", enabled).apply()
+                }
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "离线字形模型默认开启，已内置，无需联网；横向连写不限固定格，可调整字界，也可切换单字。自动分字仍在质量验收中，关闭可返回原轨迹模型。首次加载会增加内存使用。"
+                textSize = 14f
+            })
             addView(Switch(this@MainActivity).apply {
                 setText(R.string.default_pinyin)
                 isChecked = preferences.getBoolean("default_pinyin", true)
@@ -82,6 +98,20 @@ class MainActivity : Activity() {
                 isChecked = preferences.getBoolean("high_contrast", false)
                 setOnCheckedChangeListener { _, enabled ->
                     preferences.edit().putBoolean("high_contrast", enabled).apply()
+                }
+            })
+            addView(Button(this@MainActivity).apply {
+                var size = KeyboardTextSize.fromStored(preferences.getString("keyboard_text_size", null))
+                fun label(): String = when (size) {
+                    KeyboardTextSize.STANDARD -> "标准"
+                    KeyboardTextSize.LARGE -> "大字"
+                    KeyboardTextSize.EXTRA_LARGE -> "特大"
+                }
+                text = getString(R.string.keyboard_text_size, label())
+                setOnClickListener {
+                    size = size.next()
+                    preferences.edit().putString("keyboard_text_size", size.name).apply()
+                    text = getString(R.string.keyboard_text_size, label())
                 }
             })
             addView(Switch(this@MainActivity).apply {

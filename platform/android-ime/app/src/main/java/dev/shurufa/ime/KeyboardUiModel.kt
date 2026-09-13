@@ -9,6 +9,7 @@ enum class KeyboardPage {
     NUMBER,
     SYMBOL,
     EMOJI,
+    HANDWRITING,
 }
 
 enum class OneHandMode(val storedValue: String) {

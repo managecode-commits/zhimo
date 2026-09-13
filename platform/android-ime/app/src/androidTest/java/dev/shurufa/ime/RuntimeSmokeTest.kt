@@ -14,6 +14,49 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RuntimeSmokeTest {
     @Test
+    fun testKeyboardTypeScaleAndResponsiveCandidates() {
+        // Reference layout gives letters and numbers equal prominence.
+        assertTrue(KeyboardTypography.NUMBER >= KeyboardTypography.LETTER)
+        assertTrue(KeyboardTypography.LETTER >= 26f)
+        assertTrue(KeyboardTypography.LETTER > KeyboardTypography.HINT)
+        assertTrue(KeyboardTypography.CANDIDATE > KeyboardTypography.ANNOTATION)
+        assertTrue(KeyboardTypography.T9 > KeyboardTypography.HINT)
+        assertEquals(KeyboardTextSize.STANDARD, KeyboardTextSize.fromStored("invalid"))
+        assertEquals(KeyboardTextSize.STANDARD, KeyboardTextSize.EXTRA_LARGE.next())
+        assertEquals(4, KeyboardTypography.expandedColumns(360f, KeyboardTextSize.STANDARD))
+        assertEquals(2, KeyboardTypography.expandedColumns(280f, KeyboardTextSize.EXTRA_LARGE))
+    }
+
+    @Test
+    fun testNativePagingAndPrivacyFailClosed() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val rime = RimeAssets.prepare(context)
+        val handle = NativeIme.create(context.filesDir.absolutePath, rime.shared.absolutePath, rime.user.absolutePath)
+        try {
+            if (NativeIme.switchEngine(handle, "rime") != 0) {
+                assertFalse(InstrumentationRegistry.getArguments().getString("requireNativeRime") == "true")
+                return
+            }
+            assertEquals(0, NativeIme.feed(handle, "ren"))
+            val first = NativeIme.actions(handle)
+            assertTrue(first.contains("\"has_next\":true"))
+            assertEquals(0, NativeIme.command(handle, 7))
+            assertTrue(NativeIme.actions(handle).contains("\"index\":1"))
+            assertEquals(0, NativeIme.command(handle, 6))
+            assertTrue(NativeIme.actions(handle).contains("\"index\":0"))
+            assertEquals(0, NativeIme.command(handle, 3))
+            assertEquals(0, NativeIme.setPrivacy(handle, false, false))
+            assertTrue(NativeIme.feed(handle, "nihao") < 0)
+            assertEquals(0, NativeIme.switchEngine(handle, "pinyin.reference"))
+            assertEquals(0, NativeIme.feed(handle, "nihao"))
+            assertEquals(0, NativeIme.command(handle, 2))
+            assertTrue(NativeIme.actions(handle).contains("你好"))
+        } finally {
+            NativeIme.destroy(handle)
+        }
+    }
+
+    @Test
     fun testBundledRimeInstallationRecoversFromCorruption() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val first = RimeAssets.prepare(context)
@@ -28,6 +71,9 @@ class RuntimeSmokeTest {
 
     @Test
     fun testPlatformPolicyRequiresExplicitNetworkConsentAndProtectsPasswords() {
+        assertFalse(PlatformPolicy.isPassword(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI))
+        assertTrue(PlatformPolicy.isPassword(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD))
+        assertTrue(PlatformPolicy.isPassword(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD))
         assertFalse(PlatformPolicy.mayStartSpeech(true, true, true, true))
         assertFalse(PlatformPolicy.mayStartSpeech(false, true, false, false))
         assertTrue(PlatformPolicy.mayStartSpeech(false, true, true, false))

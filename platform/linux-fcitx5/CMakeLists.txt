@@ -19,6 +19,8 @@ target_link_libraries(shurufa Fcitx5::Core "${SHURUFA_IME_LIBRARY}")
 set_target_properties(shurufa PROPERTIES INSTALL_RPATH "$ORIGIN/..")
 install(TARGETS shurufa DESTINATION "${CMAKE_INSTALL_LIBDIR}/fcitx5")
 install(FILES "${SHURUFA_IME_LIBRARY}" DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../../models/handwriting"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/shurufa/models")
 
 configure_file(shurufa-addon.conf.in shurufa-addon.conf @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/shurufa-addon.conf"

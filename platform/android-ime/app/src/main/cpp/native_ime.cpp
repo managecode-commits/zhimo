@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <cstring>
 
 namespace {
 std::string utf8(JNIEnv *env, jstring value) {
@@ -18,6 +19,29 @@ ImeHandle *handle(jlong value) {
   return reinterpret_cast<ImeHandle *>(static_cast<intptr_t>(value));
 }
 }  // namespace
+
+extern "C" JNIEXPORT jlong JNICALL
+Java_dev_shurufa_ime_NativeIme_handwritingOpen(JNIEnv *env, jobject, jstring path) {
+  const auto file = utf8(env, path);
+  return static_cast<jlong>(reinterpret_cast<intptr_t>(ime_handwriting_new(file.c_str())));
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_dev_shurufa_ime_NativeIme_handwritingClose(JNIEnv *, jobject, jlong value) {
+  ime_handwriting_free(reinterpret_cast<ImeHandwritingHandle *>(static_cast<intptr_t>(value)));
+}
+
+extern "C" JNIEXPORT jbyteArray JNICALL
+Java_dev_shurufa_ime_NativeIme_handwritingRecognize(JNIEnv *env, jobject, jlong value, jstring ink) {
+  const auto request = utf8(env, ink);
+  const char *result = ime_handwriting_recognize_json(
+      reinterpret_cast<ImeHandwritingHandle *>(static_cast<intptr_t>(value)), request.c_str());
+  if (!result) return nullptr;
+  const auto length = static_cast<jsize>(std::strlen(result));
+  jbyteArray bytes = env->NewByteArray(length);
+  if (bytes) env->SetByteArrayRegion(bytes, 0, length, reinterpret_cast<const jbyte *>(result));
+  return bytes;
+}
 
 extern "C" JNIEXPORT jlong JNICALL
 Java_dev_shurufa_ime_NativeIme_create(JNIEnv *env, jobject, jstring data_dir,

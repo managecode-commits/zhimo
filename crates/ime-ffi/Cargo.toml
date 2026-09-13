@@ -20,6 +20,8 @@ ime-engine-pinyin = { path = "../ime-engine-pinyin" }
 ime-engine-router = { path = "../ime-engine-router" }
 ime-engine-rime = { path = "../ime-engine-rime", optional = true }
 ime-speech = { path = "../ime-speech" }
+ime-handwriting = { path = "../ime-handwriting" }
+serde.workspace = true
 serde_json.workspace = true
 
 [lints.rust]

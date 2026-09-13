@@ -13,6 +13,9 @@ object NativeIme {
         rimeUserDirectory: String,
     ): Long
     external fun capabilities(): Long
+    external fun handwritingOpen(path: String): Long
+    external fun handwritingClose(handle: Long)
+    external fun handwritingRecognize(handle: Long, ink: String): ByteArray?
     external fun destroy(handle: Long)
     external fun feed(handle: Long, text: String): Int
     external fun command(handle: Long, command: Int): Int

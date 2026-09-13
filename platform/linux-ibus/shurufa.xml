@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component>
   <name>org.freedesktop.IBus.Shurufa</name>
-  <description>Shurufa multilingual input method</description>
+  <description>Zhimo multilingual input method</description>
   <exec>@SHURUFA_IBUS_EXEC@</exec>
   <version>0.1.0</version>
   <license>Apache-2.0</license>
   <author>Shurufa Contributors</author>
-  <homepage>https://shurufa.dev</homepage>
+  <homepage>https://github.com/managecode-commits/zhimo</homepage>
   <textdomain>shurufa</textdomain>
   <engines>
     <engine>
       <name>shurufa</name>
-      <longname>Shurufa Pinyin</longname>
+      <longname>Zhimo Pinyin (知墨输入法)</longname>
       <description>Privacy-first multilingual input</description>
       <language>zh_CN</language>
       <license>Apache-2.0</license>

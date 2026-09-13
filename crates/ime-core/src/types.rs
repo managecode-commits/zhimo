@@ -16,6 +16,8 @@ pub enum Key {
     Escape,
     Left,
     Right,
+    PageUp,
+    PageDown,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -143,6 +145,7 @@ pub struct Candidate {
 pub enum Action {
     UpdateComposition(Composition),
     ShowCandidates(Vec<Candidate>),
+    CandidatePage { index: usize, has_next: bool },
     CommitText(String),
     CloseComposition,
     Ignored,

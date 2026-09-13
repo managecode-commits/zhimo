@@ -53,55 +53,54 @@ impl PinyinEngine {
             .learning
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let mut unique_candidates = HashMap::<String, Candidate>::new();
-        for entry in lexicon().iter().filter(|entry| lookup.matches(entry)) {
+        let mut unique_candidates = HashMap::<String, (bool, Candidate)>::new();
+        for entry in lookup
+            .entries()
+            .iter()
+            .copied()
+            .filter(|entry| lookup.matches(entry))
+        {
             let learned_score = learning.score(input, &entry.text);
             let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
-            let exact_match_bonus = if lookup.exact(entry) {
-                1_000_000.0
-            } else {
-                0.0
-            };
+            let exact = lookup.exact(entry);
             let candidate = Candidate {
                 id: CandidateId(format!("pinyin:{}", entry.text)),
                 display_text: entry.text.clone(),
                 commit_text: entry.text.clone(),
                 language: Some("zh-CN".to_owned()),
                 source: "pinyin.reference".to_owned(),
-                score: f64::from(entry.weight)
-                    + f64::from(bounded_score) * 10_000.0
-                    + exact_match_bonus,
+                score: f64::from(entry.weight) + f64::from(bounded_score) * 10_000.0,
                 annotation: Some(entry.display_pinyin.clone()),
                 learning_allowed: true,
             };
             let existing = unique_candidates
                 .entry(entry.text.clone())
-                .or_insert_with(|| candidate.clone());
-            if candidate.score > existing.score {
-                *existing = candidate;
+                .or_insert_with(|| (exact, candidate.clone()));
+            if (exact && !existing.0) || (exact == existing.0 && candidate.score > existing.1.score)
+            {
+                *existing = (exact, candidate);
             }
         }
         let mut candidates = unique_candidates.into_values().collect::<Vec<_>>();
         candidates.sort_by(|left, right| {
             right
-                .score
-                .total_cmp(&left.score)
-                .then_with(|| left.commit_text.cmp(&right.commit_text))
+                .0
+                .cmp(&left.0)
+                .then_with(|| right.1.score.total_cmp(&left.1.score))
+                .then_with(|| left.1.commit_text.cmp(&right.1.commit_text))
         });
         candidates.truncate(50);
         candidates
+            .into_iter()
+            .map(|(_, candidate)| candidate)
+            .collect()
     }
 
     fn composing_actions(&self, input: &str) -> ActionBatch {
         let candidates = self.lookup(input);
-        let display_input = if normalized_t9_input(input).is_some() {
-            candidates
-                .first()
-                .and_then(|candidate| candidate.annotation.clone())
-                .unwrap_or_else(|| input.to_owned())
-        } else {
-            input.to_owned()
-        };
+        // Keep the editable buffer truthful. Ambiguous T9 interpretations belong
+        // in candidate annotations, not in a guessed/pre-completed preedit.
+        let display_input = input.to_owned();
         let composition = Composition {
             segments: vec![Segment {
                 text: display_input,
@@ -308,6 +307,23 @@ enum LookupInput {
 }
 
 impl LookupInput {
+    fn entries(&self) -> &'static [&'static LexiconEntry] {
+        static PINYIN: OnceLock<Vec<&'static LexiconEntry>> = OnceLock::new();
+        static T9: OnceLock<Vec<&'static LexiconEntry>> = OnceLock::new();
+        let (index, input, key): (_, _, fn(&LexiconEntry) -> &str) = match self {
+            Self::Pinyin(input) => (&PINYIN, input.as_str(), |entry| entry.pinyin.as_str()),
+            Self::T9(input) => (&T9, input.as_str(), |entry| entry.t9.as_str()),
+        };
+        let entries = index.get_or_init(|| {
+            let mut entries = lexicon().iter().collect::<Vec<_>>();
+            entries.sort_unstable_by(|left, right| key(left).cmp(key(right)));
+            entries
+        });
+        let start = entries.partition_point(|entry| key(entry) < input);
+        let count = entries[start..].partition_point(|entry| key(entry).starts_with(input));
+        &entries[start..start + count]
+    }
+
     fn new(input: &str) -> Option<Self> {
         if let Some(digits) = normalized_t9_input(input) {
             return Some(Self::T9(digits));
@@ -450,6 +466,27 @@ mod tests {
     }
 
     #[test]
+    fn exact_syllable_beats_project_prefix_boost() {
+        let engine = PinyinEngine::new();
+        assert_eq!(engine.lookup("re")[0].commit_text, "热");
+        assert_eq!(engine.lookup("ren")[0].commit_text, "人");
+    }
+
+    #[test]
+    fn indexed_lookup_matches_full_scan() {
+        for input in ["r", "re", "ren", "nihao", "64426", "78826", "zzzzzz"] {
+            let lookup = LookupInput::new(input).expect("input");
+            assert_eq!(
+                lookup.entries().len(),
+                lexicon()
+                    .iter()
+                    .filter(|entry| lookup.matches(entry))
+                    .count()
+            );
+        }
+    }
+
+    #[test]
     fn t9_nihao_sequence_exposes_and_commits_chinese_candidate() {
         let engine = PinyinEngine::new();
         let session = SessionId("t9-nihao".to_owned());
@@ -472,7 +509,7 @@ mod tests {
             Some("你好")
         );
         assert!(actions.0.iter().any(|action| {
-            matches!(action, Action::UpdateComposition(composition) if composition.segments[0].text == "ni hao")
+            matches!(action, Action::UpdateComposition(composition) if composition.segments[0].text == "64426" && composition.cursor == 5)
         }));
 
         let committed = engine

@@ -550,8 +550,18 @@ dependencies = [
  "ime-engine-pinyin",
  "ime-engine-rime",
  "ime-engine-router",
+ "ime-handwriting",
  "ime-speech",
+ "serde",
  "serde_json",
+]
+
+[[package]]
+name = "ime-handwriting"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "sha2",
 ]
 
 [[package]]

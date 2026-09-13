@@ -3,6 +3,17 @@ package dev.shurufa.ime
 import android.text.InputType
 
 object PlatformPolicy {
+    fun isPassword(inputType: Int): Boolean {
+        val variation = inputType and InputType.TYPE_MASK_VARIATION
+        return when (inputType and InputType.TYPE_MASK_CLASS) {
+            InputType.TYPE_CLASS_NUMBER -> variation == InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            InputType.TYPE_CLASS_TEXT -> variation == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                variation == InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD ||
+                variation == InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD
+            else -> false
+        }
+    }
+
     fun engine(
         pinyin: Boolean,
         nativeRimeAvailable: Boolean,

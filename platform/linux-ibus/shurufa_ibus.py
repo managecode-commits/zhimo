@@ -131,6 +131,8 @@ class ShurufaEngine(IBus.Engine):
         self.composing = False
         self.pinyin = True
         self.scope = 0
+        self.handwriting = None
+        self.focused = False
         self.learning_allowed = True
         self.application_id: str | None = None
         self.mode_property = IBus.Property.new(
@@ -149,6 +151,7 @@ class ShurufaEngine(IBus.Engine):
         self.register_properties(properties)
 
     def do_destroy(self) -> None:
+        self.close_handwriting()
         if self.runtime:
             self.runtime.close()
         super().destroy()
@@ -205,6 +208,7 @@ class ShurufaEngine(IBus.Engine):
         self.hide_lookup_table()
 
     def toggle_mode(self) -> None:
+        self.close_handwriting()
         if not self.runtime or self.scope == 1:
             return
         self.reset_composition()
@@ -231,6 +235,22 @@ class ShurufaEngine(IBus.Engine):
         del keycode
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
+        if keyval in (IBus.KEY_h, IBus.KEY_H) and state & IBus.ModifierType.CONTROL_MASK and state & IBus.ModifierType.SHIFT_MASK:
+            if self.scope == 1 or not self.runtime or not self.focused:
+                return False
+            if self.handwriting and not self.handwriting.closed:
+                self.close_handwriting()
+            else:
+                if self.composing:
+                    self.apply_actions(self.runtime.command(2))
+                try:
+                    from handwriting_panel import HandwritingPanel
+                    self.handwriting = HandwritingPanel(self.runtime.library, self.commit_handwriting)
+                except Exception:
+                    self.handwriting = None
+                    print("Shurufa handwriting unavailable; check GTK and model installation", file=sys.stderr)
+            return True
+        self.close_handwriting()
         if keyval == IBus.KEY_space and state & IBus.ModifierType.SHIFT_MASK:
             self.toggle_mode()
             return self.runtime is not None and self.scope != 1
@@ -277,6 +297,7 @@ class ShurufaEngine(IBus.Engine):
         return False
 
     def do_reset(self) -> None:
+        self.close_handwriting()
         self.reset_composition()
 
     def do_candidate_clicked(self, index: int, button: int, state: int) -> None:
@@ -306,6 +327,7 @@ class ShurufaEngine(IBus.Engine):
             self.toggle_mode()
 
     def do_set_content_type(self, purpose: int, hints: int) -> None:
+        self.close_handwriting()
         private = bool(hints & (IBus.InputHints.PRIVATE | IBus.InputHints.HIDDEN_TEXT))
         if purpose in (IBus.InputPurpose.PASSWORD, IBus.InputPurpose.PIN) or private:
             scope = 1
@@ -324,19 +346,38 @@ class ShurufaEngine(IBus.Engine):
         self.update_context()
 
     def do_focus_in_id(self, object_path: str, client: str) -> None:
+        self.close_handwriting()
+        self.focused = True
         del object_path
         self.application_id = client or None
         self.update_context()
 
     def do_focus_in(self) -> None:
+        self.close_handwriting()
+        self.focused = True
         self.update_context()
 
     def do_focus_out_id(self, object_path: str) -> None:
+        self.focused = False
+        self.close_handwriting()
         del object_path
         self.reset_composition()
 
     def do_focus_out(self) -> None:
+        self.focused = False
+        self.close_handwriting()
         self.reset_composition()
+
+    def close_handwriting(self) -> None:
+        if self.handwriting:
+            self.handwriting.close()
+            self.handwriting = None
+
+    def commit_handwriting(self, text: str) -> bool:
+        if not self.focused or self.scope == 1:
+            return False
+        self.commit_text(IBus.Text.new_from_string(text))
+        return True
 
 
 def main() -> int:
@@ -352,18 +393,18 @@ def main() -> int:
     else:
         component = IBus.Component.new(
             "org.freedesktop.IBus.Shurufa",
-            "Shurufa multilingual input method",
+            "Zhimo multilingual input method",
             "0.1.0",
             "Apache-2.0",
             "Shurufa Contributors",
-            "https://shurufa.dev",
+            "https://github.com/managecode-commits/zhimo",
             "",
             "shurufa",
         )
         component.add_engine(
             IBus.EngineDesc.new(
                 "shurufa",
-                "Shurufa Pinyin",
+                "Zhimo Pinyin (知墨输入法)",
                 "Privacy-first multilingual input",
                 "zh_CN",
                 "Apache-2.0",

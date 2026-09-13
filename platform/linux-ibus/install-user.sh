@@ -20,6 +20,9 @@ cargo build --release -p ime-ffi
 install -d "$install_root/lib" "$binary_dir" "$component_dir"
 install -m 755 target/release/libime_ffi.so "$install_root/lib/libime_ffi.so"
 install -m 755 platform/linux-ibus/shurufa_ibus.py "$binary_dir/shurufa-ibus"
+install -m 644 platform/linux-ibus/handwriting_panel.py "$binary_dir/handwriting_panel.py"
+install -d "$install_root/models"
+cp -R models/handwriting "$install_root/models/"
 
 temporary_component="$(mktemp)"
 trap 'rm -f "$temporary_component"' EXIT

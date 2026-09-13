@@ -47,4 +47,7 @@ if(WIN32)
   add_custom_command(TARGET shurufa-tsf POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       "${SHURUFA_IME_RUNTIME_DLL}" "$<TARGET_FILE_DIR:shurufa-tsf>")
+  add_custom_command(TARGET shurufa-tsf POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "${SHURUFA_ROOT}/models/handwriting" "$<TARGET_FILE_DIR:shurufa-tsf>/models/handwriting")
 endif()
