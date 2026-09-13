@@ -93,9 +93,18 @@ impl PinyinEngine {
     }
 
     fn composing_actions(&self, input: &str) -> ActionBatch {
+        let candidates = self.lookup(input);
+        let display_input = if normalized_t9_input(input).is_some() {
+            candidates
+                .first()
+                .and_then(|candidate| candidate.annotation.clone())
+                .unwrap_or_else(|| input.to_owned())
+        } else {
+            input.to_owned()
+        };
         let composition = Composition {
             segments: vec![Segment {
-                text: input.to_owned(),
+                text: display_input,
                 state: SegmentState::Composing,
                 language: Some("zh-Latn-pinyin".to_owned()),
             }],
@@ -103,7 +112,7 @@ impl PinyinEngine {
         };
         ActionBatch(vec![
             Action::UpdateComposition(composition),
-            Action::ShowCandidates(self.lookup(input)),
+            Action::ShowCandidates(candidates),
         ])
     }
 }
@@ -462,6 +471,9 @@ mod tests {
                 .map(|item| item.commit_text.as_str()),
             Some("你好")
         );
+        assert!(actions.0.iter().any(|action| {
+            matches!(action, Action::UpdateComposition(composition) if composition.segments[0].text == "ni hao")
+        }));
 
         let committed = engine
             .process(

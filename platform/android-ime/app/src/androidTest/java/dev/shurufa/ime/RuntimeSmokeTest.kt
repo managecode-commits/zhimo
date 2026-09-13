@@ -1,6 +1,7 @@
 package dev.shurufa.ime
 
 import android.text.InputType
+import android.content.res.Configuration
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
@@ -43,6 +44,7 @@ class RuntimeSmokeTest {
         assertTrue(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.TEXT))
         assertFalse(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.NUMBER))
         assertFalse(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.SYMBOL))
+        assertFalse(PlatformPolicy.shouldRouteEditingToEngine(KeyboardPage.EMOJI))
         assertTrue(
             PlatformPolicy.shouldInitializeKeyboardState(
                 restarting = false,
@@ -74,6 +76,39 @@ class RuntimeSmokeTest {
         assertEquals(KeyboardPage.TEXT, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_TEXT))
         assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_NUMBER))
         assertEquals(KeyboardPage.NUMBER, PlatformPolicy.initialKeyboardPage(InputType.TYPE_CLASS_PHONE))
+        assertEquals(
+            listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "-"),
+            KeyboardUiModel.numberRows(InputType.TYPE_CLASS_TEXT).flatten(),
+        )
+        assertEquals(
+            listOf("*", "0", "#"),
+            KeyboardUiModel.numberRows(InputType.TYPE_CLASS_PHONE).last(),
+        )
+        assertEquals(
+            listOf(".", "0", "-"),
+            KeyboardUiModel.numberRows(
+                InputType.TYPE_CLASS_NUMBER or
+                    InputType.TYPE_NUMBER_FLAG_DECIMAL or
+                    InputType.TYPE_NUMBER_FLAG_SIGNED,
+            ).last(),
+        )
+        assertEquals("1", KeyboardUiModel.longPressValue('q'))
+        assertEquals("?", KeyboardUiModel.longPressValue('m'))
+        assertEquals(OneHandMode.LEFT, OneHandMode.CENTER.next())
+        assertEquals(OneHandMode.RIGHT, OneHandMode.LEFT.next())
+        assertEquals(OneHandMode.CENTER, OneHandMode.RIGHT.next())
+        assertEquals(0.82f, KeyboardUiModel.keyboardWidthFraction(OneHandMode.LEFT, 400))
+        assertEquals(0.62f, KeyboardUiModel.keyboardWidthFraction(OneHandMode.RIGHT, 700))
+        assertTrue(
+            KeyboardUiModel.keyHeightDp(
+                Configuration.ORIENTATION_PORTRAIT,
+                KeyboardSize.COMPACT,
+                1.3f,
+            ) >= 62,
+        )
+        assertTrue(KeyboardUiModel.chineseSymbolPages.all { it.size == 3 })
+        assertTrue(KeyboardUiModel.englishSymbolPages.all { it.size == 3 })
+        assertEquals(32, KeyboardUiModel.emojiRows.flatten().size)
         assertEquals(1, PlatformText.previousGraphemeUtf16Length("a"))
         assertEquals(2, PlatformText.previousGraphemeUtf16Length("e\u0301"))
         assertEquals(11, PlatformText.previousGraphemeUtf16Length("👨‍👩‍👧‍👦"))

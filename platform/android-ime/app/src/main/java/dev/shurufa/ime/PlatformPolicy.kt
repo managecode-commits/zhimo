@@ -2,12 +2,6 @@ package dev.shurufa.ime
 
 import android.text.InputType
 
-enum class KeyboardPage {
-    TEXT,
-    NUMBER,
-    SYMBOL,
-}
-
 object PlatformPolicy {
     fun engine(
         pinyin: Boolean,
