@@ -388,7 +388,20 @@ impl InputEngine for PinyinEngine {
                         self.phrases.lock().map_err(lock_error)?.remove(session);
                     }
                 }
-                Key::Space | Key::Enter => {
+                Key::Enter => {
+                    // Return commits what was typed; Space selects a Chinese
+                    // candidate. Never learn a candidate from a raw-text commit.
+                    self.readings.lock().map_err(lock_error)?.remove(session);
+                    self.phrases.lock().map_err(lock_error)?.remove(session);
+                    if input.is_empty() {
+                        return Ok(ActionBatch(vec![Action::Ignored]));
+                    }
+                    return Ok(ActionBatch(vec![
+                        Action::CommitText(std::mem::take(input)),
+                        Action::CloseComposition,
+                    ]));
+                }
+                Key::Space => {
                     let selected = self.readings.lock().map_err(lock_error)?.get(session).cloned();
                     if let Some(candidate) = self.lookup_reading(input, selected.as_deref()).first() {
                         return self.commit_candidate(session, input, candidate, context);
@@ -968,6 +981,26 @@ mod tests {
         assert_eq!(t9_signature("shu'ru'fa"), "7487832");
         assert_eq!(t9_signature("zhongwen"), "94664936");
         assert!(pinyin_exact_match("nihao", "64'426"));
+    }
+
+    #[test]
+    fn return_commits_raw_pinyin_while_space_selects_chinese() {
+        for (text, expected) in [("jixu", "继续"), ("nihao", "你好")] {
+            for key in [Key::Enter, Key::Space] {
+                let engine = PinyinEngine::new();
+                let session = SessionId("return-space".to_owned());
+                let context = InputContext::default();
+                engine.create_session(&session).unwrap();
+                engine.process(&session, &InputEvent::Text(text.to_owned()), &context).unwrap();
+                let actions = engine.process(&session,
+                    &InputEvent::Key(ime_core::KeyEvent::press(key.clone())), &context).unwrap();
+                assert_eq!(actions.committed_text(), Some(if key == Key::Enter { text } else { expected }));
+                let idle = engine.process(&session,
+                    &InputEvent::Key(ime_core::KeyEvent::press(Key::Enter)), &context).unwrap();
+                assert_eq!(idle.committed_text(), None);
+                assert!(matches!(idle.0.as_slice(), [Action::Ignored]));
+            }
+        }
     }
 
     #[test]

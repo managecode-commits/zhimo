@@ -38,6 +38,12 @@ with tempfile.TemporaryDirectory(prefix='zhimo-rime-smoke-') as directory:
     runtime = module.Runtime()
     try:
         assert runtime.pinyin_engine == 'rime'
+        for command, expected in [(1, 'jixu'), (2, '继续')]:
+            runtime.command(3)
+            runtime.feed('jixu')
+            actions = runtime.command(command)
+            assert any(action.get('CommitText') == expected for action in actions), actions
+            print(f'jixu command {command}: {expected} commit OK')
         for pinyin, expected in [('nihao', '你好'), ('lvdai', '履带'), ('wulianwang', '物联网'), ('zhimo', '知墨'), ("zhi'mo", '知墨'), ('nh', '你好'), ('wm', '我们'), ('zg', '中国'), ('nih', '你好'), ('nhao', '你好'), ('wulw', '物联网'), ("n'h", '你好')]:
             runtime.library.ime_runtime_send_command(runtime.handle, 3)
             for char in pinyin:

@@ -978,6 +978,27 @@ mod tests {
     }
 
     #[test]
+    fn c_abi_pinyin_return_commits_raw_and_space_commits_candidate() {
+        unsafe {
+            let handle = ime_runtime_new();
+            assert!(!handle.is_null());
+            let engine = CString::new("pinyin.reference").unwrap();
+            let input = CString::new("jixu").unwrap();
+            assert_eq!(ime_runtime_switch_engine(handle, engine.as_ptr()), 0);
+            for (command, expected) in [(1, "jixu"), (2, "继续")] {
+                assert_eq!(ime_runtime_feed_utf8(handle, input.as_ptr()), 0);
+                assert_eq!(ime_runtime_send_command(handle, command), 0);
+                let commits: Vec<_> = (0..ime_runtime_action_count(handle))
+                    .filter(|index| ime_runtime_action_kind(handle, *index) == 3)
+                    .map(|index| CStr::from_ptr(ime_runtime_action_text(handle, index)).to_str().unwrap().to_owned())
+                    .collect();
+                assert_eq!(commits, vec![expected]);
+            }
+            ime_runtime_free(handle);
+        }
+    }
+
+    #[test]
     fn c_abi_rejects_unknown_input_scope() {
         let handle = ime_runtime_new();
         unsafe {

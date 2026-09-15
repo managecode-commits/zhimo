@@ -59,6 +59,15 @@ class KeyboardTests(unittest.TestCase):
         self.assertTrue(self.key(obj, IBus.KEY_space))
         self.assertEqual(events, [('select', 4)])
 
+    def test_return_uses_raw_commit_command_not_candidate_selection(self):
+        for key in (IBus.KEY_Return, IBus.KEY_KP_Enter):
+            obj, events = self.fixture(composing=True, cursor=4)
+            self.assertTrue(self.key(obj, key))
+            self.assertEqual(events, [('command', 1)])
+            obj, events = self.fixture(composing=False)
+            self.assertFalse(self.key(obj, key))
+            self.assertEqual(events, [])
+
     def test_punctuation_closes_before_forwarding(self):
         for ch in ',.!"0':
             obj, events = self.fixture(composing=True, cursor=2)
