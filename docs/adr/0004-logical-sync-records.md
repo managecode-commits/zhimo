@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # ADR-0004：同步逻辑记录而非数据库文件
 
 - 状态：已接受

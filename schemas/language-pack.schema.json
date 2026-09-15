@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://shurufa.dev/schemas/language-pack-v1.json",
-  "title": "Shurufa language pack manifest",
+  "$id": "https://zhimo.dev/schemas/language-pack-v1.json",
+  "title": "Zhimo language pack manifest",
   "type": "object",
   "required": ["schemaVersion", "id", "version", "languages", "engine", "offline", "license"],
   "properties": {

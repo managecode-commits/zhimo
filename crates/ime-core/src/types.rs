@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use serde::Serialize;
 use std::fmt;
 
@@ -146,6 +147,8 @@ pub enum Action {
     UpdateComposition(Composition),
     ShowCandidates(Vec<Candidate>),
     CandidatePage { index: usize, has_next: bool },
+    /// Optional phonetic disambiguation UI; selecting a reading must not commit text.
+    PinyinReadings { readings: Vec<String>, selected: Option<String> },
     CommitText(String),
     CloseComposition,
     Ignored,

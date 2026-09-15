@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Native librime backend enabled by the `native-librime` feature.
 
 use std::ffi::{c_char, c_int, c_ulonglong, CString};
@@ -6,33 +7,26 @@ use std::path::Path;
 use crate::{RimeBackend, RimeSnapshot};
 
 unsafe extern "C" {
-    fn shurufa_rime_initialize(shared_dir: *const c_char, user_dir: *const c_char) -> c_int;
-    fn shurufa_rime_finalize();
-    fn shurufa_rime_create_session() -> c_ulonglong;
-    fn shurufa_rime_destroy_session(session: c_ulonglong);
-    fn shurufa_rime_process_key(session: c_ulonglong, keycode: c_int, modifiers: c_int) -> c_int;
-    fn shurufa_rime_clear(session: c_ulonglong);
-    fn shurufa_rime_select_candidate(session: c_ulonglong, index: usize) -> c_int;
-    fn shurufa_rime_copy_preedit(
-        session: c_ulonglong,
-        output: *mut c_char,
-        capacity: usize,
-    ) -> usize;
-    fn shurufa_rime_candidate_count(session: c_ulonglong) -> usize;
-    fn shurufa_rime_page_index(session: c_ulonglong) -> usize;
-    fn shurufa_rime_has_next_page(session: c_ulonglong) -> c_int;
-    fn shurufa_rime_copy_candidate(
+    fn zhimo_rime_initialize(shared_dir: *const c_char, user_dir: *const c_char) -> c_int;
+    fn zhimo_rime_finalize();
+    fn zhimo_rime_create_session() -> c_ulonglong;
+    fn zhimo_rime_destroy_session(session: c_ulonglong);
+    fn zhimo_rime_process_key(session: c_ulonglong, keycode: c_int, modifiers: c_int) -> c_int;
+    fn zhimo_rime_clear(session: c_ulonglong);
+    fn zhimo_rime_select_candidate(session: c_ulonglong, index: usize) -> c_int;
+    fn zhimo_rime_copy_preedit(session: c_ulonglong, output: *mut c_char, capacity: usize)
+        -> usize;
+    fn zhimo_rime_candidate_count(session: c_ulonglong) -> usize;
+    fn zhimo_rime_page_index(session: c_ulonglong) -> usize;
+    fn zhimo_rime_has_next_page(session: c_ulonglong) -> c_int;
+    fn zhimo_rime_copy_candidate(
         session: c_ulonglong,
         index: usize,
         comment: c_int,
         output: *mut c_char,
         capacity: usize,
     ) -> usize;
-    fn shurufa_rime_take_commit(
-        session: c_ulonglong,
-        output: *mut c_char,
-        capacity: usize,
-    ) -> usize;
+    fn zhimo_rime_take_commit(session: c_ulonglong, output: *mut c_char, capacity: usize) -> usize;
 }
 
 pub struct NativeRimeBackend;
@@ -40,7 +34,7 @@ pub struct NativeRimeBackend;
 impl Drop for NativeRimeBackend {
     fn drop(&mut self) {
         // SAFETY: each successful initialization owns one shim lifecycle reference.
-        unsafe { shurufa_rime_finalize() }
+        unsafe { zhimo_rime_finalize() }
     }
 }
 
@@ -55,7 +49,7 @@ impl NativeRimeBackend {
         let shared = CString::new(shared_dir).map_err(|_| "shared directory contains NUL")?;
         let user = CString::new(user_dir).map_err(|_| "user directory contains NUL")?;
         // SAFETY: both strings are valid and retained for the duration of the call; the shim copies traits during initialization.
-        if unsafe { shurufa_rime_initialize(shared.as_ptr(), user.as_ptr()) } == 0 {
+        if unsafe { zhimo_rime_initialize(shared.as_ptr(), user.as_ptr()) } == 0 {
             Err("librime initialization failed".to_owned())
         } else {
             Ok(Self)
@@ -77,7 +71,7 @@ impl NativeRimeBackend {
         // single call rather than the two-pass sizing used for stable context.
         let mut buffer = vec![0_u8; 64 * 1024];
         let length =
-            unsafe { shurufa_rime_take_commit(session, buffer.as_mut_ptr().cast(), buffer.len()) };
+            unsafe { zhimo_rime_take_commit(session, buffer.as_mut_ptr().cast(), buffer.len()) };
         let copied = length.min(buffer.len().saturating_sub(1));
         String::from_utf8_lossy(&buffer[..copied]).into_owned()
     }
@@ -85,16 +79,16 @@ impl NativeRimeBackend {
     fn snapshot(session: u64) -> RimeSnapshot {
         // SAFETY: session was created by the shim and buffers are managed by copy helpers.
         let preedit = Self::copy_string(|output, capacity| unsafe {
-            shurufa_rime_copy_preedit(session, output, capacity)
+            zhimo_rime_copy_preedit(session, output, capacity)
         });
-        let count = unsafe { shurufa_rime_candidate_count(session) };
+        let count = unsafe { zhimo_rime_candidate_count(session) };
         let candidates = (0..count)
             .map(|index| {
                 let text = Self::copy_string(|output, capacity| unsafe {
-                    shurufa_rime_copy_candidate(session, index, 0, output, capacity)
+                    zhimo_rime_copy_candidate(session, index, 0, output, capacity)
                 });
                 let comment = Self::copy_string(|output, capacity| unsafe {
-                    shurufa_rime_copy_candidate(session, index, 1, output, capacity)
+                    zhimo_rime_copy_candidate(session, index, 1, output, capacity)
                 });
                 (text, (!comment.is_empty()).then_some(comment))
             })
@@ -104,8 +98,8 @@ impl NativeRimeBackend {
             preedit,
             candidates,
             commit: (!commit.is_empty()).then_some(commit),
-            page_index: unsafe { shurufa_rime_page_index(session) },
-            has_next_page: unsafe { shurufa_rime_has_next_page(session) } != 0,
+            page_index: unsafe { zhimo_rime_page_index(session) },
+            has_next_page: unsafe { zhimo_rime_has_next_page(session) } != 0,
         }
     }
 }
@@ -113,13 +107,13 @@ impl NativeRimeBackend {
 impl RimeBackend for NativeRimeBackend {
     type Session = u64;
     fn create_session(&mut self) -> Result<Self::Session, String> {
-        let session = unsafe { shurufa_rime_create_session() };
+        let session = unsafe { zhimo_rime_create_session() };
         (session != 0)
             .then_some(session)
             .ok_or_else(|| "librime did not create a session".to_owned())
     }
     fn destroy_session(&mut self, session: Self::Session) {
-        unsafe { shurufa_rime_destroy_session(session) }
+        unsafe { zhimo_rime_destroy_session(session) }
     }
     fn process_key(
         &mut self,
@@ -127,7 +121,7 @@ impl RimeBackend for NativeRimeBackend {
         keycode: i32,
         modifiers: i32,
     ) -> Result<RimeSnapshot, String> {
-        unsafe { shurufa_rime_process_key(session, keycode, modifiers) };
+        unsafe { zhimo_rime_process_key(session, keycode, modifiers) };
         Ok(Self::snapshot(session))
     }
     fn select_candidate(
@@ -135,13 +129,13 @@ impl RimeBackend for NativeRimeBackend {
         session: Self::Session,
         index: usize,
     ) -> Result<RimeSnapshot, String> {
-        if unsafe { shurufa_rime_select_candidate(session, index) } == 0 {
+        if unsafe { zhimo_rime_select_candidate(session, index) } == 0 {
             return Err("librime rejected candidate".to_owned());
         }
         Ok(Self::snapshot(session))
     }
     fn clear(&mut self, session: Self::Session) -> Result<RimeSnapshot, String> {
-        unsafe { shurufa_rime_clear(session) };
+        unsafe { zhimo_rime_clear(session) };
         Ok(Self::snapshot(session))
     }
 }
@@ -153,7 +147,7 @@ mod tests {
     #[test]
     fn rejects_missing_shared_data_before_native_initialization() {
         let missing =
-            std::env::temp_dir().join(format!("shurufa-missing-rime-{}", std::process::id()));
+            std::env::temp_dir().join(format!("zhimo-missing-rime-{}", std::process::id()));
         assert!(NativeRimeBackend::initialize(
             missing.to_string_lossy().as_ref(),
             missing.to_string_lossy().as_ref(),

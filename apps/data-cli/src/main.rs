@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::path::Path;
 
 use ime_data::{LearningModel, SqliteStore};

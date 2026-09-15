@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright © 2026 立方田 <managecode@gmail.com>
 """Synthetic perturbations of training-source ink; NOT real-user accuracy.
 
 Usage: python3 tools/verify-handwriting-robustness.py NEW_LIBRARY [OLD_LIBRARY]

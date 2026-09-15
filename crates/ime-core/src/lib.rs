@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Language-neutral input runtime primitives.
 
 mod runtime;

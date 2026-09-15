@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
@@ -44,15 +45,15 @@ async fn main() {
 }
 
 async fn run() -> Result<(), String> {
-    let bind = std::env::var("SHURUFA_SYNC_BIND").unwrap_or_else(|_| "127.0.0.1:8787".to_owned());
-    let database = std::env::var("SHURUFA_SYNC_DATABASE")
-        .unwrap_or_else(|_| "shurufa-sync.sqlite3".to_owned());
-    let account = std::env::var("SHURUFA_SYNC_ACCOUNT")
-        .map_err(|_| "SHURUFA_SYNC_ACCOUNT is required".to_owned())?;
-    let token = std::env::var("SHURUFA_SYNC_TOKEN")
-        .map_err(|_| "SHURUFA_SYNC_TOKEN is required".to_owned())?;
+    let bind = std::env::var("ZHIMO_SYNC_BIND").unwrap_or_else(|_| "127.0.0.1:8787".to_owned());
+    let database =
+        std::env::var("ZHIMO_SYNC_DATABASE").unwrap_or_else(|_| "zhimo-sync.sqlite3".to_owned());
+    let account = std::env::var("ZHIMO_SYNC_ACCOUNT")
+        .map_err(|_| "ZHIMO_SYNC_ACCOUNT is required".to_owned())?;
+    let token =
+        std::env::var("ZHIMO_SYNC_TOKEN").map_err(|_| "ZHIMO_SYNC_TOKEN is required".to_owned())?;
     if token.len() < 32 {
-        return Err("SHURUFA_SYNC_TOKEN must contain at least 32 characters".to_owned());
+        return Err("ZHIMO_SYNC_TOKEN must contain at least 32 characters".to_owned());
     }
     let connection = open_database(Path::new(&database)).map_err(|error| error.to_string())?;
     let state = AppState {

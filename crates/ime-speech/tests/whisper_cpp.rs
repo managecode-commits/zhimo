@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
@@ -17,7 +18,7 @@ fn transcribes_real_audio_without_blocking_poll() {
     let mut provider = WhisperCppProvider::new(
         executable,
         model,
-        std::env::temp_dir().join("shurufa-whisper-tests"),
+        std::env::temp_dir().join("zhimo-whisper-tests"),
     );
     let handle = provider
         .start(&SpeechSessionConfig {

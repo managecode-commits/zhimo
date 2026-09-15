@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # Speech Provider SDK v1
 
 `ime_speech::SpeechProvider` 把采集、识别和输入提交解耦。Provider 接收规范化 PCM frame，

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::sync::Arc;
 
 use ime_core::{Action, InputContext, InputEvent, Key, KeyEvent, Runtime};

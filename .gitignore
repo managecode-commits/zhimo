@@ -28,3 +28,4 @@ __pycache__/
 *.pfx
 *.apk
 *.aab
+/models/speech/*.bin

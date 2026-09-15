@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # Platform Bridge v1
 
 平台桥只负责操作系统事件与 Runtime C ABI 之间的转换，不包含语言、排序或学习逻辑。
@@ -30,7 +31,7 @@ Runtime 只能使用平台已声明且当前会话允许的能力。安全文本
 
 平台加载后先调用 `ime_runtime_abi_version()` 和 `ime_runtime_capabilities()`。当前 ABI 为
 `1.1`（返回值 `0x00010001`）；主版本不兼容时必须停止加载，次版本不足时按 capability
-降级。能力位定义以 `include/shurufa_ime.h` 为唯一来源。
+降级。能力位定义以 `include/zhimo_ime.h` 为唯一来源。
 
 动作有两种兼容读取方式：
 
@@ -41,6 +42,10 @@ Runtime 只能使用平台已声明且当前会话允许的能力。安全文本
 结构化查询返回的字符串由 Runtime 持有，只在下一次查询或会话变更前有效；平台必须立即
 复制。动作类型 `1..5` 依次为组合更新、候选、提交、关闭和忽略。候选字段 `0..3` 依次为
 ID、显示文本、提交文本和注释。平台必须按动作原顺序应用，不能把 Commit 合并或重排。
+
+可选动作 `6` 为候选分页，`7` 为 `PinyinReadings { readings, selected }` 读音筛选状态，
+详情从 JSON 接口读取。九键可通过候选选择接口发送 `pinyin-reading:<reading>`，
+仅筛选候选、不提交文字；空 reading 恢复自动。旧平台应忽略未知动作编号。
 
 语音既可由平台系统 ASR 通过 `ime_runtime_speech_result()` 注入，也可使用
 `ime_speech_*` 管理离线 whisper.cpp 会话。密码 scope 下启动和结果注入都会被拒绝；取消

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 fn main() {
     println!("cargo:rerun-if-changed=native/rime_shim.c");
     println!("cargo:rerun-if-env-changed=RIME_ROOT");
@@ -9,7 +10,7 @@ fn main() {
         .file("native/rime_shim.c")
         .include(format!("{root}/include"))
         .warnings(true)
-        .compile("shurufa_rime_shim");
+        .compile("zhimo_rime_shim");
     println!("cargo:rustc-link-search=native={root}/lib");
     println!("cargo:rustc-link-lib=rime");
 }

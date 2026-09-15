@@ -1,3 +1,4 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
 [workspace]
 members = [
     "crates/ime-core",

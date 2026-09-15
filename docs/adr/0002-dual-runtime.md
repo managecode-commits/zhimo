@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # ADR-0002：轻量输入运行时与后台服务分离
 
 - 状态：已接受

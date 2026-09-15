@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # 密文同步服务
 
 Release 构建、运行和健康检查参见
@@ -6,9 +7,9 @@ Release 构建、运行和健康检查参见
 服务端只保存客户端生成的加密 envelope，不接触学习记录明文或密钥。接口支持幂等上传、增量拉取和设备撤销。
 
 ```bash
-SHURUFA_SYNC_ACCOUNT=demo \
-SHURUFA_SYNC_TOKEN='replace-with-at-least-32-random-characters' \
-SHURUFA_SYNC_DATABASE=sync.sqlite3 \
+ZHIMO_SYNC_ACCOUNT=demo \
+ZHIMO_SYNC_TOKEN='replace-with-at-least-32-random-characters' \
+ZHIMO_SYNC_DATABASE=sync.sqlite3 \
 cargo run -p sync-server
 ```
 

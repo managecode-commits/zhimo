@@ -1,4 +1,5 @@
-#include "shurufa_ime.h"
+// Copyright © 2026 立方田 <managecode@gmail.com>
+#include "zhimo_ime.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -6,7 +7,7 @@
 
 int main(void) {
     assert(ime_runtime_abi_version() >= 0x00010001U);
-    assert((ime_runtime_capabilities() & SHURUFA_CAP_STRUCTURED_ACTIONS) != 0);
+    assert((ime_runtime_capabilities() & ZHIMO_CAP_STRUCTURED_ACTIONS) != 0);
     ImeHandle *ime = ime_runtime_new();
     assert(ime != NULL);
     assert(ime_runtime_set_input_scope(ime, 0) == 0);

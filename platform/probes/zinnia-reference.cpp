@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 // Test-only reference bridge. Compile against the pinned upstream BSD Zinnia sources.
 #include "zinnia.h"
 #include <iostream>

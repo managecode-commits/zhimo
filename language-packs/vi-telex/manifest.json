@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "dev.shurufa.lang.vi-telex",
+  "id": "dev.zhimo.lang.vi-telex",
   "version": "0.1.0",
   "languages": ["vi"],
   "engine": "vietnamese.telex",

@@ -1,4 +1,11 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # Android IME
+
+内置离线语音版本见 [内置离线语音交付](../../docs/内置离线语音交付.md)：默认使用本地 Base Q5_1 模型，无需系统语音服务；停止录音后转录，非流式。构建前执行 `bash tools/prepare-offline-speech.sh`（仓库根目录），统一 Beta/Release 脚本已自动调用。
+
+数字/字母手写历史测试包：`app/build/outputs/apk/debug/zhimo-alphabet-debug.apk`。手写左上角可循环切换「混合 / 中文 / 数字 / 字母」，支持大小写、连写和逐字纠正；使用方式和验收边界见 [数字字母与混合手写](../../docs/数字字母与混合手写.md)。该历史包未内置语音模型；新语音版保留上述手写能力。
+
+当前工程包名已统一为 `dev.zhimo.ime`，不能覆盖旧包名应用；请保留旧应用数据并另行启用新版。最新迁移构建与验证见 [工程标识统一验收](../../docs/工程标识统一验收.md)。
 
 当前 Zhimo 连写版支持完整词组优先和逐字纠正，见 [连写候选排序与逐字纠正](../../docs/连写候选排序与逐字纠正.md)。
 
@@ -60,8 +67,8 @@ fcitx5-android 预构建依赖，使用现有 Android SDK/NDK 为三个 ABI 编�
 ```
 
 默认 Rime 前缀输出到 `target/android-rime`，下载和中间编译文件缓存在
-`${XDG_CACHE_HOME:-$HOME/.cache}/shurufa-librime`。再次执行会复用源码、依赖和编译缓存。
-可通过 `ANDROID_RIME_ROOT` 改变前缀目录，通过 `SHURUFA_ANDROID_RIME_CACHE` 改变缓存目录。
+`${XDG_CACHE_HOME:-$HOME/.cache}/zhimo-librime`。再次执行会复用源码、依赖和编译缓存。
+可通过 `ANDROID_RIME_ROOT` 改变前缀目录，通过 `ZHIMO_ANDROID_RIME_CACHE` 改变缓存目录。
 只构建 Rime 前缀而不打 APK 时执行 `./tools/build-android-librime.sh [输出目录]`。
 独立产物为 `app/build/outputs/apk/debug/app-debug-rime.apk` 及同目录 SHA-256 文件；Rime
 模式的设备测试会额外强制断言原生引擎初始化并成功选中，不能通过参考拼音降级掩盖失败。
@@ -97,8 +104,8 @@ APK，并阻断 JNI `DT_NEEDED` 中的构建机绝对路径。
 完整资源。手工启用组件可执行：
 
 ```bash
-adb shell ime enable dev.shurufa.ime/.ShurufaInputMethodService
-adb shell ime set dev.shurufa.ime/.ShurufaInputMethodService
+adb shell ime enable dev.zhimo.ime/.ZhimoInputMethodService
+adb shell ime set dev.zhimo.ime/.ZhimoInputMethodService
 ```
 
 候选 JSON 的字段约定来自 `docs/api/platform-bridge.md`。配套 Activity 已提供启用/选择输入法、
@@ -135,17 +142,17 @@ emoji、用户显式触发的剪贴板粘贴、长按连续删除、字母长按
 语音、学习和剪贴板读取。滑行输入仍需独立轨迹解码器，未用普通按键事件伪装实现。
 
 已验证的自动化设备基线是 Android 15 / API 35 AOSP ATD x86_64；
-`shurufa_visual_api35` 模拟器上六项 instrumentation 测试全部通过，且已可视化验证26键
+`zhimo_visual_api35` 模拟器上六项 instrumentation 测试全部通过，且已可视化验证26键
 `putao → 葡萄`、空格选词提交，以及9键 `78826 → 葡萄`。模拟器验收不替代上述真机矩阵。
 
 Release 签名信息仅从进程环境读取，不得将 keystore 或口令写入仓库：
 
 ```bash
-export SHURUFA_ANDROID_KEYSTORE=/secure/path/release.jks
-export SHURUFA_ANDROID_KEY_ALIAS=release
-export SHURUFA_ANDROID_STORE_PASSWORD='...'
-export SHURUFA_ANDROID_KEY_PASSWORD='...'
-export SHURUFA_ANDROID_CERT_SHA256='expected signing certificate SHA-256'
+export ZHIMO_ANDROID_KEYSTORE=/secure/path/release.jks
+export ZHIMO_ANDROID_KEY_ALIAS=release
+export ZHIMO_ANDROID_STORE_PASSWORD='...'
+export ZHIMO_ANDROID_KEY_PASSWORD='...'
+export ZHIMO_ANDROID_CERT_SHA256='expected signing certificate SHA-256'
 ./tools/verify-android-release.sh
 ```
 

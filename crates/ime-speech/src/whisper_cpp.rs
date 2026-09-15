@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Offline batch provider backed by the `whisper-cli` executable.
 //!
 //! Inference runs on a worker thread. Platform input threads only enqueue audio
@@ -265,7 +266,7 @@ mod tests {
 
     #[test]
     fn writes_a_valid_ieee_float_wav_header() {
-        let path = std::env::temp_dir().join(format!("shurufa-wav-{}.wav", std::process::id()));
+        let path = std::env::temp_dir().join(format!("zhimo-wav-{}.wav", std::process::id()));
         write_float_wav(&path, &[0.0, 0.5], 16_000).expect("write WAV");
         let bytes = std::fs::read(&path).expect("read WAV");
         assert_eq!(&bytes[0..4], b"RIFF");

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 if ! command -v cargo >/dev/null 2>&1; then

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Engine-neutral logical records used for local learning and encrypted sync payloads.
 
 use std::cmp::Ordering;
@@ -596,7 +597,7 @@ mod tests {
     #[test]
     fn file_store_round_trips_unicode_and_tombstones() {
         let path =
-            std::env::temp_dir().join(format!("shurufa-store-test-{}.json", std::process::id()));
+            std::env::temp_dir().join(format!("zhimo-store-test-{}.json", std::process::id()));
         let store = JsonFileStore::new(&path);
         let expected = vec![record("phone", 7, true)];
         store.save(&expected).expect("save");
@@ -630,7 +631,7 @@ mod tests {
     #[test]
     fn sqlite_store_is_transactional_and_keeps_a_stable_device_id() {
         let path =
-            std::env::temp_dir().join(format!("shurufa-store-test-{}.sqlite3", std::process::id()));
+            std::env::temp_dir().join(format!("zhimo-store-test-{}.sqlite3", std::process::id()));
         let store = SqliteStore::new(&path);
         let first_id = store.device_id().expect("first device ID");
         store.save(&[record("desktop", 4, false)]).expect("save");
@@ -646,7 +647,7 @@ mod tests {
 
     #[test]
     fn migrates_portable_json_into_sqlite() {
-        let base = std::env::temp_dir().join(format!("shurufa-migrate-{}", std::process::id()));
+        let base = std::env::temp_dir().join(format!("zhimo-migrate-{}", std::process::id()));
         let json_path = base.with_extension("json");
         let sqlite_path = base.with_extension("sqlite3");
         let source = JsonFileStore::new(&json_path);
@@ -667,7 +668,7 @@ mod tests {
     #[test]
     fn sqlite_merge_save_preserves_a_newer_tombstone() {
         let path =
-            std::env::temp_dir().join(format!("shurufa-merge-test-{}.sqlite3", std::process::id()));
+            std::env::temp_dir().join(format!("zhimo-merge-test-{}.sqlite3", std::process::id()));
         let store = SqliteStore::new(&path);
         store
             .save(&[record("desktop", 2, true)])

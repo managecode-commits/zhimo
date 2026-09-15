@@ -1,0 +1,6638 @@
+# Generated geographic names; source, snapshot and licenses: geography/manifest.json.
+---
+name: zhimo_geography
+version: "2026.09.14"
+sort: by_weight
+...
+丁青	ding qing	80
+丁青县	ding qing xian	80
+七台河	qi tai he	250
+七台河市	qi tai he shi	250
+七台河市新兴区	qi tai he shi xin xing qu	80
+七堵	qi du	80
+七堵区	qi du qu	80
+七星	qi xing	80
+七星关	qi xing guan	80
+七星关区	qi xing guan qu	80
+七星区	qi xing qu	80
+七股	qi gu	80
+七股区	qi gu qu	80
+七里河	qi li he	80
+七里河区	qi li he qu	80
+万全	wan quan	80
+万全区	wan quan qu	80
+万华	wan hua	80
+万华区	wan hua qu	80
+万宁	wan ning	80
+万宁市	wan ning shi	80
+万安	wan an	80
+万安县	wan an xian	80
+万山	wan shan	80
+万山区	wan shan qu	80
+万州	wan zhou	80
+万州区	wan zhou qu	80
+万年	wan nian	80
+万年县	wan nian xian	80
+万柏	wan bai	80
+万柏林区	wan bo lin qu	80
+万源	wan yuan	80
+万源市	wan yuan shi	80
+万秀	wan xiu	80
+万秀区	wan xiu qu	80
+万荣	wan rong	80
+万荣县	wan rong xian	80
+万载	wan zai	80
+万载县	wan zai xian	80
+万里	wan li	80
+万里区	wan li qu	80
+三亚	san ya	250
+三亚市	san ya shi	250
+三元	san yuan	80
+三元区	san yuan qu	80
+三原	san yuan	80
+三原县	san yuan xian	80
+三台	san tai	80
+三台县	san tai xian	80
+三峡	san xia	80
+三峡区	san xia qu	80
+三明	san ming	250
+三明市	san ming shi	250
+三民	san min	80
+三民区	san min qu	80
+三水	san shui	80
+三水区	san shui qu	80
+三江	san jiang	80
+三江侗族自治县	san jiang dong zu zi zhi xian	80
+三沙	san sha	250
+三沙市	san sha shi	250
+三沙市南沙区	san sha shi nan sha qu	80
+三河	san he	80
+三河市	san he shi	80
+三穗	san sui	80
+三穗县	san sui xian	80
+三芝	san zhi	80
+三芝区	san zhi qu	80
+三都	san dou	80
+三都水族自治县	san dou shui zu zi zhi xian	80
+三重	san chong	80
+三重区	san chong qu	80
+三门	san men	80
+三门县	san men xian	80
+三门峡	san men xia	250
+三门峡市	san men xia shi	250
+上党	shang dang	80
+上党区	shang dang qu	80
+上城	shang cheng	80
+上城区	shang cheng qu	80
+上思	shang si	80
+上思县	shang si xian	80
+上杭	shang hang	80
+上杭县	shang hang xian	80
+上林	shang lin	80
+上林县	shang lin xian	80
+上栗	shang li	80
+上栗县	shang li xian	80
+上海	shang hai	500
+上海市	shang hai shi	500
+上海市宝山区	shang hai shi bao shan qu	80
+上海市普陀区	shang hai shi pu tuo qu	80
+上海市金山区	shang hai shi jin shan qu	80
+上犹	shang you	80
+上犹县	shang you xian	80
+上蔡	shang cai	80
+上蔡县	shang cai xian	80
+上虞	shang yu	80
+上虞区	shang yu qu	80
+上街	shang jie	80
+上街区	shang jie qu	80
+上饶	shang rao	250
+上饶市	shang rao shi	250
+上高	shang gao	80
+上高县	shang gao xian	80
+下花园	xia hua yuan	80
+下花园区	xia hua yuan qu	80
+下营	xia ying	80
+下营区	xia ying qu	80
+下陆	xia lu	80
+下陆区	xia lu qu	80
+且末	qie mo	80
+且末县	qie mo xian	80
+丘北	qiu bei	80
+丘北县	qiu bei xian	80
+丛台	cong tai	80
+丛台区	cong tai qu	80
+东丰	dong feng	80
+东丰县	dong feng xian	80
+东丽	dong li	80
+东丽区	dong li qu	80
+东乌珠穆沁	dong wu zhu mu qin	80
+东乌珠穆沁旗	dong wu zhu mu qin qi	80
+东乡	dong xiang	80
+东乡区	dong xiang qu	80
+东乡族自治县	dong xiang zu zi zhi xian	80
+东光	dong guang	80
+东光县	dong guang xian	80
+东兰	dong lan	80
+东兰县	dong lan xian	80
+东兴	dong xing	80
+东兴区	dong xing qu	80
+东兴市	dong xing shi	80
+东势	dong shi	80
+东势区	dong shi qu	80
+东区	dong qu	80
+东台	dong tai	80
+东台市	dong tai shi	80
+东坡	dong po	80
+东坡区	dong po qu	80
+东城	dong cheng	80
+东城区	dong cheng qu	80
+东宁	dong ning	80
+东宁市	dong ning shi	80
+东安	dong an	80
+东安区	dong an qu	80
+东安县	dong an xian	80
+东宝	dong bao	80
+东宝区	dong bao qu	80
+东山	dong shan	80
+东山区	dong shan qu	80
+东山县	dong shan xian	80
+东川	dong chuan	80
+东川区	dong chuan qu	80
+东平	dong ping	80
+东平县	dong ping xian	80
+东方	dong fang	80
+东方市	dong fang shi	80
+东昌	dong chang	80
+东昌区	dong chang qu	80
+东昌府	dong chang fu	80
+东昌府区	dong chang fu qu	80
+东明	dong ming	80
+东明县	dong ming xian	80
+东河	dong he	80
+东河区	dong he qu	80
+东洲	dong zhou	80
+东洲区	dong zhou qu	80
+东海	dong hai	80
+东海县	dong hai xian	80
+东港	dong gang	80
+东港区	dong gang qu	80
+东港市	dong gang shi	80
+东湖	dong hu	80
+东湖区	dong hu qu	80
+东源	dong yuan	80
+东源县	dong yuan xian	80
+东胜	dong sheng	80
+东胜区	dong sheng qu	80
+东至	dong zhi	80
+东至县	dong zhi xian	80
+东莞	dong guan	250
+东莞市	dong guan shi	250
+东营	dong ying	250
+东营区	dong ying qu	80
+东营市	dong ying shi	250
+东西湖	dong xi hu	80
+东西湖区	dong xi hu qu	80
+东辽	dong liao	80
+东辽县	dong liao xian	80
+东阳	dong yang	80
+东阳市	dong yang shi	80
+东阿	dong e	80
+东阿县	dong e xian	80
+东风	dong feng	80
+东风区	dong feng qu	80
+两当	liang dang	80
+两当县	liang dang xian	80
+两江	liang jiang	80
+两江新区	liang jiang xin qu	80
+个旧	ge jiu	80
+个旧市	ge jiu shi	80
+中区	zhong qu	80
+中卫	zhong wei	250
+中卫市	zhong wei shi	250
+中原	zhong yuan	80
+中原区	zhong yuan qu	80
+中和	zhong he	80
+中和区	zhong he qu	80
+中坜	zhong li	80
+中坜区	zhong li qu	80
+中宁	zhong ning	80
+中宁县	zhong ning xian	80
+中山	zhong shan	250
+中山区	zhong shan qu	80
+中山市	zhong shan shi	250
+中方	zhong fang	80
+中方县	zhong fang xian	80
+中正	zhong zheng	80
+中正区	zhong zheng qu	80
+中江	zhong jiang	80
+中江县	zhong jiang xian	80
+中牟	zhong mou	80
+中牟县	zhong mou xian	80
+中站	zhong zhan	80
+中站区	zhong zhan qu	80
+中西	zhong xi	80
+中西区	zhong xi qu	80
+中西區	zhong xi qu	80
+中阳	zhong yang	80
+中阳县	zhong yang xian	80
+丰南	feng nan	80
+丰南区	feng nan qu	80
+丰原	feng yuan	80
+丰原区	feng yuan qu	80
+丰县	feng xian	80
+丰台	feng tai	80
+丰台区	feng tai qu	80
+丰城	feng cheng	80
+丰城市	feng cheng shi	80
+丰宁	feng ning	80
+丰宁满族自治县	feng ning man zu zi zhi xian	80
+丰林	feng lin	80
+丰林县	feng lin xian	80
+丰泽	feng ze	80
+丰泽区	feng ze qu	80
+丰润	feng run	80
+丰润区	feng run qu	80
+丰满	feng man	80
+丰满区	feng man qu	80
+丰都	feng dou	80
+丰都县	feng dou xian	80
+丰镇	feng zhen	80
+丰镇市	feng zhen shi	80
+丰顺	feng shun	80
+丰顺县	feng shun xian	80
+临县	lin xian	80
+临城	lin cheng	80
+临城县	lin cheng xian	80
+临夏	lin xia	250
+临夏县	lin xia xian	80
+临夏回族自治州	lin xia hui zu zi zhi zhou	250
+临夏市	lin xia shi	80
+临安	lin an	80
+临安区	lin an qu	80
+临川	lin chuan	80
+临川区	lin chuan qu	80
+临平	lin ping	80
+临平区	lin ping qu	80
+临朐	lin qu	80
+临朐县	lin qu xian	80
+临桂	lin gui	80
+临桂区	lin gui qu	80
+临武	lin wu	80
+临武县	lin wu xian	80
+临江	lin jiang	80
+临江市	lin jiang shi	80
+临汾	lin fen	250
+临汾市	lin fen shi	250
+临沂	lin yi	250
+临沂市	lin yi shi	250
+临沂市河东区	lin yi shi he dong qu	80
+临沧	lin cang	250
+临沧市	lin cang shi	250
+临沭	lin shu	80
+临沭县	lin shu xian	80
+临河	lin he	80
+临河区	lin he qu	80
+临泉	lin quan	80
+临泉县	lin quan xian	80
+临泽	lin ze	80
+临泽县	lin ze xian	80
+临洮	lin tao	80
+临洮县	lin tao xian	80
+临海	lin hai	80
+临海市	lin hai shi	80
+临淄	lin zi	80
+临淄区	lin zi qu	80
+临清	lin qing	80
+临清市	lin qing shi	80
+临渭	lin wei	80
+临渭区	lin wei qu	80
+临湘	lin xiang	80
+临湘市	lin xiang shi	80
+临漳	lin zhang	80
+临漳县	lin zhang xian	80
+临潭	lin tan	80
+临潭县	lin tan xian	80
+临潼	lin tong	80
+临潼区	lin tong qu	80
+临澧	lin li	80
+临澧县	lin li xian	80
+临猗	lin yi	80
+临猗县	lin yi xian	80
+临翔	lin xiang	80
+临翔区	lin xiang qu	80
+临西	lin xi	80
+临西县	lin xi xian	80
+临邑	lin yi	80
+临邑县	lin yi xian	80
+临颍	lin ying	80
+临颍县	lin ying xian	80
+临高	lin gao	80
+临高县	lin gao xian	80
+丹东	dan dong	250
+丹东市	dan dong shi	250
+丹凤	dan feng	80
+丹凤县	dan feng xian	80
+丹寨	dan zhai	80
+丹寨县	dan zhai xian	80
+丹巴	dan ba	80
+丹巴县	dan ba xian	80
+丹徒	dan tu	80
+丹徒区	dan tu qu	80
+丹棱	dan leng	80
+丹棱县	dan leng xian	80
+丹江口	dan jiang kou	80
+丹江口市	dan jiang kou shi	80
+丹阳	dan yang	80
+丹阳市	dan yang shi	80
+丽水	li shui	250
+丽水市	li shui shi	250
+丽江	li jiang	250
+丽江市	li jiang shi	250
+乃东	nai dong	80
+乃东区	nai dong qu	80
+久治	jiu zhi	80
+久治县	jiu zhi xian	80
+义乌	yi wu	80
+义乌市	yi wu shi	80
+义县	yi xian	80
+义安	yi an	80
+义安区	yi an qu	80
+义马	yi ma	80
+义马市	yi ma shi	80
+乌什	wu shen	80
+乌什县	wu shen xian	80
+乌兰	wu lan	80
+乌兰县	wu lan xian	80
+乌兰察布	wu lan cha bu	250
+乌兰察布市	wu lan cha bu shi	250
+乌兰浩特	wu lan hao te	80
+乌兰浩特市	wu lan hao te shi	80
+乌审	wu shen	80
+乌审旗	wu shen qi	80
+乌尔禾	wu er he	80
+乌尔禾区	wu er he qu	80
+乌当	wu dang	80
+乌当区	wu dang qu	80
+乌恰	wu qia	80
+乌恰县	wu qia xian	80
+乌拉特中	wu la te zhong	80
+乌拉特中旗	wu la te zhong qi	80
+乌拉特前	wu la te qian	80
+乌拉特前旗	wu la te qian qi	80
+乌拉特后	wu la te hou	80
+乌拉特后旗	wu la te hou qi	80
+乌日	wu ri	80
+乌日区	wu ri qu	80
+乌来	wu lai	80
+乌来区	wu lai qu	80
+乌海	wu hai	250
+乌海市	wu hai shi	250
+乌翠	wu cui	80
+乌翠区	wu cui qu	80
+乌苏	wu su	80
+乌苏市	wu su shi	80
+乌达	wu da	80
+乌达区	wu da qu	80
+乌鲁木齐	wu lu mu qi	250
+乌鲁木齐县	wu lu mu qi xian	80
+乌鲁木齐市	wu lu mu qi shi	250
+乌鲁木齐市新市区	wu lu mu qi shi xin shi qu	80
+乐业	le ye	80
+乐业县	le ye xian	80
+乐东	le dong	80
+乐东黎族自治县	le dong li zu zi zhi xian	80
+乐亭	lao ting	80
+乐亭县	lao ting xian	80
+乐安	le an	80
+乐安县	le an xian	80
+乐山	le shan	250
+乐山市	le shan shi	250
+乐山市市中区	le shan shi shi zhong qu	80
+乐平	le ping	80
+乐平市	le ping shi	80
+乐昌	le chang	80
+乐昌市	le chang shi	80
+乐清	yue qing	80
+乐清市	yue qing shi	80
+乐至	le zhi	80
+乐至县	le zhi xian	80
+乐都	le du	80
+乐都区	le du qu	80
+乐陵	le ling	80
+乐陵市	le ling shi	80
+九原	jiu yuan	80
+九原区	jiu yuan qu	80
+九台	jiu tai	80
+九台区	jiu tai qu	80
+九寨沟	jiu zhai gou	80
+九寨沟县	jiu zhai gou xian	80
+九江	jiu jiang	250
+九江市	jiu jiang shi	250
+九龍	jiu long	80
+九龍城區	jiu long cheng qu	80
+九龙	jiu long	80
+九龙县	jiu long xian	80
+九龙坡	jiu long po	80
+九龙坡区	jiu long po qu	80
+九龙城	jiu long cheng	80
+九龙城区	jiu long cheng qu	80
+习水	xi shui	80
+习水县	xi shui xian	80
+乡城	xiang cheng	80
+乡城县	xiang cheng xian	80
+乡宁	xiang ning	80
+乡宁县	xiang ning xian	80
+乳山	ru shan	80
+乳山市	ru shan shi	80
+乳源	ru yuan	80
+乳源瑶族自治县	ru yuan yao zu zi zhi xian	80
+乾县	gan xian	80
+乾安	gan an	80
+乾安县	gan an xian	80
+二七	er qi	80
+二七区	er qi qu	80
+二连浩特	er lian hao te	80
+二连浩特市	er lian hao te shi	80
+二道	er dao	80
+二道区	er dao qu	80
+二道江	er dao jiang	80
+二道江区	er dao jiang qu	80
+于洪	yu hong	80
+于洪区	yu hong qu	80
+于田	yu tian	80
+于田县	yu tian xian	80
+于都	yu dou	80
+于都县	yu dou xian	80
+云冈	yun gang	80
+云冈区	yun gang qu	80
+云南	yun nan	500
+云南省	yun nan sheng	500
+云县	yun xian	80
+云和	yun he	80
+云和县	yun he xian	80
+云城	yun cheng	80
+云城区	yun cheng qu	80
+云安	yun an	80
+云安区	yun an qu	80
+云岩	yun yan	80
+云岩区	yun yan qu	80
+云州	yun zhou	80
+云州区	yun zhou qu	80
+云林	yun lin	80
+云林县	yun lin xian	80
+云梦	yun meng	80
+云梦县	yun meng xian	80
+云浮	yun fu	250
+云浮市	yun fu shi	250
+云溪	yun xi	80
+云溪区	yun xi qu	80
+云阳	yun yang	80
+云阳县	yun yang xian	80
+云霄	yun xiao	80
+云霄县	yun xiao xian	80
+云龙	yun long	80
+云龙区	yun long qu	80
+云龙县	yun long xian	80
+互助	hu zhu	80
+互助土族自治县	hu zhu tu zu zi zhi xian	80
+五华	wu hua	80
+五华区	wu hua qu	80
+五华县	wu hua xian	80
+五原	wu yuan	80
+五原县	wu yuan xian	80
+五台	wu tai	80
+五台县	wu tai xian	80
+五大连池	wu da lian chi	80
+五大连池市	wu da lian chi shi	80
+五家渠	wu jia qu	80
+五家渠市	wu jia qu shi	80
+五寨	wu zhai	80
+五寨县	wu zhai xian	80
+五峰	wu feng	80
+五峰土家族自治县	wu feng tu jia zu zi zhi xian	80
+五常	wu chang	80
+五常市	wu chang shi	80
+五指山	wu zhi shan	80
+五指山市	wu zhi shan shi	80
+五河	wu he	80
+五河县	wu he xian	80
+五股	wu gu	80
+五股区	wu gu qu	80
+五莲	wu lian	80
+五莲县	wu lian xian	80
+五通桥	wu tong qiao	80
+五通桥区	wu tong qiao qu	80
+井冈山	jing gang shan	80
+井冈山市	jing gang shan shi	80
+井研	jing yan	80
+井研县	jing yan xian	80
+井陉	jing xing	80
+井陉县	jing xing xian	80
+井陉矿	jing xing kuang	80
+井陉矿区	jing xing kuang qu	80
+亚东	ya dong	80
+亚东县	ya dong xian	80
+交口	jiao kou	80
+交口县	jiao kou xian	80
+交城	jiao cheng	80
+交城县	jiao cheng xian	80
+京口	jing kou	80
+京口区	jing kou qu	80
+京山	jing shan	80
+京山市	jing shan shi	80
+亭湖	ting hu	80
+亭湖区	ting hu qu	80
+亳州	bo zhou	250
+亳州市	bo zhou shi	250
+什邡	shen fang	80
+什邡市	shen fang shi	80
+仁化	ren hua	80
+仁化县	ren hua xian	80
+仁和	ren he	80
+仁和区	ren he qu	80
+仁寿	ren shou	80
+仁寿县	ren shou xian	80
+仁布	ren bu	80
+仁布县	ren bu xian	80
+仁德	ren de	80
+仁德区	ren de qu	80
+仁怀	ren huai	80
+仁怀市	ren huai shi	80
+仁武	ren wu	80
+仁武区	ren wu qu	80
+仁爱	ren ai	80
+仁爱区	ren ai qu	80
+介休	jie xiu	80
+介休市	jie xiu shi	80
+从化	cong hua	80
+从化区	cong hua qu	80
+从江	cong jiang	80
+从江县	cong jiang xian	80
+仓山	cang shan	80
+仓山区	cang shan qu	80
+仙居	xian ju	80
+仙居县	xian ju xian	80
+仙桃	xian tao	80
+仙桃市	xian tao shi	80
+仙游	xian you	80
+仙游县	xian you xian	80
+代县	dai xian	80
+仪征	yi zheng	80
+仪征市	yi zheng shi	80
+仪陇	yi long	80
+仪陇县	yi long xian	80
+仲巴	zhong ba	80
+仲巴县	zhong ba xian	80
+任丘	ren qiu	80
+任丘市	ren qiu shi	80
+任城	ren cheng	80
+任城区	ren cheng qu	80
+任泽	ren ze	80
+任泽区	ren ze qu	80
+伊吾	yi wu	80
+伊吾县	yi wu xian	80
+伊宁	yi ning	80
+伊宁县	yi ning xian	80
+伊宁市	yi ning shi	80
+伊川	yi chuan	80
+伊川县	yi chuan xian	80
+伊州	yi zhou	80
+伊州区	yi zhou qu	80
+伊春	yi chun	250
+伊春市	yi chun shi	250
+伊犁	yi li	250
+伊犁哈萨克自治州	yi li ha sa ke zi zhi zhou	250
+伊美	yi mei	80
+伊美区	yi mei qu	80
+伊通	yi tong	80
+伊通满族自治县	yi tong man zu zi zhi xian	80
+伊金霍洛	yi jin huo luo	80
+伊金霍洛旗	yi jin huo luo qi	80
+伍家岗	wu jia gang	80
+伍家岗区	wu jia gang qu	80
+休宁	xiu ning	80
+休宁县	xiu ning xian	80
+会东	hui dong	80
+会东县	hui dong xian	80
+会同	hui tong	80
+会同县	hui tong xian	80
+会宁	hui ning	80
+会宁县	hui ning xian	80
+会昌	hui chang	80
+会昌县	hui chang xian	80
+会泽	hui ze	80
+会泽县	hui ze xian	80
+会理	hui li	80
+会理市	hui li shi	80
+伽师	ga shi	80
+伽师县	ga shi xian	80
+余姚	yu yao	80
+余姚市	yu yao shi	80
+余干	yu gan	80
+余干县	yu gan xian	80
+余庆	yu qing	80
+余庆县	yu qing xian	80
+余杭	yu hang	80
+余杭区	yu hang qu	80
+余江	yu jiang	80
+余江区	yu jiang qu	80
+佛冈	fu gang	80
+佛冈县	fu gang xian	80
+佛坪	fu ping	80
+佛坪县	fu ping xian	80
+佛山	fo shan	250
+佛山市	fo shan shi	250
+佳县	jia xian	80
+佳木斯	jia mu si	250
+佳木斯市	jia mu si shi	250
+佳木斯市向阳区	jia mu si shi xiang yang qu	80
+佳木斯市郊区	jia mu si shi jiao qu	80
+佳里	jia li	80
+佳里区	jia li qu	80
+依兰	yi lan	80
+依兰县	yi lan xian	80
+依安	yi an	80
+依安县	yi an xian	80
+侯马	hou ma	80
+侯马市	hou ma shi	80
+保亭	bao ting	80
+保亭黎族苗族自治县	bao ting li zu miao zu zi zhi xian	80
+保定	bao ding	250
+保定市	bao ding shi	250
+保山	bao shan	250
+保山市	bao shan shi	250
+保康	bao kang	80
+保康县	bao kang xian	80
+保德	bao de	80
+保德县	bao de xian	80
+保靖	bao jing	80
+保靖县	bao jing xian	80
+信丰	xin feng	80
+信丰县	xin feng xian	80
+信义	xin yi	80
+信义区	xin yi qu	80
+信宜	xin yi	80
+信宜市	xin yi shi	80
+信州	xin zhou	80
+信州区	xin zhou qu	80
+信都	xin dou	80
+信都区	xin dou qu	80
+信阳	xin yang	250
+信阳市	xin yang shi	250
+修文	xiu wen	80
+修文县	xiu wen xian	80
+修武	xiu wu	80
+修武县	xiu wu xian	80
+修水	xiu shui	80
+修水县	xiu shui xian	80
+偃师	yan shi	80
+偃师区	yan shi qu	80
+偏关	pian guan	80
+偏关县	pian guan xian	80
+儋州	dan zhou	250
+儋州市	dan zhou shi	250
+元宝	yuan bao	80
+元宝区	yuan bao qu	80
+元宝山	yuan bao shan	80
+元宝山区	yuan bao shan qu	80
+元朗	yuan lang	80
+元朗区	yuan lang qu	80
+元朗區	yuan lang qu	80
+元氏	yuan shi	80
+元氏县	yuan shi xian	80
+元江	yuan jiang	80
+元江哈尼族彝族傣族自治县	yuan jiang ha ni zu yi zu dai zu zi zhi xian	80
+元谋	yuan mou	80
+元谋县	yuan mou xian	80
+元阳	yuan yang	80
+元阳县	yuan yang xian	80
+光山	guang shan	80
+光山县	guang shan xian	80
+光明	guang ming	80
+光明区	guang ming qu	80
+光泽	guang ze	80
+光泽县	guang ze xian	80
+克东	ke dong	80
+克东县	ke dong xian	80
+克什克腾	ke shen ke teng	80
+克什克腾旗	ke shen ke teng qi	80
+克孜勒苏	ke zi lei su	250
+克孜勒苏柯尔克孜自治州	ke zi lei su ke er ke zi zi zhi zhou	250
+克山	ke shan	80
+克山县	ke shan xian	80
+克拉玛依	ke la ma yi	250
+克拉玛依区	ke la ma yi qu	80
+克拉玛依市	ke la ma yi shi	250
+兖州	yan zhou	80
+兖州区	yan zhou qu	80
+全南	quan nan	80
+全南县	quan nan xian	80
+全州	quan zhou	80
+全州县	quan zhou xian	80
+全椒	quan jiao	80
+全椒县	quan jiao xian	80
+八公山	ba gong shan	80
+八公山区	ba gong shan qu	80
+八宿	ba su	80
+八宿县	ba su xian	80
+八德	ba de	80
+八德区	ba de qu	80
+八步	ba bu	80
+八步区	ba bu qu	80
+八里	ba li	80
+八里区	ba li qu	80
+公主岭	gong zhu ling	80
+公主岭市	gong zhu ling shi	80
+公安	gong an	80
+公安县	gong an xian	80
+六合	liu he	80
+六合区	liu he qu	80
+六安	lu an	250
+六安市	lu an shi	250
+六枝	liu zhi	80
+六枝特区	liu zhi te qu	80
+六甲	liu jia	80
+六甲区	liu jia qu	80
+六盘水	liu pan shui	250
+六盘水市	liu pan shui shi	250
+六龟	liu gui	80
+六龟区	liu gui qu	80
+兰坪	lan ping	80
+兰坪白族普米族自治县	lan ping bai zu pu mi zu zi zhi xian	80
+兰山	lan shan	80
+兰山区	lan shan qu	80
+兰州	lan zhou	250
+兰州市	lan zhou shi	250
+兰州市城关区	lan zhou shi cheng guan qu	80
+兰溪	lan xi	80
+兰溪市	lan xi shi	80
+兰考	lan kao	80
+兰考县	lan kao xian	80
+兰西	lan xi	80
+兰西县	lan xi xian	80
+兰陵	lan ling	80
+兰陵县	lan ling xian	80
+共和	gong he	80
+共和县	gong he xian	80
+共青城	gong qing cheng	80
+共青城市	gong qing cheng shi	80
+关岭	guan ling	80
+关岭布依族苗族自治县	guan ling bu yi zu miao zu zi zhi xian	80
+关庙	guan miao	80
+关庙区	guan miao qu	80
+兴业	xing ye	80
+兴业县	xing ye xian	80
+兴义	xing yi	80
+兴义市	xing yi shi	80
+兴仁	xing ren	80
+兴仁市	xing ren shi	80
+兴化	xing hua	80
+兴化市	xing hua shi	80
+兴县	xing xian	80
+兴和	xing he	80
+兴和县	xing he xian	80
+兴国	xing guo	80
+兴国县	xing guo xian	80
+兴城	xing cheng	80
+兴城市	xing cheng shi	80
+兴宁	xing ning	80
+兴宁区	xing ning qu	80
+兴宁市	xing ning shi	80
+兴安	xing an	250
+兴安区	xing an qu	80
+兴安县	xing an xian	80
+兴安盟	xing an meng	250
+兴宾	xing bin	80
+兴宾区	xing bin qu	80
+兴山	xing shan	80
+兴山区	xing shan qu	80
+兴山县	xing shan xian	80
+兴平	xing ping	80
+兴平市	xing ping shi	80
+兴庆	xing qing	80
+兴庆区	xing qing qu	80
+兴文	xing wen	80
+兴文县	xing wen xian	80
+兴海	xing hai	80
+兴海县	xing hai xian	80
+兴隆	xing long	80
+兴隆县	xing long xian	80
+兴隆台	xing long tai	80
+兴隆台区	xing long tai qu	80
+冀州	ji zhou	80
+冀州区	ji zhou qu	80
+内丘	nei qiu	80
+内丘县	nei qiu xian	80
+内乡	nei xiang	80
+内乡县	nei xiang xian	80
+内江	nei jiang	250
+内江市	nei jiang shi	250
+内江市市中区	nei jiang shi shi zhong qu	80
+内湖	nei hu	80
+内湖区	nei hu qu	80
+内蒙古自治区	nei meng gu zi zhi qu	500
+内门	nei men	80
+内门区	nei men qu	80
+内黄	nei huang	80
+内黄县	nei huang xian	80
+冈山	gang shan	80
+冈山区	gang shan qu	80
+册亨	ce heng	80
+册亨县	ce heng xian	80
+冕宁	mian ning	80
+冕宁县	mian ning xian	80
+农安	nong an	80
+农安县	nong an xian	80
+冠县	guan xian	80
+冷水江	leng shui jiang	80
+冷水江市	leng shui jiang shi	80
+冷水滩	leng shui tan	80
+冷水滩区	leng shui tan qu	80
+准格尔	zhun ge er	80
+准格尔旗	zhun ge er qi	80
+凉城	liang cheng	80
+凉城县	liang cheng xian	80
+凉山	liang shan	250
+凉山彝族自治州	liang shan yi zu zi zhi zhou	250
+凉州	liang zhou	80
+凉州区	liang zhou qu	80
+凌云	ling yun	80
+凌云县	ling yun xian	80
+凌河	ling he	80
+凌河区	ling he qu	80
+凌海	ling hai	80
+凌海市	ling hai shi	80
+凌源	ling yuan	80
+凌源市	ling yuan shi	80
+凤冈	feng gang	80
+凤冈县	feng gang xian	80
+凤凰	feng huang	80
+凤凰县	feng huang xian	80
+凤县	feng xian	80
+凤台	feng tai	80
+凤台县	feng tai xian	80
+凤城	feng cheng	80
+凤城市	feng cheng shi	80
+凤山	feng shan	80
+凤山区	feng shan qu	80
+凤山县	feng shan xian	80
+凤庆	feng qing	80
+凤庆县	feng qing xian	80
+凤泉	feng quan	80
+凤泉区	feng quan qu	80
+凤翔	feng xiang	80
+凤翔区	feng xiang qu	80
+凤阳	feng yang	80
+凤阳县	feng yang xian	80
+凭祥	ping xiang	80
+凭祥市	ping xiang shi	80
+凯里	kai li	80
+凯里市	kai li shi	80
+分宜	fen yi	80
+分宜县	fen yi xian	80
+刚察	gang cha	80
+刚察县	gang cha xian	80
+利川	li chuan	80
+利川市	li chuan shi	80
+利州	li zhou	80
+利州区	li zhou qu	80
+利津	li jin	80
+利津县	li jin xian	80
+利辛	li xin	80
+利辛县	li xin xian	80
+利通	li tong	80
+利通区	li tong qu	80
+前进	qian jin	80
+前进区	qian jin qu	80
+前郭尔罗斯	qian guo er luo si	80
+前郭尔罗斯蒙古族自治县	qian guo er luo si meng gu zu zi zhi xian	80
+前金	qian jin	80
+前金区	qian jin qu	80
+前锋	qian feng	80
+前锋区	qian feng qu	80
+前镇	qian zhen	80
+前镇区	qian zhen qu	80
+剑川	jian chuan	80
+剑川县	jian chuan xian	80
+剑河	jian he	80
+剑河县	jian he xian	80
+剑阁	jian ge	80
+剑阁县	jian ge xian	80
+加查	jia cha	80
+加查县	jia cha xian	80
+务川	wu chuan	80
+务川仡佬族苗族自治县	wu chuan ge lao zu miao zu zi zhi xian	80
+勃利	bo li	80
+勃利县	bo li xian	80
+勉县	mian xian	80
+勐海	meng hai	80
+勐海县	meng hai xian	80
+勐腊	meng la	80
+勐腊县	meng la xian	80
+包头	bao tou	250
+包头市	bao tou shi	250
+包头市青山区	bao tou shi qing shan qu	80
+包河	bao he	80
+包河区	bao he qu	80
+化州	hua zhou	80
+化州市	hua zhou shi	80
+化德	hua de	80
+化德县	hua de xian	80
+化隆	hua long	80
+化隆回族自治县	hua long hui zu zi zhi xian	80
+北京	bei jing	500
+北京市	bei jing shi	500
+北京市朝阳区	bei jing shi chao yang qu	80
+北京市通州区	bei jing shi tong zhou qu	80
+北仑	bei lun	80
+北仑区	bei lun qu	80
+北关	bei guan	80
+北关区	bei guan qu	80
+北区	bei qu	80
+北區	bei qu	80
+北塔	bei ta	80
+北塔区	bei ta qu	80
+北安	bei an	80
+北安市	bei an shi	80
+北屯	bei tun	80
+北屯区	bei tun qu	80
+北屯市	bei tun shi	80
+北川	bei chuan	80
+北川羌族自治县	bei chuan qiang zu zi zhi xian	80
+北戴河	bei dai he	80
+北戴河区	bei dai he qu	80
+北投	bei tou	80
+北投区	bei tou qu	80
+北林区	bei lin qu	80
+北流	bei liu	80
+北流市	bei liu shi	80
+北海	bei hai	250
+北海市	bei hai shi	250
+北湖	bei hu	80
+北湖区	bei hu qu	80
+北碚	bei bei	80
+北碚区	bei bei qu	80
+北票	bei piao	80
+北票市	bei piao shi	80
+北辰	bei chen	80
+北辰区	bei chen qu	80
+北镇	bei zhen	80
+北镇市	bei zhen shi	80
+北门	bei men	80
+北门区	bei men qu	80
+十堰	shi yan	250
+十堰市	shi yan shi	250
+千山	qian shan	80
+千山区	qian shan qu	80
+千阳	qian yang	80
+千阳县	qian yang xian	80
+华亭	hua ting	80
+华亭市	hua ting shi	80
+华坪	hua ping	80
+华坪县	hua ping xian	80
+华宁	hua ning	80
+华宁县	hua ning xian	80
+华安	hua an	80
+华安县	hua an xian	80
+华容	hua rong	80
+华容区	hua rong qu	80
+华容县	hua rong xian	80
+华州	hua zhou	80
+华州区	hua zhou qu	80
+华池	hua chi	80
+华池县	hua chi xian	80
+华蓥	hua ying	80
+华蓥市	hua ying shi	80
+华阴	hua yin	80
+华阴市	hua yin shi	80
+华龙	hua long	80
+华龙区	hua long qu	80
+卓尼	zhuo ni	80
+卓尼县	zhuo ni xian	80
+卓资	zhuo zi	80
+卓资县	zhuo zi xian	80
+单县	shan xian	80
+南丰	nan feng	80
+南丰县	nan feng xian	80
+南丹	nan dan	80
+南丹县	nan dan xian	80
+南乐	nan yue	80
+南乐县	nan yue xian	80
+南京	nan jing	250
+南京市	nan jing shi	250
+南京市鼓楼区	nan jing shi gu lou qu	80
+南充	nan chong	250
+南充市	nan chong shi	250
+南关	nan guan	80
+南关区	nan guan qu	80
+南化	nan hua	80
+南化区	nan hua qu	80
+南区	nan qu	80
+南區	nan qu	80
+南华	nan hua	80
+南华县	nan hua xian	80
+南县	nan xian	80
+南召	nan zhao	80
+南召县	nan zhao xian	80
+南和	nan he	80
+南和区	nan he qu	80
+南城	nan cheng	80
+南城县	nan cheng xian	80
+南宁	nan ning	250
+南宁市	nan ning shi	250
+南安	nan an	80
+南安市	nan an shi	80
+南宫	nan gong	80
+南宫市	nan gong shi	80
+南屯	nan tun	80
+南屯区	nan tun qu	80
+南山	nan shan	80
+南山区	nan shan qu	80
+南岔	nan cha	80
+南岔县	nan cha xian	80
+南岗	nan gang	80
+南岗区	nan gang qu	80
+南岳	nan yue	80
+南岳区	nan yue qu	80
+南岸	nan an	80
+南岸区	nan an qu	80
+南川	nan chuan	80
+南川区	nan chuan qu	80
+南平	nan ping	250
+南平市	nan ping shi	250
+南康	nan kang	80
+南康区	nan kang qu	80
+南开	nan kai	80
+南开区	nan kai qu	80
+南投	nan tou	80
+南投县	nan tou xian	80
+南昌	nan chang	250
+南昌县	nan chang xian	80
+南昌市	nan chang shi	250
+南昌市西湖区	nan chang shi xi hu qu	80
+南明	nan ming	80
+南明区	nan ming qu	80
+南木林	nan mu lin	80
+南木林县	nan mu lin xian	80
+南江	nan jiang	80
+南江县	nan jiang xian	80
+南沙	nan sha	80
+南沙区	nan sha qu	80
+南浔	nan xun	80
+南浔区	nan xun qu	80
+南海	nan hai	80
+南海区	nan hai qu	80
+南涧	nan jian	80
+南涧彝族自治县	nan jian yi zu zi zhi xian	80
+南港	nan gang	80
+南港区	nan gang qu	80
+南湖	nan hu	80
+南湖区	nan hu qu	80
+南溪	nan xi	80
+南溪区	nan xi qu	80
+南漳	nan zhang	80
+南漳县	nan zhang xian	80
+南澳	nan ao	80
+南澳县	nan ao xian	80
+南皮	nan pi	80
+南皮县	nan pi xian	80
+南票	nan piao	80
+南票区	nan piao qu	80
+南芬	nan fen	80
+南芬区	nan fen qu	80
+南谯	nan qiao	80
+南谯区	nan qiao qu	80
+南通	nan tong	250
+南通市	nan tong shi	250
+南通市通州区	nan tong shi tong zhou qu	80
+南郑	nan zheng	80
+南郑区	nan zheng qu	80
+南部	nan bu	80
+南部县	nan bu xian	80
+南阳	nan yang	250
+南阳市	nan yang shi	250
+南陵	nan ling	80
+南陵县	nan ling xian	80
+南雄	nan xiong	80
+南雄市	nan xiong shi	80
+南靖	nan jing	80
+南靖县	nan jing xian	80
+博乐	bo le	80
+博乐市	bo le shi	80
+博兴	bo xing	80
+博兴县	bo xing xian	80
+博尔塔拉	bo er ta la	250
+博尔塔拉蒙古自治州	bo er ta la meng gu zi zhi zhou	250
+博山	bo shan	80
+博山区	bo shan qu	80
+博望	bo wang	80
+博望区	bo wang qu	80
+博湖	bo hu	80
+博湖县	bo hu xian	80
+博爱	bo ai	80
+博爱县	bo ai xian	80
+博白	bo bai	80
+博白县	bo bai xian	80
+博罗	bo luo	80
+博罗县	bo luo xian	80
+博野	bo ye	80
+博野县	bo ye xian	80
+卡若	ka ruo	80
+卡若区	ka ruo qu	80
+卢氏	lu shi	80
+卢氏县	lu shi xian	80
+卢龙	lu long	80
+卢龙县	lu long xian	80
+卧龙	wo long	80
+卧龙区	wo long qu	80
+卫东	wei dong	80
+卫东区	wei dong qu	80
+卫滨	wei bin	80
+卫滨区	wei bin qu	80
+卫辉	wei hui	80
+卫辉市	wei hui shi	80
+印台	yin tai	80
+印台区	yin tai qu	80
+印江	yin jiang	80
+印江土家族苗族自治县	yin jiang tu jia zu miao zu zi zhi xian	80
+即墨	ji mo	80
+即墨区	ji mo qu	80
+历下	li xia	80
+历下区	li xia qu	80
+历城	li cheng	80
+历城区	li cheng qu	80
+原州	yuan zhou	80
+原州区	yuan zhou qu	80
+原平	yuan ping	80
+原平市	yuan ping shi	80
+原阳	yuan yang	80
+原阳县	yuan yang xian	80
+厦门	xia men	250
+厦门市	xia men shi	250
+友好	you hao	80
+友好区	you hao qu	80
+友谊	you yi	80
+友谊县	you yi xian	80
+双台子	shuang tai zi	80
+双台子区	shuang tai zi qu	80
+双城	shuang cheng	80
+双城区	shuang cheng qu	80
+双塔	shuang ta	80
+双塔区	shuang ta qu	80
+双峰	shuang feng	80
+双峰县	shuang feng xian	80
+双柏	shuang bai	80
+双柏县	shuang bai xian	80
+双桥	shuang qiao	80
+双桥区	shuang qiao qu	80
+双江	shuang jiang	80
+双江拉祜族佤族布朗族傣族自治县	shuang jiang la hu zu wa zu bu lang zu dai zu zi zhi xian	80
+双河	shuang he	80
+双河市	shuang he shi	80
+双流	shuang liu	80
+双流区	shuang liu qu	80
+双清	shuang qing	80
+双清区	shuang qing qu	80
+双湖	shuang hu	80
+双湖县	shuang hu xian	80
+双溪	shuang xi	80
+双溪区	shuang xi qu	80
+双滦	shuang luan	80
+双滦区	shuang luan qu	80
+双牌	shuang pai	80
+双牌县	shuang pai xian	80
+双辽	shuang liao	80
+双辽市	shuang liao shi	80
+双阳	shuang yang	80
+双阳区	shuang yang qu	80
+双鸭山	shuang ya shan	250
+双鸭山市	shuang ya shan shi	250
+双鸭山市宝山区	shuang ya shan shi bao shan qu	80
+叙州	xu zhou	80
+叙州区	xu zhou qu	80
+叙永	xu yong	80
+叙永县	xu yong xian	80
+叠彩	die cai	80
+叠彩区	die cai qu	80
+古丈	gu zhang	80
+古丈县	gu zhang xian	80
+古交	gu jiao	80
+古交市	gu jiao shi	80
+古冶	gu ye	80
+古冶区	gu ye qu	80
+古县	gu xian	80
+古城	gu cheng	80
+古城区	gu cheng qu	80
+古塔	gu ta	80
+古塔区	gu ta qu	80
+古浪	gu lang	80
+古浪县	gu lang xian	80
+古田	gu tian	80
+古田县	gu tian xian	80
+古蔺	gu lin	80
+古蔺县	gu lin xian	80
+句容	ju rong	80
+句容市	ju rong shi	80
+召陵	zhao ling	80
+召陵区	zhao ling qu	80
+可克达拉	ke ke da la	80
+可克达拉市	ke ke da la shi	80
+台东	tai dong	80
+台东县	tai dong xian	80
+台中	tai zhong	80
+台中市	tai zhong shi	80
+台中市东区	tai zhong shi dong qu	80
+台中市北区	tai zhong shi bei qu	80
+台中市南区	tai zhong shi nan qu	80
+台中市和平区	tai zhong shi he ping qu	80
+台中市大安区	tai zhong shi da an qu	80
+台中市太平区	tai zhong shi tai ping qu	80
+台中市西区	tai zhong shi xi qu	80
+台儿庄	tai er zhuang	80
+台儿庄区	tai er zhuang qu	80
+台前	tai qian	80
+台前县	tai qian xian	80
+台北	tai bei	80
+台北市	tai bei shi	80
+台北市中山区	tai bei shi zhong shan qu	80
+台北市中正区	tai bei shi zhong zheng qu	80
+台北市信义区	tai bei shi xin yi qu	80
+台北市大同区	tai bei shi da tong qu	80
+台北市大安区	tai bei shi da an qu	80
+台北市松山区	tai bei shi song shan qu	80
+台南	tai nan	80
+台南市	tai nan shi	80
+台南市东区	tai nan shi dong qu	80
+台南市东山区	tai nan shi dong shan qu	80
+台南市中西区	tai nan shi zhong xi qu	80
+台南市北区	tai nan shi bei qu	80
+台南市南区	tai nan shi nan qu	80
+台南市安定区	tai nan shi an ding qu	80
+台南市新市区	tai nan shi xin shi qu	80
+台安	tai an	80
+台安县	tai an xian	80
+台山	tai shan	80
+台山市	tai shan shi	80
+台州	tai zhou	250
+台州市	tai zhou shi	250
+台江	tai jiang	80
+台江区	tai jiang qu	80
+台江县	tai jiang xian	80
+台湾	tai wan	500
+台湾省	tai wan sheng	500
+台湾省连江县	tai wan sheng lian jiang xian	80
+台湾省金门县	tai wan sheng jin men xian	80
+右江	you jiang	80
+右江区	you jiang qu	80
+右玉	you yu	80
+右玉县	you yu xian	80
+叶县	ye xian	80
+叶城	ye cheng	80
+叶城县	ye cheng xian	80
+叶集	ye ji	80
+叶集区	ye ji qu	80
+合作	he zuo	80
+合作市	he zuo shi	80
+合山	he shan	80
+合山市	he shan shi	80
+合川	he chuan	80
+合川区	he chuan qu	80
+合水	he shui	80
+合水县	he shui xian	80
+合江	he jiang	80
+合江县	he jiang xian	80
+合浦	he pu	80
+合浦县	he pu xian	80
+合肥	he fei	250
+合肥市	he fei shi	250
+合阳	he yang	80
+合阳县	he yang xian	80
+吉县	ji xian	80
+吉安	ji an	250
+吉安县	ji an xian	80
+吉安市	ji an shi	250
+吉州	ji zhou	80
+吉州区	ji zhou qu	80
+吉木乃	ji mu nai	80
+吉木乃县	ji mu nai xian	80
+吉木萨尔	ji mu sa er	80
+吉木萨尔县	ji mu sa er xian	80
+吉林	ji lin	500
+吉林市	ji lin shi	250
+吉林市龙潭区	ji lin shi long tan qu	80
+吉林省	ji lin sheng	500
+吉水	ji shui	80
+吉水县	ji shui xian	80
+吉阳	ji yang	80
+吉阳区	ji yang qu	80
+吉隆	ji long	80
+吉隆县	ji long xian	80
+吉首	ji shou	80
+吉首市	ji shou shi	80
+同仁	tong ren	80
+同仁市	tong ren shi	80
+同安	tong an	80
+同安区	tong an qu	80
+同德	tong de	80
+同德县	tong de xian	80
+同心	tong xin	80
+同心县	tong xin xian	80
+同江	tong jiang	80
+同江市	tong jiang shi	80
+名山	ming shan	80
+名山区	ming shan qu	80
+后壁	hou bi	80
+后壁区	hou bi qu	80
+后里	hou li	80
+后里区	hou li qu	80
+吐鲁番	tu lu fan	250
+吐鲁番市	tu lu fan shi	250
+向阳	xiang yang	80
+向阳区	xiang yang qu	80
+吕梁	lv liang	250
+吕梁市	lv liang shi	250
+君山	jun shan	80
+君山区	jun shan qu	80
+含山	han shan	80
+含山县	han shan xian	80
+启东	qi dong	80
+启东市	qi dong shi	80
+吴中	wu zhong	80
+吴中区	wu zhong qu	80
+吴兴	wu xing	80
+吴兴区	wu xing qu	80
+吴堡	wu bu	80
+吴堡县	wu bu xian	80
+吴川	wu chuan	80
+吴川市	wu chuan shi	80
+吴忠	wu zhong	250
+吴忠市	wu zhong shi	250
+吴桥	wu qiao	80
+吴桥县	wu qiao xian	80
+吴江	wu jiang	80
+吴江区	wu jiang qu	80
+吴起	wu qi	80
+吴起县	wu qi xian	80
+呈贡	cheng gong	80
+呈贡区	cheng gong qu	80
+周口	zhou kou	250
+周口市	zhou kou shi	250
+周宁	zhou ning	80
+周宁县	zhou ning xian	80
+周村	zhou cun	80
+周村区	zhou cun qu	80
+周至	zhou zhi	80
+周至县	zhou zhi xian	80
+呼伦贝尔	hu lun bei er	250
+呼伦贝尔市	hu lun bei er shi	250
+呼兰	hu lan	80
+呼兰区	hu lan qu	80
+呼和浩特	hu he hao te	250
+呼和浩特市	hu he hao te shi	250
+呼和浩特市新城区	hu he hao te shi xin cheng qu	80
+呼图壁	hu tu bi	80
+呼图壁县	hu tu bi xian	80
+呼玛	hu ma	80
+呼玛县	hu ma xian	80
+和县	he xian	80
+和安	he an	80
+和安县	he an xian	80
+和布克赛尔	he bu ke sai er	80
+和布克赛尔蒙古自治县	he bu ke sai er meng gu zi zhi xian	80
+和平	he ping	80
+和平区	he ping qu	80
+和平县	he ping xian	80
+和康	he kang	80
+和康县	he kang xian	80
+和政	he zheng	80
+和政县	he zheng xian	80
+和林格尔	he lin ge er	80
+和林格尔县	he lin ge er xian	80
+和田	he tian	250
+和田县	he tian xian	80
+和田地区	he tian di qu	250
+和田市	he tian shi	80
+和硕	he shuo	80
+和硕县	he shuo xian	80
+和静	he jing	80
+和静县	he jing xian	80
+和顺	he shun	80
+和顺县	he shun xian	80
+和龙	he long	80
+和龙市	he long shi	80
+咸丰	xian feng	80
+咸丰县	xian feng xian	80
+咸宁	xian ning	250
+咸宁市	xian ning shi	250
+咸安	xian an	80
+咸安区	xian an qu	80
+咸阳	xian yang	250
+咸阳市	xian yang shi	250
+哈密	ha mi	250
+哈密市	ha mi shi	250
+哈尔滨	ha er bin	250
+哈尔滨市	ha er bin shi	250
+哈巴河	ha ba he	80
+哈巴河县	ha ba he xian	80
+响水	xiang shui	80
+响水县	xiang shui xian	80
+唐县	tang xian	80
+唐山	tang shan	250
+唐山市	tang shan shi	250
+唐河	tang he	80
+唐河县	tang he xian	80
+商丘	shang qiu	250
+商丘市	shang qiu shi	250
+商南	shang nan	80
+商南县	shang nan xian	80
+商城	shang cheng	80
+商城县	shang cheng xian	80
+商州	shang zhou	80
+商州区	shang zhou qu	80
+商水	shang shui	80
+商水县	shang shui xian	80
+商河	shang he	80
+商河县	shang he xian	80
+商洛	shang luo	250
+商洛市	shang luo shi	250
+商都	shang dou	80
+商都县	shang dou xian	80
+喀什	ka shi	250
+喀什地区	ka shi di qu	250
+喀什市	ka shi shi	80
+喀喇沁	ka la qin	80
+喀喇沁左翼	ka la qin zuo yi	80
+喀喇沁左翼蒙古族自治县	ka la qin zuo yi meng gu zu zi zhi xian	80
+喀喇沁旗	ka la qin qi	80
+善化	shan hua	80
+善化区	shan hua qu	80
+喜德	xi de	80
+喜德县	xi de xian	80
+嘉义	jia yi	80
+嘉义县	jia yi xian	80
+嘉义市	jia yi shi	80
+嘉义市东区	jia yi shi dong qu	80
+嘉义市西区	jia yi shi xi qu	80
+嘉兴	jia xing	250
+嘉兴市	jia xing shi	250
+嘉善	jia shan	80
+嘉善县	jia shan xian	80
+嘉定	jia ding	80
+嘉定区	jia ding qu	80
+嘉峪关	jia yu guan	250
+嘉峪关市	jia yu guan shi	250
+嘉模堂	jia mo tang	80
+嘉模堂区	jia mo tang qu	80
+嘉祥	jia xiang	80
+嘉祥县	jia xiang xian	80
+嘉禾	jia he	80
+嘉禾县	jia he xian	80
+嘉荫	jia yin	80
+嘉荫县	jia yin xian	80
+嘉陵	jia ling	80
+嘉陵区	jia ling qu	80
+嘉鱼	jia yu	80
+嘉鱼县	jia yu xian	80
+嘉黎	jia li	80
+嘉黎县	jia li xian	80
+噶尔	ga er	80
+噶尔县	ga er xian	80
+囊谦	nang qian	80
+囊谦县	nang qian xian	80
+四会	si hui	80
+四会市	si hui shi	80
+四子王	si zi wang	80
+四子王旗	si zi wang qi	80
+四川	si chuan	500
+四川省	si chuan sheng	500
+四平	si ping	250
+四平市	si ping shi	250
+四平市铁东区	si ping shi tie dong qu	80
+四平市铁西区	si ping shi tie xi qu	80
+四方台	si fang tai	80
+四方台区	si fang tai qu	80
+回民	hui min	80
+回民区	hui min qu	80
+团风	tuan feng	80
+团风县	tuan feng xian	80
+围场	wei chang	80
+围场满族蒙古族自治县	wei chang man zu meng gu zu zi zhi xian	80
+固原	gu yuan	250
+固原市	gu yuan shi	250
+固始	gu shi	80
+固始县	gu shi xian	80
+固安	gu an	80
+固安县	gu an xian	80
+固镇	gu zhen	80
+固镇县	gu zhen xian	80
+固阳	gu yang	80
+固阳县	gu yang xian	80
+图们	tu men	80
+图们市	tu men shi	80
+图木舒克	tu mu shu ke	80
+图木舒克市	tu mu shu ke shi	80
+土城	tu cheng	80
+土城区	tu cheng qu	80
+土默特右	tu mo te you	80
+土默特右旗	tu mo te you qi	80
+土默特左	tu mo te zuo	80
+土默特左旗	tu mo te zuo qi	80
+圣安多尼堂	sheng an duo ni tang	80
+圣安多尼堂区	sheng an duo ni tang qu	80
+圣方济各堂	sheng fang ji ge tang	80
+圣方济各堂区	sheng fang ji ge tang qu	80
+坊子	fang zi	80
+坊子区	fang zi qu	80
+坡头	po tou	80
+坡头区	po tou qu	80
+坪山	ping shan	80
+坪山区	ping shan qu	80
+坪林区	ping lin qu	80
+垣曲	yuan qu	80
+垣曲县	yuan qu xian	80
+垦利	ken li	80
+垦利区	ken li qu	80
+垫江	dian jiang	80
+垫江县	dian jiang xian	80
+埇桥	yong qiao	80
+埇桥区	yong qiao qu	80
+城东	cheng dong	80
+城东区	cheng dong qu	80
+城中	cheng zhong	80
+城中区	cheng zhong qu	80
+城关	cheng guan	80
+城关区	cheng guan qu	80
+城北	cheng bei	80
+城北区	cheng bei qu	80
+城区	cheng qu	80
+城厢	cheng xiang	80
+城厢区	cheng xiang qu	80
+城口	cheng kou	80
+城口县	cheng kou xian	80
+城固	cheng gu	80
+城固县	cheng gu xian	80
+城子河	cheng zi he	80
+城子河区	cheng zi he qu	80
+城步	cheng bu	80
+城步苗族自治县	cheng bu miao zu zi zhi xian	80
+城西	cheng xi	80
+城西区	cheng xi qu	80
+城阳	cheng yang	80
+城阳区	cheng yang qu	80
+基隆	ji long	80
+基隆市	ji long shi	80
+基隆市中山区	ji long shi zhong shan qu	80
+基隆市中正区	ji long shi zhong zheng qu	80
+基隆市信义区	ji long shi xin yi qu	80
+堆龙德庆	dui long de qing	80
+堆龙德庆区	dui long de qing qu	80
+塔什库尔干	ta shen ku er gan	80
+塔什库尔干塔吉克自治县	ta shen ku er gan ta ji ke zi zhi xian	80
+塔城	ta cheng	250
+塔城地区	ta cheng di qu	250
+塔城市	ta cheng shi	80
+塔河	ta he	80
+塔河县	ta he xian	80
+增城	zeng cheng	80
+增城区	zeng cheng qu	80
+墨江	mo jiang	80
+墨江哈尼族自治县	mo jiang ha ni zu zi zhi xian	80
+墨玉	mo yu	80
+墨玉县	mo yu xian	80
+墨竹工卡	mo zhu gong ka	80
+墨竹工卡县	mo zhu gong ka xian	80
+墨脱	mo tuo	80
+墨脱县	mo tuo xian	80
+壤塘	rang tang	80
+壤塘县	rang tang xian	80
+士林区	shi lin qu	80
+壶关	hu guan	80
+壶关县	hu guan xian	80
+复兴	fu xing	80
+复兴区	fu xing qu	80
+夏县	xia xian	80
+夏河	xia he	80
+夏河县	xia he xian	80
+夏津	xia jin	80
+夏津县	xia jin xian	80
+夏邑	xia yi	80
+夏邑县	xia yi xian	80
+外埔	wai pu	80
+外埔区	wai pu qu	80
+多伦	duo lun	80
+多伦县	duo lun xian	80
+大东	da dong	80
+大东区	da dong qu	80
+大丰	da feng	80
+大丰区	da feng qu	80
+大余	da yu	80
+大余县	da yu xian	80
+大关	da guan	80
+大关县	da guan xian	80
+大兴	da xing	80
+大兴区	da xing qu	80
+大兴安岭	da xing an ling	250
+大兴安岭地区	da xing an ling di qu	250
+大内	da nei	80
+大内区	da nei qu	80
+大冶	da ye	80
+大冶市	da ye shi	80
+大化	da hua	80
+大化瑶族自治县	da hua yao zu zi zhi xian	80
+大厂	da chang	80
+大厂回族自治县	da chang hui zu zi zhi xian	80
+大同	da tong	250
+大同区	da tong qu	80
+大同市	da tong shi	250
+大名	da ming	80
+大名县	da ming xian	80
+大园	da yuan	80
+大园区	da yuan qu	80
+大城	da cheng	80
+大城县	da cheng xian	80
+大埔	da bu	80
+大埔区	da bu qu	80
+大埔區	da bu qu	80
+大埔县	da bu xian	80
+大堂	da tang	80
+大堂区	da tang qu	80
+大姚	da yao	80
+大姚县	da yao xian	80
+大宁	da ning	80
+大宁县	da ning xian	80
+大安	da an	80
+大安区	da an qu	80
+大安市	da an shi	80
+大寮	da liao	80
+大寮区	da liao qu	80
+大庆	da qing	250
+大庆市	da qing shi	250
+大庆市大同区	da qing shi da tong qu	80
+大悟	da wu	80
+大悟县	da wu xian	80
+大新	da xin	80
+大新县	da xin xian	80
+大方	da fang	80
+大方县	da fang xian	80
+大树	da shu	80
+大树区	da shu qu	80
+大武口	da wu kou	80
+大武口区	da wu kou qu	80
+大洼	da wa	80
+大洼区	da wa qu	80
+大渡口	da du kou	80
+大渡口区	da du kou qu	80
+大溪	da xi	80
+大溪区	da xi qu	80
+大理	da li	250
+大理市	da li shi	80
+大理白族自治州	da li bai zu zi zhi zhou	250
+大田	da tian	80
+大田县	da tian xian	80
+大甲	da jia	80
+大甲区	da jia qu	80
+大石桥	da shi qiao	80
+大石桥市	da shi qiao shi	80
+大社	da she	80
+大社区	da she qu	80
+大祥	da xiang	80
+大祥区	da xiang qu	80
+大竹	da zhu	80
+大竹县	da zhu xian	80
+大箐山	da qing shan	80
+大箐山县	da qing shan xian	80
+大肚	da du	80
+大肚区	da du qu	80
+大英	da ying	80
+大英县	da ying xian	80
+大荔	da li	80
+大荔县	da li xian	80
+大观	da guan	80
+大观区	da guan qu	80
+大足	da zu	80
+大足区	da zu qu	80
+大连	da lian	250
+大连市	da lian shi	250
+大连市中山区	da lian shi zhong shan qu	80
+大通	da tong	80
+大通区	da tong qu	80
+大通回族土族自治县	da tong hui zu tu zu zi zhi xian	80
+大邑	da yi	80
+大邑县	da yi xian	80
+大里	da li	80
+大里区	da li qu	80
+大雅	da ya	80
+大雅区	da ya qu	80
+天元	tian yuan	80
+天元区	tian yuan qu	80
+天全	tian quan	80
+天全县	tian quan xian	80
+天台	tian tai	80
+天台县	tian tai xian	80
+天宁	tian ning	80
+天宁区	tian ning qu	80
+天山	tian shan	80
+天山区	tian shan qu	80
+天峨	tian e	80
+天峨县	tian e xian	80
+天峻	tian jun	80
+天峻县	tian jun xian	80
+天心	tian xin	80
+天心区	tian xin qu	80
+天柱	tian zhu	80
+天柱县	tian zhu xian	80
+天桥	tian qiao	80
+天桥区	tian qiao qu	80
+天水	tian shui	250
+天水市	tian shui shi	250
+天河	tian he	80
+天河区	tian he qu	80
+天津	tian jin	500
+天津市	tian jin shi	500
+天津市和平区	tian jin shi he ping qu	80
+天津市河东区	tian jin shi he dong qu	80
+天涯	tian ya	80
+天涯区	tian ya qu	80
+天祝	tian zhu	80
+天祝藏族自治县	tian zhu zang zu zi zhi xian	80
+天等	tian deng	80
+天等县	tian deng xian	80
+天镇	tian zhen	80
+天镇县	tian zhen xian	80
+天长	tian zhang	80
+天长市	tian zhang shi	80
+天门	tian men	80
+天门市	tian men shi	80
+太仆寺	tai pu si	80
+太仆寺旗	tai pu si qi	80
+太仓	tai cang	80
+太仓市	tai cang shi	80
+太原	tai yuan	250
+太原市	tai yuan shi	250
+太和	tai he	80
+太和区	tai he qu	80
+太和县	tai he xian	80
+太子河	tai zi he	80
+太子河区	tai zi he qu	80
+太平	tai ping	80
+太平区	tai ping qu	80
+太康	tai kang	80
+太康县	tai kang xian	80
+太湖	tai hu	80
+太湖县	tai hu xian	80
+太白	tai bai	80
+太白县	tai bai xian	80
+太谷	tai gu	80
+太谷区	tai gu qu	80
+头屯河	tou tun he	80
+头屯河区	tou tun he qu	80
+夷陵	yi ling	80
+夷陵区	yi ling qu	80
+夹江	jia jiang	80
+夹江县	jia jiang xian	80
+奇台	qi tai	80
+奇台县	qi tai xian	80
+奈曼	nai man	80
+奈曼旗	nai man qi	80
+奉化	feng hua	80
+奉化区	feng hua qu	80
+奉新	feng xin	80
+奉新县	feng xin xian	80
+奉节	feng jie	80
+奉节县	feng jie xian	80
+奉贤	feng xian	80
+奉贤区	feng xian qu	80
+奎屯	kui tun	80
+奎屯市	kui tun shi	80
+奎文	kui wen	80
+奎文区	kui wen qu	80
+如东	ru dong	80
+如东县	ru dong xian	80
+如皋	ru gao	80
+如皋市	ru gao shi	80
+始兴	shi xing	80
+始兴县	shi xing xian	80
+姑苏	gu su	80
+姑苏区	gu su qu	80
+姚安	yao an	80
+姚安县	yao an xian	80
+姜堰	jiang yan	80
+姜堰区	jiang yan qu	80
+威信	wei xin	80
+威信县	wei xin xian	80
+威县	wei xian	80
+威宁	wei ning	80
+威宁彝族回族苗族自治县	wei ning yi zu hui zu miao zu zi zhi xian	80
+威海	wei hai	250
+威海市	wei hai shi	250
+威远	wei yuan	80
+威远县	wei yuan xian	80
+娄底	lou di	250
+娄底市	lou di shi	250
+娄星	lou xing	80
+娄星区	lou xing qu	80
+娄烦	lou fan	80
+娄烦县	lou fan xian	80
+婺城	wu cheng	80
+婺城区	wu cheng qu	80
+婺源	wu yuan	80
+婺源县	wu yuan xian	80
+嫩江	nen jiang	80
+嫩江市	nen jiang shi	80
+子洲	zi zhou	80
+子洲县	zi zhou xian	80
+子长	zi zhang	80
+子长市	zi zhang shi	80
+孙吴	sun wu	80
+孙吴县	sun wu xian	80
+孝义	xiao yi	80
+孝义市	xiao yi shi	80
+孝南	xiao nan	80
+孝南区	xiao nan qu	80
+孝感	xiao gan	250
+孝感市	xiao gan shi	250
+孝昌	xiao chang	80
+孝昌县	xiao chang xian	80
+孟州	meng zhou	80
+孟州市	meng zhou shi	80
+孟村	meng cun	80
+孟村回族自治县	meng cun hui zu zi zhi xian	80
+孟津	meng jin	80
+孟津区	meng jin qu	80
+孟连	meng lian	80
+孟连傣族拉祜族佤族自治县	meng lian dai zu la hu zu wa zu zi zhi xian	80
+学甲	xue jia	80
+学甲区	xue jia qu	80
+宁乡	ning xiang	80
+宁乡市	ning xiang shi	80
+宁化	ning hua	80
+宁化县	ning hua xian	80
+宁南	ning nan	80
+宁南县	ning nan xian	80
+宁县	ning xian	80
+宁国	ning guo	80
+宁国市	ning guo shi	80
+宁城	ning cheng	80
+宁城县	ning cheng xian	80
+宁夏	ning xia	500
+宁夏回族自治区	ning xia hui zu zi zhi qu	500
+宁安	ning an	80
+宁安市	ning an shi	80
+宁强	ning qiang	80
+宁强县	ning qiang xian	80
+宁德	ning de	250
+宁德市	ning de shi	250
+宁明	ning ming	80
+宁明县	ning ming xian	80
+宁晋	ning jin	80
+宁晋县	ning jin xian	80
+宁武	ning wu	80
+宁武县	ning wu xian	80
+宁江	ning jiang	80
+宁江区	ning jiang qu	80
+宁河	ning he	80
+宁河区	ning he qu	80
+宁波	ning bo	250
+宁波市	ning bo shi	250
+宁津	ning jin	80
+宁津县	ning jin xian	80
+宁洱	ning er	80
+宁洱哈尼族彝族自治县	ning er ha ni zu yi zu zi zhi xian	80
+宁海	ning hai	80
+宁海县	ning hai xian	80
+宁蒗	ning lang	80
+宁蒗彝族自治县	ning lang yi zu zi zhi xian	80
+宁远	ning yuan	80
+宁远县	ning yuan xian	80
+宁都	ning dou	80
+宁都县	ning dou xian	80
+宁阳	ning yang	80
+宁阳县	ning yang xian	80
+宁陕	ning shan	80
+宁陕县	ning shan xian	80
+宁陵	ning ling	80
+宁陵县	ning ling xian	80
+安丘	an qiu	80
+安丘市	an qiu shi	80
+安义	an yi	80
+安义县	an yi xian	80
+安乐	an le	80
+安乐区	an le qu	80
+安乡	an xiang	80
+安乡县	an xiang xian	80
+安仁	an ren	80
+安仁县	an ren xian	80
+安化	an hua	80
+安化县	an hua xian	80
+安南	an nan	80
+安南区	an nan qu	80
+安吉	an ji	80
+安吉县	an ji xian	80
+安国	an guo	80
+安国市	an guo shi	80
+安图	an tu	80
+安图县	an tu xian	80
+安塞	an sai	80
+安塞区	an sai qu	80
+安多	an duo	80
+安多县	an duo xian	80
+安宁	an ning	80
+安宁区	an ning qu	80
+安宁市	an ning shi	80
+安定	an ding	80
+安定区	an ding qu	80
+安居	an ju	80
+安居区	an ju qu	80
+安岳	an yue	80
+安岳县	an yue xian	80
+安州	an zhou	80
+安州区	an zhou qu	80
+安平	an ping	80
+安平区	an ping qu	80
+安平县	an ping xian	80
+安庆	an qing	250
+安庆市	an qing shi	250
+安康	an kang	250
+安康市	an kang shi	250
+安徽	an hui	500
+安徽省	an hui sheng	500
+安新	an xin	80
+安新县	an xin xian	80
+安次	an ci	80
+安次区	an ci qu	80
+安泽	an ze	80
+安泽县	an ze xian	80
+安源	an yuan	80
+安源区	an yuan qu	80
+安溪	an xi	80
+安溪县	an xi xian	80
+安福	an fu	80
+安福县	an fu xian	80
+安达	an da	80
+安达市	an da shi	80
+安远	an yuan	80
+安远县	an yuan xian	80
+安阳	an yang	250
+安阳县	an yang xian	80
+安阳市	an yang shi	250
+安陆	an lu	80
+安陆市	an lu shi	80
+安顺	an shun	250
+安顺市	an shun shi	250
+安龙	an long	80
+安龙县	an long xian	80
+宏伟	hong wei	80
+宏伟区	hong wei qu	80
+宕昌	tan chang	80
+宕昌县	tan chang xian	80
+官渡	guan du	80
+官渡区	guan du qu	80
+官田	guan tian	80
+官田区	guan tian qu	80
+定兴	ding xing	80
+定兴县	ding xing xian	80
+定南	ding nan	80
+定南县	ding nan xian	80
+定安	ding an	80
+定安县	ding an xian	80
+定州	ding zhou	80
+定州市	ding zhou shi	80
+定日	ding ri	80
+定日县	ding ri xian	80
+定海	ding hai	80
+定海区	ding hai qu	80
+定结	ding jie	80
+定结县	ding jie xian	80
+定襄	ding xiang	80
+定襄县	ding xiang xian	80
+定西	ding xi	250
+定西市	ding xi shi	250
+定西市安定区	ding xi shi an ding qu	80
+定边	ding bian	80
+定边县	ding bian xian	80
+定远	ding yuan	80
+定远县	ding yuan xian	80
+定陶	ding tao	80
+定陶区	ding tao qu	80
+宛城	wan cheng	80
+宛城区	wan cheng qu	80
+宜丰	yi feng	80
+宜丰县	yi feng xian	80
+宜兰	yi lan	80
+宜兰县	yi lan xian	80
+宜兴	yi xing	80
+宜兴市	yi xing shi	80
+宜君	yi jun	80
+宜君县	yi jun xian	80
+宜城	yi cheng	80
+宜城市	yi cheng shi	80
+宜宾	yi bin	250
+宜宾市	yi bin shi	250
+宜川	yi chuan	80
+宜川县	yi chuan xian	80
+宜州	yi zhou	80
+宜州区	yi zhou qu	80
+宜昌	yi chang	250
+宜昌市	yi chang shi	250
+宜春	yi chun	250
+宜春市	yi chun shi	250
+宜秀	yi xiu	80
+宜秀区	yi xiu qu	80
+宜章	yi zhang	80
+宜章县	yi zhang xian	80
+宜良	yi liang	80
+宜良县	yi liang xian	80
+宜都	yi dou	80
+宜都市	yi du shi	80
+宜阳	yi yang	80
+宜阳县	yi yang xian	80
+宜黄	yi huang	80
+宜黄县	yi huang xian	80
+宝丰	bao feng	80
+宝丰县	bao feng xian	80
+宝兴	bao xing	80
+宝兴县	bao xing xian	80
+宝坻	bao di	80
+宝坻区	bao di qu	80
+宝塔	bao ta	80
+宝塔区	bao ta qu	80
+宝安	bao an	80
+宝安区	bao an qu	80
+宝山	bao shan	80
+宝山区	bao shan qu	80
+宝应	bao ying	80
+宝应县	bao ying xian	80
+宝清	bao qing	80
+宝清县	bao qing xian	80
+宝鸡	bao ji	250
+宝鸡市	bao ji shi	250
+宣化	xuan hua	80
+宣化区	xuan hua qu	80
+宣城	xuan cheng	250
+宣城市	xuan cheng shi	250
+宣威	xuan wei	80
+宣威市	xuan wei shi	80
+宣州	xuan zhou	80
+宣州区	xuan zhou qu	80
+宣恩	xuan en	80
+宣恩县	xuan en xian	80
+宣汉	xuan han	80
+宣汉县	xuan han xian	80
+容县	rong xian	80
+容城	rong cheng	80
+容城县	rong cheng xian	80
+宽城	kuan cheng	80
+宽城区	kuan cheng qu	80
+宽城满族自治县	kuan cheng man zu zi zhi xian	80
+宽甸	kuan dian	80
+宽甸满族自治县	kuan dian man zu zi zhi xian	80
+宾县	bin xian	80
+宾川	bin chuan	80
+宾川县	bin chuan xian	80
+宾阳	bin yang	80
+宾阳县	bin yang xian	80
+宿城	su cheng	80
+宿城区	su cheng qu	80
+宿州	su zhou	250
+宿州市	su zhou shi	250
+宿松	su song	80
+宿松县	su song xian	80
+宿豫	su yu	80
+宿豫区	su yu qu	80
+宿迁	su qian	250
+宿迁市	su qian shi	250
+密云	mi yun	80
+密云区	mi yun qu	80
+密山	mi shan	80
+密山市	mi shan shi	80
+富县	fu xian	80
+富宁	fu ning	80
+富宁县	fu ning xian	80
+富川	fu chuan	80
+富川瑶族自治县	fu chuan yao zu zi zhi xian	80
+富平	fu ping	80
+富平县	fu ping xian	80
+富拉尔基	fu la er ji	80
+富拉尔基区	fu la er ji qu	80
+富民	fu min	80
+富民县	fu min xian	80
+富源	fu yuan	80
+富源县	fu yuan xian	80
+富蕴	fu yun	80
+富蕴县	fu yun xian	80
+富裕	fu yu	80
+富裕县	fu yu xian	80
+富锦	fu jin	80
+富锦市	fu jin shi	80
+富阳	fu yang	80
+富阳区	fu yang qu	80
+富顺	fu shun	80
+富顺县	fu shun xian	80
+寒亭	han ting	80
+寒亭区	han ting qu	80
+察哈尔右翼中	cha ha er you yi zhong	80
+察哈尔右翼中旗	cha ha er you yi zhong qi	80
+察哈尔右翼前	cha ha er you yi qian	80
+察哈尔右翼前旗	cha ha er you yi qian qi	80
+察哈尔右翼后	cha ha er you yi hou	80
+察哈尔右翼后旗	cha ha er you yi hou qi	80
+察布查尔	cha bu cha er	80
+察布查尔锡伯自治县	cha bu cha er xi bo zi zhi xian	80
+察隅	cha yu	80
+察隅县	cha yu xian	80
+察雅	cha ya	80
+察雅县	cha ya xian	80
+寻乌	xun wu	80
+寻乌县	xun wu xian	80
+寻甸	xun dian	80
+寻甸回族彝族自治县	xun dian hui zu yi zu zi zhi xian	80
+寿光	shou guang	80
+寿光市	shou guang shi	80
+寿县	shou xian	80
+寿宁	shou ning	80
+寿宁县	shou ning xian	80
+寿阳	shou yang	80
+寿阳县	shou yang xian	80
+封丘	feng qiu	80
+封丘县	feng qiu xian	80
+封开	feng kai	80
+封开县	feng kai xian	80
+射洪	she hong	80
+射洪市	she hong shi	80
+射阳	she yang	80
+射阳县	she yang xian	80
+将乐	jiang le	80
+将乐县	jiang le xian	80
+将军	jiang jun	80
+将军区	jiang jun qu	80
+尉氏	wei shi	80
+尉氏县	wei shi xian	80
+尉犁	yu li	80
+尉犁县	yu li xian	80
+小店	xiao dian	80
+小店区	xiao dian qu	80
+小港	xiao gang	80
+小港区	xiao gang qu	80
+小金	xiao jin	80
+小金县	xiao jin xian	80
+尖山	jian shan	80
+尖山区	jian shan qu	80
+尖扎	jian zha	80
+尖扎县	jian zha xian	80
+尖草坪	jian cao ping	80
+尖草坪区	jian cao ping qu	80
+尚义	shang yi	80
+尚义县	shang yi xian	80
+尚志	shang zhi	80
+尚志市	shang zhi shi	80
+尤溪	you xi	80
+尤溪县	you xi xian	80
+尧都	yao dou	80
+尧都区	yao dou qu	80
+尼勒克	ni lei ke	80
+尼勒克县	ni lei ke xian	80
+尼木	ni mu	80
+尼木县	ni mu xian	80
+尼玛	ni ma	80
+尼玛县	ni ma xian	80
+屏东	ping dong	80
+屏东县	ping dong xian	80
+屏南	ping nan	80
+屏南县	ping nan xian	80
+屏山	ping shan	80
+屏山县	ping shan xian	80
+屏边	ping bian	80
+屏边苗族自治县	ping bian miao zu zi zhi xian	80
+屯昌	tun chang	80
+屯昌县	tun chang xian	80
+屯溪	tun xi	80
+屯溪区	tun xi qu	80
+屯留	tun liu	80
+屯留区	tun liu qu	80
+屯門區	tun men qu	80
+屯门	tun men	80
+屯门区	tun men qu	80
+山上	shan shang	80
+山上区	shan shang qu	80
+山东	shan dong	500
+山东省	shan dong sheng	500
+山丹	shan dan	80
+山丹县	shan dan xian	80
+山亭	shan ting	80
+山亭区	shan ting qu	80
+山南	shan nan	250
+山南市	shan nan shi	250
+山城	shan cheng	80
+山城区	shan cheng qu	80
+山海关	shan hai guan	80
+山海关区	shan hai guan qu	80
+山西	shan xi	500
+山西省	shan xi sheng	500
+山阳	shan yang	80
+山阳区	shan yang qu	80
+山阳县	shan yang xian	80
+山阴	shan yin	80
+山阴县	shan yin xian	80
+岐山	qi shan	80
+岐山县	qi shan xian	80
+岑巩	cen gong	80
+岑巩县	cen gong xian	80
+岑溪	cen xi	80
+岑溪市	cen xi shi	80
+岗巴	gang ba	80
+岗巴县	gang ba xian	80
+岚县	lan xian	80
+岚山	lan shan	80
+岚山区	lan shan qu	80
+岚皋	lan gao	80
+岚皋县	lan gao xian	80
+岢岚	ke lan	80
+岢岚县	ke lan xian	80
+岫岩	xiu yan	80
+岫岩满族自治县	xiu yan man zu zi zhi xian	80
+岭东	ling dong	80
+岭东区	ling dong qu	80
+岱山	dai shan	80
+岱山县	dai shan xian	80
+岱岳	dai yue	80
+岱岳区	dai yue qu	80
+岳塘	yue tang	80
+岳塘区	yue tang qu	80
+岳普湖	yue pu hu	80
+岳普湖县	yue pu hu xian	80
+岳池	yue chi	80
+岳池县	yue chi xian	80
+岳西	yue xi	80
+岳西县	yue xi xian	80
+岳阳	yue yang	250
+岳阳县	yue yang xian	80
+岳阳市	yue yang shi	250
+岳阳楼	yue yang lou	80
+岳阳楼区	yue yang lou qu	80
+岳麓	yue lu	80
+岳麓区	yue lu qu	80
+岷县	min xian	80
+峄城	yi cheng	80
+峄城区	yi cheng qu	80
+峡江	xia jiang	80
+峡江县	xia jiang xian	80
+峨山	e shan	80
+峨山彝族自治县	e shan yi zu zi zhi xian	80
+峨眉山	e mei shan	80
+峨眉山市	e mei shan shi	80
+峨边	e bian	80
+峨边彝族自治县	e bian yi zu zi zhi xian	80
+峰峰矿	feng feng kuang	80
+峰峰矿区	feng feng kuang qu	80
+崂山	lao shan	80
+崂山区	lao shan qu	80
+崆峒	kong dong	80
+崆峒区	kong dong qu	80
+崇义	chong yi	80
+崇义县	chong yi xian	80
+崇仁	chong ren	80
+崇仁县	chong ren xian	80
+崇信	chong xin	80
+崇信县	chong xin xian	80
+崇川	chong chuan	80
+崇川区	chong chuan qu	80
+崇州	chong zhou	80
+崇州市	chong zhou shi	80
+崇左	chong zuo	250
+崇左市	chong zuo shi	250
+崇明	chong ming	80
+崇明区	chong ming qu	80
+崇礼	chong li	80
+崇礼区	chong li qu	80
+崇阳	chong yang	80
+崇阳县	chong yang xian	80
+崖州	ya zhou	80
+崖州区	ya zhou qu	80
+嵊州	sheng zhou	80
+嵊州市	sheng zhou shi	80
+嵊泗	sheng si	80
+嵊泗县	sheng si xian	80
+嵩县	song xian	80
+嵩明	song ming	80
+嵩明县	song ming xian	80
+巍山	wei shan	80
+巍山彝族回族自治县	wei shan yi zu hui zu zi zhi xian	80
+川汇	chuan hui	80
+川汇区	chuan hui qu	80
+巢湖	chao hu	80
+巢湖市	chao hu shi	80
+工农	gong nong	80
+工农区	gong nong qu	80
+工布江达	gong bu jiang da	80
+工布江达县	gong bu jiang da xian	80
+左云	zuo yun	80
+左云县	zuo yun xian	80
+左权	zuo quan	80
+左权县	zuo quan xian	80
+左营	zuo ying	80
+左营区	zuo ying qu	80
+左贡	zuo gong	80
+左贡县	zuo gong xian	80
+左镇	zuo zhen	80
+左镇区	zuo zhen qu	80
+巧家	qiao jia	80
+巧家县	qiao jia xian	80
+巨野	ju ye	80
+巨野县	ju ye xian	80
+巨鹿	ju lu	80
+巨鹿县	ju lu xian	80
+巩义	gong yi	80
+巩义市	gong yi shi	80
+巩留	gong liu	80
+巩留县	gong liu xian	80
+巫山	wu shan	80
+巫山县	wu shan xian	80
+巫溪	wu xi	80
+巫溪县	wu xi xian	80
+巴东	ba dong	80
+巴东县	ba dong xian	80
+巴中	ba zhong	250
+巴中市	ba zhong shi	250
+巴南	ba nan	80
+巴南区	ba nan qu	80
+巴塘	ba tang	80
+巴塘县	ba tang xian	80
+巴宜	ba yi	80
+巴宜区	ba yi qu	80
+巴州	ba zhou	80
+巴州区	ba zhou qu	80
+巴彦	ba yan	80
+巴彦县	ba yan xian	80
+巴彦淖尔	ba yan nao er	250
+巴彦淖尔市	ba yan nao er shi	250
+巴林右	ba lin you	80
+巴林右旗	ba lin you qi	80
+巴林左	ba lin zuo	80
+巴林左旗	ba lin zuo qi	80
+巴楚	ba chu	80
+巴楚县	ba chu xian	80
+巴里坤	ba li kun	80
+巴里坤哈萨克自治县	ba li kun ha sa ke zi zhi xian	80
+巴青	ba qing	80
+巴青县	ba qing xian	80
+巴音郭楞	ba yin guo leng	250
+巴音郭楞蒙古自治州	ba yin guo leng meng gu zi zhi zhou	250
+巴马	ba ma	80
+巴马瑶族自治县	ba ma yao zu zi zhi xian	80
+市中	shi zhong	80
+市中区	shi zhong qu	80
+市北	shi bei	80
+市北区	shi bei qu	80
+市南	shi nan	80
+市南区	shi nan qu	80
+布尔津	bu er jin	80
+布尔津县	bu er jin xian	80
+布拖	bu tuo	80
+布拖县	bu tuo xian	80
+师宗	shi zong	80
+师宗县	shi zong xian	80
+常宁	chang ning	80
+常宁市	chang ning shi	80
+常山	chang shan	80
+常山县	chang shan xian	80
+常州	chang zhou	250
+常州市	chang zhou shi	250
+常德	chang de	250
+常德市	chang de shi	250
+常熟	chang shu	80
+常熟市	chang shu shi	80
+干县	gan xian	80
+干安	gan an	80
+干安县	gan an xian	80
+平乐	ping le	80
+平乐县	ping le xian	80
+平乡	ping xiang	80
+平乡县	ping xiang xian	80
+平凉	ping liang	250
+平凉市	ping liang shi	250
+平利	ping li	80
+平利县	ping li xian	80
+平南	ping nan	80
+平南县	ping nan xian	80
+平原	ping yuan	80
+平原县	ping yuan xian	80
+平和	ping he	80
+平和县	ping he xian	80
+平坝	ping ba	80
+平坝区	ping ba qu	80
+平城	ping cheng	80
+平城区	ping cheng qu	80
+平塘	ping tang	80
+平塘县	ping tang xian	80
+平安	ping an	80
+平安区	ping an qu	80
+平定	ping ding	80
+平定县	ping ding xian	80
+平山	ping shan	80
+平山区	ping shan qu	80
+平山县	ping shan xian	80
+平川	ping chuan	80
+平川区	ping chuan qu	80
+平度	ping du	80
+平度市	ping du shi	80
+平房	ping fang	80
+平房区	ping fang qu	80
+平昌	ping chang	80
+平昌县	ping chang xian	80
+平果	ping guo	80
+平果市	ping guo shi	80
+平桂	ping gui	80
+平桂区	ping gui qu	80
+平桥	ping qiao	80
+平桥区	ping qiao qu	80
+平武	ping wu	80
+平武县	ping wu xian	80
+平江	ping jiang	80
+平江县	ping jiang xian	80
+平泉	ping quan	80
+平泉市	ping quan shi	80
+平湖	ping hu	80
+平湖市	ping hu shi	80
+平溪	ping xi	80
+平溪区	ping xi qu	80
+平潭	ping tan	80
+平潭县	ping tan xian	80
+平罗	ping luo	80
+平罗县	ping luo xian	80
+平舆	ping yu	80
+平舆县	ping yu xian	80
+平谷	ping gu	80
+平谷区	ping gu qu	80
+平远	ping yuan	80
+平远县	ping yuan xian	80
+平遥	ping yao	80
+平遥县	ping yao xian	80
+平邑	ping yi	80
+平邑县	ping yi xian	80
+平镇	ping zhen	80
+平镇区	ping zhen qu	80
+平阳	ping yang	80
+平阳县	ping yang xian	80
+平阴	ping yin	80
+平阴县	ping yin xian	80
+平陆	ping lu	80
+平陆县	ping lu xian	80
+平顶山	ping ding shan	250
+平顶山市	ping ding shan shi	250
+平顶山市新华区	ping ding shan shi xin hua qu	80
+平顺	ping shun	80
+平顺县	ping shun xian	80
+平鲁	ping lu	80
+平鲁区	ping lu qu	80
+广东	guang dong	500
+广东省	guang dong sheng	500
+广丰	guang feng	80
+广丰区	guang feng qu	80
+广信	guang xin	80
+广信区	guang xin qu	80
+广元	guang yuan	250
+广元市	guang yuan shi	250
+广南	guang nan	80
+广南县	guang nan xian	80
+广宁	guang ning	80
+广宁县	guang ning xian	80
+广安	guang an	250
+广安区	guang an qu	80
+广安市	guang an shi	250
+广宗	guang zong	80
+广宗县	guang zong xian	80
+广州	guang zhou	250
+广州市	guang zhou shi	250
+广州市南沙区	guang zhou shi nan sha qu	80
+广州市白云区	guang zhou shi bai yun qu	80
+广平	guang ping	80
+广平县	guang ping xian	80
+广德	guang de	80
+广德市	guang de shi	80
+广昌	guang chang	80
+广昌县	guang chang xian	80
+广水	guang shui	80
+广水市	guang shui shi	80
+广汉	guang han	80
+广汉市	guang han shi	80
+广河	guang he	80
+广河县	guang he xian	80
+广灵	guang ling	80
+广灵县	guang ling xian	80
+广西	guang xi	500
+广西壮族自治区	guang xi zhuang zu zi zhi qu	500
+广阳	guang yang	80
+广阳区	guang yang qu	80
+广陵	guang ling	80
+广陵区	guang ling qu	80
+广饶	guang rao	80
+广饶县	guang rao xian	80
+庄河	zhuang he	80
+庄河市	zhuang he shi	80
+庄浪	zhuang lang	80
+庄浪县	zhuang lang xian	80
+庆云	qing yun	80
+庆云县	qing yun xian	80
+庆元	qing yuan	80
+庆元县	qing yuan xian	80
+庆城	qing cheng	80
+庆城县	qing cheng xian	80
+庆安	qing an	80
+庆安县	qing an xian	80
+庆阳	qing yang	250
+庆阳市	qing yang shi	250
+庐山	lu shan	80
+庐山市	lu shan shi	80
+庐江	lu jiang	80
+庐江县	lu jiang xian	80
+庐阳	lu yang	80
+庐阳区	lu yang qu	80
+库伦	ku lun	80
+库伦旗	ku lun qi	80
+库尔勒	ku er lei	80
+库尔勒市	ku er lei shi	80
+库车	ku che	80
+库车市	ku che shi	80
+应县	ying xian	80
+应城	ying cheng	80
+应城市	ying cheng shi	80
+府谷	fu gu	80
+府谷县	fu gu xian	80
+康乐	kang le	80
+康乐县	kang le xian	80
+康保	kang bao	80
+康保县	kang bao xian	80
+康县	kang xian	80
+康定	kang ding	80
+康定市	kang ding shi	80
+康巴什	kang ba shen	80
+康巴什区	kang ba shen qu	80
+康平	kang ping	80
+康平县	kang ping xian	80
+康马	kang ma	80
+康马县	kang ma xian	80
+廉江	lian jiang	80
+廉江市	lian jiang shi	80
+廊坊	lang fang	250
+廊坊市	lang fang shi	250
+延吉	yan ji	80
+延吉市	yan ji shi	80
+延安	yan an	250
+延安市	yan an shi	250
+延寿	yan shou	80
+延寿县	yan shou xian	80
+延川	yan chuan	80
+延川县	yan chuan xian	80
+延平	yan ping	80
+延平区	yan ping qu	80
+延庆	yan qing	80
+延庆区	yan qing qu	80
+延津	yan jin	80
+延津县	yan jin xian	80
+延边	yan bian	250
+延边朝鲜族自治州	yan bian chao xian zu zi zhi zhou	250
+延长	yan chang	80
+延长县	yan chang xian	80
+建华	jian hua	80
+建华区	jian hua qu	80
+建始	jian shi	80
+建始县	jian shi xian	80
+建宁	jian ning	80
+建宁县	jian ning xian	80
+建安	jian an	80
+建安区	jian an qu	80
+建平	jian ping	80
+建平县	jian ping xian	80
+建德	jian de	80
+建德市	jian de shi	80
+建昌	jian chang	80
+建昌县	jian chang xian	80
+建水	jian shui	80
+建水县	jian shui xian	80
+建湖	jian hu	80
+建湖县	jian hu xian	80
+建瓯	jian ou	80
+建瓯市	jian ou shi	80
+建邺	jian ye	80
+建邺区	jian ye qu	80
+建阳	jian yang	80
+建阳区	jian yang qu	80
+开化	kai hua	80
+开化县	kai hua xian	80
+开原	kai yuan	80
+开原市	kai yuan shi	80
+开封	kai feng	250
+开封市	kai feng shi	250
+开封市鼓楼区	kai feng shi gu lou qu	80
+开州	kai zhou	80
+开州区	kai zhou qu	80
+开平	kai ping	80
+开平区	kai ping qu	80
+开平市	kai ping shi	80
+开江	kai jiang	80
+开江县	kai jiang xian	80
+开福	kai fu	80
+开福区	kai fu qu	80
+开远	kai yuan	80
+开远市	kai yuan shi	80
+开阳	kai yang	80
+开阳县	kai yang xian	80
+开鲁	kai lu	80
+开鲁县	kai lu xian	80
+弋江	yi jiang	80
+弋江区	yi jiang qu	80
+弋阳	yi yang	80
+弋阳县	yi yang xian	80
+弓长岭	gong zhang ling	80
+弓长岭区	gong zhang ling qu	80
+张北	zhang bei	80
+张北县	zhang bei xian	80
+张家口	zhang jia kou	250
+张家口市	zhang jia kou shi	250
+张家口市桥西区	zhang jia kou shi qiao xi qu	80
+张家川	zhang jia chuan	80
+张家川回族自治县	zhang jia chuan hui zu zi zhi xian	80
+张家港	zhang jia gang	80
+张家港市	zhang jia gang shi	80
+张家界	zhang jia jie	250
+张家界市	zhang jia jie shi	250
+张家界市永定区	zhang jia jie shi yong ding qu	80
+张店	zhang dian	80
+张店区	zhang dian qu	80
+张掖	zhang ye	250
+张掖市	zhang ye shi	250
+张湾	zhang wan	80
+张湾区	zhang wan qu	80
+弥勒	mi le	80
+弥勒市	mi le shi	80
+弥渡	mi du	80
+弥渡县	mi du xian	80
+弥陀	mi tuo	80
+弥陀区	mi tuo qu	80
+归仁	gui ren	80
+归仁区	gui ren qu	80
+当涂	dang tu	80
+当涂县	dang tu xian	80
+当阳	dang yang	80
+当阳市	dang yang shi	80
+当雄	dang xiong	80
+当雄县	dang xiong xian	80
+彝良	yi liang	80
+彝良县	yi liang xian	80
+彬州	bin zhou	80
+彬州市	bin zhou shi	80
+彭山	peng shan	80
+彭山区	peng shan qu	80
+彭州	peng zhou	80
+彭州市	peng zhou shi	80
+彭水苗族土家族自治县	peng shui miao zu tu jia zu zi zhi xian	80
+彭泽	peng ze	80
+彭泽县	peng ze xian	80
+彭阳	peng yang	80
+彭阳县	peng yang xian	80
+彰化	zhang hua	80
+彰化县	zhang hua xian	80
+彰武	zhang wu	80
+彰武县	zhang wu xian	80
+徐州	xu zhou	250
+徐州市	xu zhou shi	250
+徐州市鼓楼区	xu zhou shi gu lou qu	80
+徐水	xu shui	80
+徐水区	xu shui qu	80
+徐汇	xu hui	80
+徐汇区	xu hui qu	80
+徐闻	xu wen	80
+徐闻县	xu wen xian	80
+得荣	de rong	80
+得荣县	de rong xian	80
+循化	xun hua	80
+循化撒拉族自治县	xun hua sa la zu zi zhi xian	80
+微山	wei shan	80
+微山县	wei shan xian	80
+德令哈	de ling ha	80
+德令哈市	de ling ha shi	80
+德保	de bao	80
+德保县	de bao xian	80
+德兴	de xing	80
+德兴市	de xing shi	80
+德化	de hua	80
+德化县	de hua xian	80
+德城	de cheng	80
+德城区	de cheng qu	80
+德安	de an	80
+德安县	de an xian	80
+德宏	de hong	250
+德宏傣族景颇族自治州	de hong dai zu jing po zu zi zhi zhou	250
+德州	de zhou	250
+德州市	de zhou shi	250
+德庆	de qing	80
+德庆县	de qing xian	80
+德惠	de hui	80
+德惠市	de hui shi	80
+德昌	de chang	80
+德昌县	de chang xian	80
+德格	de ge	80
+德格县	de ge xian	80
+德江	de jiang	80
+德江县	de jiang xian	80
+德清	de qing	80
+德清县	de qing xian	80
+德钦	de qin	80
+德钦县	de qin xian	80
+德阳	de yang	250
+德阳市	de yang shi	250
+徽县	hui xian	80
+徽州	hui zhou	80
+徽州区	hui zhou qu	80
+志丹	zhi dan	80
+志丹县	zhi dan xian	80
+忠县	zhong xian	80
+忻城	xin cheng	80
+忻城县	xin cheng xian	80
+忻州	xin zhou	250
+忻州市	xin zhou shi	250
+忻府	xin fu	80
+忻府区	xin fu qu	80
+怀仁	huai ren	80
+怀仁市	huai ren shi	80
+怀化	huai hua	250
+怀化市	huai hua shi	250
+怀宁	huai ning	80
+怀宁县	huai ning xian	80
+怀安	huai an	80
+怀安县	huai an xian	80
+怀来	huai lai	80
+怀来县	huai lai xian	80
+怀柔	huai rou	80
+怀柔区	huai rou qu	80
+怀远	huai yuan	80
+怀远县	huai yuan xian	80
+怀集	huai ji	80
+怀集县	huai ji xian	80
+怒江	nu jiang	250
+怒江傈僳族自治州	nu jiang li su zu zi zhi zhou	250
+思南	si nan	80
+思南县	si nan xian	80
+思明	si ming	80
+思明区	si ming qu	80
+思茅	si mao	80
+思茅区	si mao qu	80
+恒山	heng shan	80
+恒山区	heng shan qu	80
+恩平	en ping	80
+恩平市	en ping shi	80
+恩施	en shi	250
+恩施土家族苗族自治州	en shi tu jia zu miao zu zi zhi zhou	250
+恩施市	en shi shi	80
+恩阳	en yang	80
+恩阳区	en yang qu	80
+恭城	gong cheng	80
+恭城瑶族自治县	gong cheng yao zu zi zhi xian	80
+息县	xi xian	80
+息烽	xi feng	80
+息烽县	xi feng xian	80
+惠东	hui dong	80
+惠东县	hui dong xian	80
+惠农	hui nong	80
+惠农区	hui nong qu	80
+惠城	hui cheng	80
+惠城区	hui cheng qu	80
+惠安	hui an	80
+惠安县	hui an xian	80
+惠山	hui shan	80
+惠山区	hui shan qu	80
+惠州	hui zhou	250
+惠州市	hui zhou shi	250
+惠来	hui lai	80
+惠来县	hui lai xian	80
+惠民	hui min	80
+惠民县	hui min xian	80
+惠水	hui shui	80
+惠水县	hui shui xian	80
+惠济	hui ji	80
+惠济区	hui ji qu	80
+惠阳	hui yang	80
+惠阳区	hui yang qu	80
+慈利	ci li	80
+慈利县	ci li xian	80
+慈溪	ci xi	80
+慈溪市	ci xi shi	80
+成华	cheng hua	80
+成华区	cheng hua qu	80
+成县	cheng xian	80
+成安	cheng an	80
+成安县	cheng an xian	80
+成武	cheng wu	80
+成武县	cheng wu xian	80
+成都	cheng du	250
+成都市	cheng du shi	250
+房县	fang xian	80
+房山	fang shan	80
+房山区	fang shan qu	80
+扎兰屯	zha lan tun	80
+扎兰屯市	zha lan tun shi	80
+扎囊	zha nang	80
+扎囊县	zha nang xian	80
+扎赉特	zha lai te	80
+扎赉特旗	zha lai te qi	80
+扎赉诺尔	zha lai nuo er	80
+扎赉诺尔区	zha lai nuo er qu	80
+扎鲁特	zha lu te	80
+扎鲁特旗	zha lu te qi	80
+托克托	tuo ke tuo	80
+托克托县	tuo ke tuo xian	80
+托克逊	tuo ke xun	80
+托克逊县	tuo ke xun xian	80
+托里	tuo li	80
+托里县	tuo li xian	80
+扬中	yang zhong	80
+扬中市	yang zhong shi	80
+扬州	yang zhou	250
+扬州市	yang zhou shi	250
+扶余	fu yu	80
+扶余市	fu yu shi	80
+扶沟	fu gou	80
+扶沟县	fu gou xian	80
+扶绥	fu sui	80
+扶绥县	fu sui xian	80
+扶风	fu feng	80
+扶风县	fu feng xian	80
+承德	cheng de	250
+承德县	cheng de xian	80
+承德市	cheng de shi	250
+抚宁	fu ning	80
+抚宁区	fu ning qu	80
+抚州	fu zhou	250
+抚州市	fu zhou shi	250
+抚松	fu song	80
+抚松县	fu song xian	80
+抚远	fu yuan	80
+抚远市	fu yuan shi	80
+抚顺	fu shun	250
+抚顺县	fu shun xian	80
+抚顺市	fu shun shi	250
+拉孜	la zi	80
+拉孜县	la zi xian	80
+拉萨	la sa	250
+拉萨市	la sa shi	250
+拉萨市城关区	la sa shi cheng guan qu	80
+招远	zhao yuan	80
+招远市	zhao yuan shi	80
+拜城	bai cheng	80
+拜城县	bai cheng xian	80
+拜泉	bai quan	80
+拜泉县	bai quan xian	80
+拱墅	gong shu	80
+拱墅区	gong shu qu	80
+振兴	zhen xing	80
+振兴区	zhen xing qu	80
+振安	zhen an	80
+振安区	zhen an qu	80
+掇刀	duo dao	80
+掇刀区	duo dao qu	80
+措勤	cuo qin	80
+措勤县	cuo qin xian	80
+措美	cuo mei	80
+措美县	cuo mei xian	80
+揭东	jie dong	80
+揭东区	jie dong qu	80
+揭西	jie xi	80
+揭西县	jie xi xian	80
+揭阳	jie yang	250
+揭阳市	jie yang shi	250
+播州	bo zhou	80
+播州区	bo zhou qu	80
+攀枝花	pan zhi hua	250
+攀枝花市	pan zhi hua shi	250
+攀枝花市东区	pan zhi hua shi dong qu	80
+攀枝花市西区	pan zhi hua shi xi qu	80
+攸县	you xian	80
+改则	gai ze	80
+改则县	gai ze xian	80
+政和	zheng he	80
+政和县	zheng he xian	80
+故城	gu cheng	80
+故城县	gu cheng xian	80
+敖汉	ao han	80
+敖汉旗	ao han qi	80
+敦化	dun hua	80
+敦化市	dun hua shi	80
+敦煌	dun huang	80
+敦煌市	dun huang shi	80
+文县	wen xian	80
+文圣	wen sheng	80
+文圣区	wen sheng qu	80
+文安	wen an	80
+文安县	wen an xian	80
+文山	wen shan	250
+文山区	wen shan qu	80
+文山壮族苗族自治州	wen shan zhuang zu miao zu zi zhi zhou	250
+文山市	wen shan shi	80
+文峰	wen feng	80
+文峰区	wen feng qu	80
+文成	wen cheng	80
+文成县	wen cheng xian	80
+文昌	wen chang	80
+文昌市	wen chang shi	80
+文水	wen shui	80
+文水县	wen shui xian	80
+文登	wen deng	80
+文登区	wen deng qu	80
+斗门	dou men	80
+斗门区	dou men qu	80
+新丰	xin feng	80
+新丰县	xin feng xian	80
+新乐	xin le	80
+新乐市	xin le shi	80
+新乡	xin xiang	250
+新乡县	xin xiang xian	80
+新乡市	xin xiang shi	250
+新会	xin hui	80
+新会区	xin hui qu	80
+新余	xin yu	250
+新余市	xin yu shi	250
+新兴	xin xing	80
+新兴区	xin xing qu	80
+新兴县	xin xing xian	80
+新化	xin hua	80
+新化区	xin hua qu	80
+新化县	xin hua xian	80
+新北	xin bei	80
+新北区	xin bei qu	80
+新北市	xin bei shi	80
+新北市泰山区	xin bei shi tai shan qu	80
+新北市金山区	xin bei shi jin shan qu	80
+新华	xin hua	80
+新华区	xin hua qu	80
+新县	xin xian	80
+新吴	xin wu	80
+新吴区	xin wu qu	80
+新和	xin he	80
+新和县	xin he xian	80
+新城	xin cheng	80
+新城区	xin cheng qu	80
+新宁	xin ning	80
+新宁县	xin ning xian	80
+新安	xin an	80
+新安县	xin an xian	80
+新宾	xin bin	80
+新宾满族自治县	xin bin man zu zi zhi xian	80
+新密	xin mi	80
+新密市	xin mi shi	80
+新屋	xin wu	80
+新屋区	xin wu qu	80
+新巴尔虎右	xin ba er hu you	80
+新巴尔虎右旗	xin ba er hu you qi	80
+新巴尔虎左	xin ba er hu zuo	80
+新巴尔虎左旗	xin ba er hu zuo qi	80
+新市	xin shi	80
+新市区	xin shi qu	80
+新干	xin gan	80
+新干县	xin gan xian	80
+新平	xin ping	80
+新平彝族傣族自治县	xin ping yi zu dai zu zi zhi xian	80
+新庄	xin zhuang	80
+新庄区	xin zhuang qu	80
+新店	xin dian	80
+新店区	xin dian qu	80
+新建	xin jian	80
+新建区	xin jian qu	80
+新抚	xin fu	80
+新抚区	xin fu qu	80
+新昌	xin chang	80
+新昌县	xin chang xian	80
+新星	xin xing	80
+新星市	xin xing shi	80
+新晃	xin huang	80
+新晃侗族自治县	xin huang dong zu zi zhi xian	80
+新民	xin min	80
+新民市	xin min shi	80
+新沂	xin yi	80
+新沂市	xin yi shi	80
+新河	xin he	80
+新河县	xin he xian	80
+新泰	xin tai	80
+新泰市	xin tai shi	80
+新津	xin jin	80
+新津区	xin jin qu	80
+新洲	xin zhou	80
+新洲区	xin zhou qu	80
+新源	xin yuan	80
+新源县	xin yuan xian	80
+新田	xin tian	80
+新田县	xin tian xian	80
+新界	xin jie	80
+新界北区	xin jie bei qu	80
+新疆	xin jiang	500
+新疆维吾尔自治区	xin jiang wei wu er zi zhi qu	500
+新社	xin she	80
+新社区	xin she qu	80
+新竹	xin zhu	80
+新竹县	xin zhu xian	80
+新竹市	xin zhu shi	80
+新竹市东区	xin zhu shi dong qu	80
+新竹市北区	xin zhu shi bei qu	80
+新绛	xin jiang	80
+新绛县	xin jiang xian	80
+新罗	xin luo	80
+新罗区	xin luo qu	80
+新荣	xin rong	80
+新荣区	xin rong qu	80
+新营	xin ying	80
+新营区	xin ying qu	80
+新蔡	xin cai	80
+新蔡县	xin cai xian	80
+新邱	xin qiu	80
+新邱区	xin qiu qu	80
+新邵	xin shao	80
+新邵县	xin shao xian	80
+新郑	xin zheng	80
+新郑市	xin zheng shi	80
+新都	xin dou	80
+新都区	xin dou qu	80
+新野	xin ye	80
+新野县	xin ye xian	80
+新龙	xin long	80
+新龙县	xin long xian	80
+方城	fang cheng	80
+方城县	fang cheng xian	80
+方山	fang shan	80
+方山县	fang shan xian	80
+方正	fang zheng	80
+方正县	fang zheng xian	80
+施甸	shi dian	80
+施甸县	shi dian xian	80
+施秉	shi bing	80
+施秉县	shi bing xian	80
+旅顺口	lv shun kou	80
+旅顺口区	lv shun kou qu	80
+旌德	jing de	80
+旌德县	jing de xian	80
+旌阳	jing yang	80
+旌阳区	jing yang qu	80
+旗山	qi shan	80
+旗山区	qi shan qu	80
+旗津	qi jin	80
+旗津区	qi jin qu	80
+无为	wu wei	80
+无为市	wu wei shi	80
+无极	wu ji	80
+无极县	wu ji xian	80
+无棣	wu di	80
+无棣县	wu di xian	80
+无锡	wu xi	250
+无锡市	wu xi shi	250
+日喀则	ri ka ze	250
+日喀则市	ri ka ze shi	250
+日土	ri tu	80
+日土县	ri tu xian	80
+日照	ri zhao	250
+日照市	ri zhao shi	250
+旬邑	xun yi	80
+旬邑县	xun yi xian	80
+旬阳	xun yang	80
+旬阳市	xun yang shi	80
+旺苍	wang cang	80
+旺苍县	wang cang xian	80
+昂仁	ang ren	80
+昂仁县	ang ren xian	80
+昂昂溪	ang ang xi	80
+昂昂溪区	ang ang xi qu	80
+昆山	kun shan	80
+昆山市	kun shan shi	80
+昆明	kun ming	250
+昆明市	kun ming shi	250
+昆玉	kun yu	80
+昆玉市	kun yu shi	80
+昆都仑	kun dou lun	80
+昆都仑区	kun dou lun qu	80
+昌乐	chang le	80
+昌乐县	chang le xian	80
+昌吉	chang ji	250
+昌吉回族自治州	chang ji hui zu zi zhi zhou	250
+昌吉市	chang ji shi	80
+昌图	chang tu	80
+昌图县	chang tu xian	80
+昌宁	chang ning	80
+昌宁县	chang ning xian	80
+昌平	chang ping	80
+昌平区	chang ping qu	80
+昌江	chang jiang	80
+昌江区	chang jiang qu	80
+昌江黎族自治县	chang jiang li zu zi zhi xian	80
+昌邑	chang yi	80
+昌邑区	chang yi qu	80
+昌邑市	chang yi shi	80
+昌都	chang dou	250
+昌都市	chang du shi	250
+昌黎	chang li	80
+昌黎县	chang li xian	80
+明光	ming guang	80
+明光市	ming guang shi	80
+明山	ming shan	80
+明山区	ming shan qu	80
+明水	ming shui	80
+明水县	ming shui xian	80
+明溪	ming xi	80
+明溪县	ming xi xian	80
+易县	yi xian	80
+易门	yi men	80
+易门县	yi men xian	80
+昔阳	xi yang	80
+昔阳县	xi yang xian	80
+昭化	zhao hua	80
+昭化区	zhao hua qu	80
+昭平	zhao ping	80
+昭平县	zhao ping xian	80
+昭苏	zhao su	80
+昭苏县	zhao su xian	80
+昭觉	zhao jue	80
+昭觉县	zhao jue xian	80
+昭通	zhao tong	250
+昭通市	zhao tong shi	250
+昭阳	zhao yang	80
+昭阳区	zhao yang qu	80
+晋中	jin zhong	250
+晋中市	jin zhong shi	250
+晋城	jin cheng	250
+晋城市	jin cheng shi	250
+晋城市城区	jin cheng shi cheng qu	80
+晋宁	jin ning	80
+晋宁区	jin ning qu	80
+晋安	jin an	80
+晋安区	jin an qu	80
+晋州	jin zhou	80
+晋州市	jin zhou shi	80
+晋江	jin jiang	80
+晋江市	jin jiang shi	80
+晋源	jin yuan	80
+晋源区	jin yuan qu	80
+普兰	pu lan	80
+普兰县	pu lan xian	80
+普兰店	pu lan dian	80
+普兰店区	pu lan dian qu	80
+普宁	pu ning	80
+普宁市	pu ning shi	80
+普安	pu an	80
+普安县	pu an xian	80
+普定	pu ding	80
+普定县	pu ding xian	80
+普格	pu ge	80
+普格县	pu ge xian	80
+普洱	pu er	250
+普洱市	pu er shi	250
+普陀	pu tuo	80
+普陀区	pu tuo qu	80
+景东	jing dong	80
+景东彝族自治县	jing dong yi zu zi zhi xian	80
+景县	jing xian	80
+景宁	jing ning	80
+景宁畲族自治县	jing ning she zu zi zhi xian	80
+景德镇	jing de zhen	250
+景德镇市	jing de zhen shi	250
+景泰	jing tai	80
+景泰县	jing tai xian	80
+景洪	jing hong	80
+景洪市	jing hong shi	80
+景谷	jing gu	80
+景谷傣族彝族自治县	jing gu dai zu yi zu zi zhi xian	80
+晴隆	qing long	80
+晴隆县	qing long xian	80
+暖暖	nuan nuan	80
+暖暖区	nuan nuan qu	80
+曲周	qu zhou	80
+曲周县	qu zhou xian	80
+曲松	qu song	80
+曲松县	qu song xian	80
+曲水	qu shui	80
+曲水县	qu shui xian	80
+曲江	qu jiang	80
+曲江区	qu jiang qu	80
+曲沃	qu wo	80
+曲沃县	qu wo xian	80
+曲阜	qu fu	80
+曲阜市	qu fu shi	80
+曲阳	qu yang	80
+曲阳县	qu yang xian	80
+曲靖	qu jing	250
+曲靖市	qu jing shi	250
+曲麻莱	qu ma lai	80
+曲麻莱县	qu ma lai xian	80
+曹县	cao xian	80
+曹妃甸	cao fei dian	80
+曹妃甸区	cao fei dian qu	80
+曾都	ceng dou	80
+曾都区	ceng dou qu	80
+月湖	yue hu	80
+月湖区	yue hu qu	80
+朔城	shuo cheng	80
+朔城区	shuo cheng qu	80
+朔州	shuo zhou	250
+朔州市	shuo zhou shi	250
+朗县	lang xian	80
+望城	wang cheng	80
+望城区	wang cheng qu	80
+望奎	wang kui	80
+望奎县	wang kui xian	80
+望德堂	wang de tang	80
+望德堂区	wang de tang qu	80
+望江	wang jiang	80
+望江县	wang jiang xian	80
+望花	wang hua	80
+望花区	wang hua qu	80
+望谟	wang mo	80
+望谟县	wang mo xian	80
+望都	wang dou	80
+望都县	wang dou xian	80
+朝天	chao tian	80
+朝天区	chao tian qu	80
+朝阳	zhao yang	250
+朝阳区	chao yang qu	80
+朝阳县	zhao yang xian	80
+朝阳市	zhao yang shi	250
+木兰	mu lan	80
+木兰县	mu lan xian	80
+木垒	mu lei	80
+木垒哈萨克自治县	mu lei ha sa ke zi zhi xian	80
+木里	mu li	80
+木里藏族自治县	mu li zang zu zi zhi xian	80
+未央	wei yang	80
+未央区	wei yang qu	80
+本溪	ben xi	250
+本溪市	ben xi shi	250
+本溪满族自治县	ben xi man zu zi zhi xian	80
+札达	zha da	80
+札达县	zha da xian	80
+杂多	za duo	80
+杂多县	za duo xian	80
+杉林区	shan lin qu	80
+李沧	li cang	80
+李沧区	li cang qu	80
+杏花岭	xing hua ling	80
+杏花岭区	xing hua ling qu	80
+杜尔伯特	du er bo te	80
+杜尔伯特蒙古族自治县	du er bo te meng gu zu zi zhi xian	80
+杜集	du ji	80
+杜集区	du ji qu	80
+杞县	qi xian	80
+来凤	lai feng	80
+来凤县	lai feng xian	80
+来安	lai an	80
+来安县	lai an xian	80
+来宾	lai bin	250
+来宾市	lai bin shi	250
+杨梅	yang mei	80
+杨梅区	yang mei qu	80
+杨浦	yang pu	80
+杨浦区	yang pu qu	80
+杨陵	yang ling	80
+杨陵区	yang ling qu	80
+杭州	hang zhou	250
+杭州市	hang zhou shi	250
+杭州市西湖区	hang zhou shi xi hu qu	80
+杭锦	hang jin	80
+杭锦后	hang jin hou	80
+杭锦后旗	hang jin hou qi	80
+杭锦旗	hang jin qi	80
+東區	dong qu	80
+松北	song bei	80
+松北区	song bei qu	80
+松原	song yuan	250
+松原市	song yuan shi	250
+松山	song shan	80
+松山区	song shan qu	80
+松桃	song tao	80
+松桃苗族自治县	song tao miao zu zi zhi xian	80
+松江	song jiang	80
+松江区	song jiang qu	80
+松溪	song xi	80
+松溪县	song xi xian	80
+松滋	song zi	80
+松滋市	song zi shi	80
+松潘	song pan	80
+松潘县	song pan xian	80
+松阳	song yang	80
+松阳县	song yang xian	80
+板桥	ban qiao	80
+板桥区	ban qiao qu	80
+林口	lin kou	80
+林口区	lin kou qu	80
+林口县	lin kou xian	80
+林周	lin zhou	80
+林周县	lin zhou xian	80
+林园	lin yuan	80
+林园区	lin yuan qu	80
+林州	lin zhou	80
+林州市	lin zhou shi	80
+林甸	lin dian	80
+林甸县	lin dian xian	80
+林芝	lin zhi	250
+林芝市	lin zhi shi	250
+林西	lin xi	80
+林西县	lin xi xian	80
+果洛	guo luo	250
+果洛藏族自治州	guo luo zang zu zi zhi zhou	250
+枝江	zhi jiang	80
+枝江市	zhi jiang shi	80
+枞阳	zong yang	80
+枞阳县	zong yang xian	80
+枣庄	zao zhuang	250
+枣庄市	zao zhuang shi	250
+枣庄市市中区	zao zhuang shi shi zhong qu	80
+枣强	zao qiang	80
+枣强县	zao qiang xian	80
+枣阳	zao yang	80
+枣阳市	zao yang shi	80
+柏乡	bai xiang	80
+柏乡县	bai xiang xian	80
+柘城	zhe cheng	80
+柘城县	zhe cheng xian	80
+柘荣	zhe rong	80
+柘荣县	zhe rong xian	80
+柞水	zha shui	80
+柞水县	zha shui xian	80
+柯坪	ke ping	80
+柯坪县	ke ping xian	80
+柯城	ke cheng	80
+柯城区	ke cheng qu	80
+柯桥	ke qiao	80
+柯桥区	ke qiao qu	80
+柳北	liu bei	80
+柳北区	liu bei qu	80
+柳南	liu nan	80
+柳南区	liu nan qu	80
+柳城	liu cheng	80
+柳城县	liu cheng xian	80
+柳州	liu zhou	250
+柳州市	liu zhou shi	250
+柳州市城中区	liu zhou shi cheng zhong qu	80
+柳林	liu lin	80
+柳林县	liu lin xian	80
+柳江	liu jiang	80
+柳江区	liu jiang qu	80
+柳河	liu he	80
+柳河县	liu he xian	80
+柳营	liu ying	80
+柳营区	liu ying qu	80
+柴桑	chai sang	80
+柴桑区	chai sang qu	80
+树林区	shu lin qu	80
+栖霞	qi xia	80
+栖霞区	qi xia qu	80
+栖霞市	qi xia shi	80
+株洲	zhu zhou	250
+株洲市	zhu zhou shi	250
+根河	gen he	80
+根河市	gen he shi	80
+格尔木	ge er mu	80
+格尔木市	ge er mu shi	80
+栾城	luan cheng	80
+栾城区	luan cheng qu	80
+栾川	luan chuan	80
+栾川县	luan chuan xian	80
+桂东	gui dong	80
+桂东县	gui dong xian	80
+桂平	gui ping	80
+桂平市	gui ping shi	80
+桂林	gui lin	250
+桂林市	gui lin shi	250
+桂阳	gui yang	80
+桂阳县	gui yang xian	80
+桃园	tao yuan	80
+桃园区	tao yuan qu	80
+桃园市	tao yuan shi	80
+桃园市复兴区	tao yuan shi fu xing qu	80
+桃园市龙潭区	tao yuan shi long tan qu	80
+桃城	tao cheng	80
+桃城区	tao cheng qu	80
+桃山	tao shan	80
+桃山区	tao shan qu	80
+桃江	tao jiang	80
+桃江县	tao jiang xian	80
+桃源	tao yuan	80
+桃源区	tao yuan qu	80
+桃源县	tao yuan xian	80
+桐乡	tong xiang	80
+桐乡市	tong xiang shi	80
+桐城	tong cheng	80
+桐城市	tong cheng shi	80
+桐庐	tong lu	80
+桐庐县	tong lu xian	80
+桐柏	tong bai	80
+桐柏县	tong bai xian	80
+桐梓	tong zi	80
+桐梓县	tong zi xian	80
+桑日	sang ri	80
+桑日县	sang ri xian	80
+桑植	sang zhi	80
+桑植县	sang zhi xian	80
+桑珠孜	sang zhu zi	80
+桑珠孜区	sang zhu zi qu	80
+桓仁	huan ren	80
+桓仁满族自治县	huan ren man zu zi zhi xian	80
+桓台	huan tai	80
+桓台县	huan tai xian	80
+桥东	qiao dong	80
+桥东区	qiao dong qu	80
+桥头	qiao tou	80
+桥头区	qiao tou qu	80
+桥西	qiao xi	80
+桥西区	qiao xi qu	80
+桦南	hua nan	80
+桦南县	hua nan xian	80
+桦川	hua chuan	80
+桦川县	hua chuan xian	80
+桦甸	hua dian	80
+桦甸市	hua dian shi	80
+梁园	liang yuan	80
+梁园区	liang yuan qu	80
+梁子湖	liang zi hu	80
+梁子湖区	liang zi hu qu	80
+梁山	liang shan	80
+梁山县	liang shan xian	80
+梁平	liang ping	80
+梁平区	liang ping qu	80
+梁河	liang he	80
+梁河县	liang he xian	80
+梁溪	liang xi	80
+梁溪区	liang xi qu	80
+梅县	mei xian	80
+梅县区	mei xian qu	80
+梅州	mei zhou	250
+梅州市	mei zhou shi	250
+梅江	mei jiang	80
+梅江区	mei jiang qu	80
+梅河口	mei he kou	80
+梅河口市	mei he kou shi	80
+梅里斯达斡尔族	mei li si da wo er zu	80
+梅里斯达斡尔族区	mei li si da wo er zu qu	80
+梓官	zi guan	80
+梓官区	zi guan qu	80
+梓潼	zi tong	80
+梓潼县	zi tong xian	80
+梧州	wu zhou	250
+梧州市	wu zhou shi	250
+梧栖	wu qi	80
+梧栖区	wu qi qu	80
+梨树	li shu	80
+梨树区	li shu qu	80
+梨树县	li shu xian	80
+椒江	jiao jiang	80
+椒江区	jiao jiang qu	80
+楚雄	chu xiong	250
+楚雄市	chu xiong shi	80
+楚雄彝族自治州	chu xiong yi zu zi zhi zhou	250
+楠梓	nan zi	80
+楠梓区	nan zi qu	80
+楠西	nan xi	80
+楠西区	nan xi qu	80
+榆中	yu zhong	80
+榆中县	yu zhong xian	80
+榆林	yu lin	250
+榆林市	yu lin shi	250
+榆树	yu shu	80
+榆树市	yu shu shi	80
+榆次	yu ci	80
+榆次区	yu ci qu	80
+榆社	yu she	80
+榆社县	yu she xian	80
+榆阳	yu yang	80
+榆阳区	yu yang qu	80
+榕城	rong cheng	80
+榕城区	rong cheng qu	80
+榕江	rong jiang	80
+榕江县	rong jiang xian	80
+槐荫	huai yin	80
+槐荫区	huai yin qu	80
+樊城	fan cheng	80
+樊城区	fan cheng qu	80
+樟树	zhang shu	80
+樟树市	zhang shu shi	80
+横山	heng shan	80
+横山区	heng shan qu	80
+横峰	heng feng	80
+横峰县	heng feng xian	80
+横州	heng zhou	80
+横州市	heng zhou shi	80
+歙县	she xian	80
+正宁	zheng ning	80
+正宁县	zheng ning xian	80
+正安	zheng an	80
+正安县	zheng an xian	80
+正定	zheng ding	80
+正定县	zheng ding xian	80
+正蓝	zheng lan	80
+正蓝旗	zheng lan qi	80
+正镶白	zheng xiang bai	80
+正镶白旗	zheng xiang bai qi	80
+正阳	zheng yang	80
+正阳县	zheng yang xian	80
+武义	wu yi	80
+武义县	wu yi xian	80
+武乡	wu xiang	80
+武乡县	wu xiang xian	80
+武侯	wu hou	80
+武侯区	wu hou qu	80
+武冈	wu gang	80
+武冈市	wu gang shi	80
+武功	wu gong	80
+武功县	wu gong xian	80
+武城	wu cheng	80
+武城县	wu cheng xian	80
+武夷山	wu yi shan	80
+武夷山市	wu yi shan shi	80
+武威	wu wei	250
+武威市	wu wei shi	250
+武宁	wu ning	80
+武宁县	wu ning xian	80
+武安	wu an	80
+武安市	wu an shi	80
+武定	wu ding	80
+武定县	wu ding xian	80
+武宣	wu xuan	80
+武宣县	wu xuan xian	80
+武山	wu shan	80
+武山县	wu shan xian	80
+武川	wu chuan	80
+武川县	wu chuan xian	80
+武平	wu ping	80
+武平县	wu ping xian	80
+武强	wu qiang	80
+武强县	wu qiang xian	80
+武昌	wu chang	80
+武昌区	wu chang qu	80
+武汉	wu han	250
+武汉市	wu han shi	250
+武汉市青山区	wu han shi qing shan qu	80
+武江	wu jiang	80
+武江区	wu jiang qu	80
+武清	wu qing	80
+武清区	wu qing qu	80
+武穴	wu xue	80
+武穴市	wu xue shi	80
+武胜	wu sheng	80
+武胜县	wu sheng xian	80
+武进	wu jin	80
+武进区	wu jin qu	80
+武邑	wu yi	80
+武邑县	wu yi xian	80
+武都	wu dou	80
+武都区	wu dou qu	80
+武陟	wu zhi	80
+武陟县	wu zhi xian	80
+武陵	wu ling	80
+武陵区	wu ling qu	80
+武陵源	wu ling yuan	80
+武陵源区	wu ling yuan qu	80
+武隆	wu long	80
+武隆区	wu long qu	80
+武鸣	wu ming	80
+武鸣区	wu ming qu	80
+殷都	yin dou	80
+殷都区	yin dou qu	80
+比如	bi ru	80
+比如县	bi ru xian	80
+毕节	bi jie	250
+毕节市	bi jie shi	250
+民丰	min feng	80
+民丰县	min feng xian	80
+民乐	min yue	80
+民乐县	min yue xian	80
+民勤	min qin	80
+民勤县	min qin xian	80
+民和	min he	80
+民和回族土族自治县	min he hui zu tu zu zi zhi xian	80
+民权	min quan	80
+民权县	min quan xian	80
+水城	shui cheng	80
+水城区	shui cheng qu	80
+水富	shui fu	80
+水富市	shui fu shi	80
+水磨沟	shui mo gou	80
+水磨沟区	shui mo gou qu	80
+永丰	yong feng	80
+永丰县	yong feng xian	80
+永仁	yong ren	80
+永仁县	yong ren xian	80
+永修	yong xiu	80
+永修县	yong xiu xian	80
+永兴	yong xing	80
+永兴县	yong xing xian	80
+永吉	yong ji	80
+永吉县	yong ji xian	80
+永和	yong he	80
+永和区	yong he qu	80
+永和县	yong he xian	80
+永善	yong shan	80
+永善县	yong shan xian	80
+永嘉	yong jia	80
+永嘉县	yong jia xian	80
+永城	yong cheng	80
+永城市	yong cheng shi	80
+永宁	yong ning	80
+永宁县	yong ning xian	80
+永安	yong an	80
+永安区	yong an qu	80
+永安市	yong an shi	80
+永定	yong ding	80
+永定区	yong ding qu	80
+永寿	yong shou	80
+永寿县	yong shou xian	80
+永川	yong chuan	80
+永川区	yong chuan qu	80
+永州	yong zhou	250
+永州市	yong zhou shi	250
+永平	yong ping	80
+永平县	yong ping xian	80
+永年	yong nian	80
+永年区	yong nian qu	80
+永康	yong kang	80
+永康区	yong kang qu	80
+永康市	yong kang shi	80
+永德	yong de	80
+永德县	yong de xian	80
+永新	yong xin	80
+永新县	yong xin xian	80
+永昌	yong chang	80
+永昌县	yong chang xian	80
+永春	yong chun	80
+永春县	yong chun xian	80
+永泰	yong tai	80
+永泰县	yong tai xian	80
+永济	yong ji	80
+永济市	yong ji shi	80
+永清	yong qing	80
+永清县	yong qing xian	80
+永登	yong deng	80
+永登县	yong deng xian	80
+永福	yong fu	80
+永福县	yong fu xian	80
+永胜	yong sheng	80
+永胜县	yong sheng xian	80
+永靖	yong jing	80
+永靖县	yong jing xian	80
+永顺	yong shun	80
+永顺县	yong shun xian	80
+汇川	hui chuan	80
+汇川区	hui chuan qu	80
+汉中	han zhong	250
+汉中市	han zhong shi	250
+汉南	han nan	80
+汉南区	han nan qu	80
+汉台	han tai	80
+汉台区	han tai qu	80
+汉寿	han shou	80
+汉寿县	han shou xian	80
+汉川	han chuan	80
+汉川市	han chuan shi	80
+汉源	han yuan	80
+汉源县	han yuan xian	80
+汉滨	han bin	80
+汉滨区	han bin qu	80
+汉阳	han yang	80
+汉阳区	han yang qu	80
+汉阴	han yin	80
+汉阴县	han yin xian	80
+汐止	xi zhi	80
+汐止区	xi zhi qu	80
+汕头	shan tou	250
+汕头市	shan tou shi	250
+汕尾	shan wei	250
+汕尾市	shan wei shi	250
+汕尾市城区	shan wei shi cheng qu	80
+汝南	ru nan	80
+汝南县	ru nan xian	80
+汝城	ru cheng	80
+汝城县	ru cheng xian	80
+汝州	ru zhou	80
+汝州市	ru zhou shi	80
+汝阳	ru yang	80
+汝阳县	ru yang xian	80
+江北	jiang bei	80
+江北区	jiang bei qu	80
+江华	jiang hua	80
+江华瑶族自治县	jiang hua yao zu zi zhi xian	80
+江南	jiang nan	80
+江南区	jiang nan qu	80
+江口	jiang kou	80
+江口县	jiang kou xian	80
+江城	jiang cheng	80
+江城区	jiang cheng qu	80
+江城哈尼族彝族自治县	jiang cheng ha ni zu yi zu zi zhi xian	80
+江夏	jiang xia	80
+江夏区	jiang xia qu	80
+江孜	jiang zi	80
+江孜县	jiang zi xian	80
+江宁	jiang ning	80
+江宁区	jiang ning qu	80
+江安	jiang an	80
+江安县	jiang an xian	80
+江山	jiang shan	80
+江山市	jiang shan shi	80
+江岸	jiang an	80
+江岸区	jiang an qu	80
+江川	jiang chuan	80
+江川区	jiang chuan qu	80
+江州	jiang zhou	80
+江州区	jiang zhou qu	80
+江永	jiang yong	80
+江永县	jiang yong xian	80
+江汉	jiang han	80
+江汉区	jiang han qu	80
+江油	jiang you	80
+江油市	jiang you shi	80
+江津	jiang jin	80
+江津区	jiang jin qu	80
+江海	jiang hai	80
+江海区	jiang hai qu	80
+江源	jiang yuan	80
+江源区	jiang yuan qu	80
+江苏	jiang su	500
+江苏省	jiang su sheng	500
+江西	jiang xi	500
+江西省	jiang xi sheng	500
+江达	jiang da	80
+江达县	jiang da xian	80
+江都	jiang du	80
+江都区	jiang du qu	80
+江门	jiang men	250
+江门市	jiang men shi	250
+江阳	jiang yang	80
+江阳区	jiang yang qu	80
+江阴	jiang yin	80
+江阴市	jiang yin shi	80
+江陵	jiang ling	80
+江陵县	jiang ling xian	80
+池州	chi zhou	250
+池州市	chi zhou shi	250
+汤原	tang yuan	80
+汤原县	tang yuan xian	80
+汤旺	tang wang	80
+汤旺县	tang wang xian	80
+汤阴	tang yin	80
+汤阴县	tang yin xian	80
+汨罗	mi luo	80
+汨罗市	mi luo shi	80
+汪清	wang qing	80
+汪清县	wang qing xian	80
+汶上	wen shang	80
+汶上县	wen shang xian	80
+汶川	wen chuan	80
+汶川县	wen chuan xian	80
+汾西	fen xi	80
+汾西县	fen xi xian	80
+汾阳	fen yang	80
+汾阳市	fen yang shi	80
+沁县	qin xian	80
+沁水	qin shui	80
+沁水县	qin shui xian	80
+沁源	qin yuan	80
+沁源县	qin yuan xian	80
+沁阳	qin yang	80
+沁阳市	qin yang shi	80
+沂南	yi nan	80
+沂南县	yi nan xian	80
+沂水	yi shui	80
+沂水县	yi shui xian	80
+沂源	yi yuan	80
+沂源县	yi yuan xian	80
+沅江	yuan jiang	80
+沅江市	yuan jiang shi	80
+沅陵	yuan ling	80
+沅陵县	yuan ling xian	80
+沈丘	shen qiu	80
+沈丘县	shen qiu xian	80
+沈北	shen bei	80
+沈北新区	shen bei xin qu	80
+沈河	shen he	80
+沈河区	shen he qu	80
+沈阳	shen yang	250
+沈阳市	shen yang shi	250
+沈阳市和平区	shen yang shi he ping qu	80
+沈阳市铁西区	shen yang shi tie xi qu	80
+沐川	mu chuan	80
+沐川县	mu chuan xian	80
+沙依巴克	sha yi ba ke	80
+沙依巴克区	sha yi ba ke qu	80
+沙县	sha xian	80
+沙县区	sha xian qu	80
+沙坡头	sha po tou	80
+沙坡头区	sha po tou qu	80
+沙坪坝	sha ping ba	80
+沙坪坝区	sha ping ba qu	80
+沙市	sha shi	80
+沙市区	sha shi qu	80
+沙河	sha he	80
+沙河口	sha he kou	80
+沙河口区	sha he kou qu	80
+沙河市	sha he shi	80
+沙洋	sha yang	80
+沙洋县	sha yang xian	80
+沙湾	sha wan	80
+沙湾区	sha wan qu	80
+沙湾市	sha wan shi	80
+沙田	sha tian	80
+沙田区	sha tian qu	80
+沙田區	sha tian qu	80
+沙雅	sha ya	80
+沙雅县	sha ya xian	80
+沙鹿	sha lu	80
+沙鹿区	sha lu qu	80
+沛县	pei xian	80
+沧县	cang xian	80
+沧州	cang zhou	250
+沧州市	cang zhou shi	250
+沧州市新华区	cang zhou shi xin hua qu	80
+沧源	cang yuan	80
+沧源佤族自治县	cang yuan wa zu zi zhi xian	80
+沭阳	shu yang	80
+沭阳县	shu yang xian	80
+河东	he dong	80
+河东区	he dong qu	80
+河北	he bei	500
+河北区	he bei qu	80
+河北省	he bei sheng	500
+河南	he nan	500
+河南省	he nan sheng	500
+河南蒙古族自治县	he nan meng gu zu zi zhi xian	80
+河口	he kou	80
+河口区	he kou qu	80
+河口瑶族自治县	he kou yao zu zi zhi xian	80
+河曲	he qu	80
+河曲县	he qu xian	80
+河池	he chi	250
+河池市	he chi shi	250
+河津	he jin	80
+河津市	he jin shi	80
+河源	he yuan	250
+河源市	he yuan shi	250
+河西	he xi	80
+河西区	he xi qu	80
+河间	he jian	80
+河间市	he jian shi	80
+油尖旺	you jian wang	80
+油尖旺区	you jian wang qu	80
+油尖旺區	you jian wang qu	80
+治多	zhi duo	80
+治多县	zhi duo xian	80
+沽源	gu yuan	80
+沽源县	gu yuan xian	80
+沾化	zhan hua	80
+沾化区	zhan hua qu	80
+沾益	zhan yi	80
+沾益区	zhan yi qu	80
+沿河	yan he	80
+沿河土家族自治县	yan he tu jia zu zi zhi xian	80
+沿滩	yan tan	80
+沿滩区	yan tan qu	80
+泉山	quan shan	80
+泉山区	quan shan qu	80
+泉州	quan zhou	250
+泉州市	quan zhou shi	250
+泉州市金门县	quan zhou shi jin men xian	80
+泉港	quan gang	80
+泉港区	quan gang qu	80
+泊头	po tou	80
+泊头市	po tou shi	80
+泌阳	bi yang	80
+泌阳县	bi yang xian	80
+法库	fa ku	80
+法库县	fa ku xian	80
+泗县	si xian	80
+泗水	si shui	80
+泗水县	si shui xian	80
+泗洪	si hong	80
+泗洪县	si hong xian	80
+泗阳	si yang	80
+泗阳县	si yang xian	80
+波密	bo mi	80
+波密县	bo mi xian	80
+泰兴	tai xing	80
+泰兴市	tai xing shi	80
+泰和	tai he	80
+泰和县	tai he xian	80
+泰宁	tai ning	80
+泰宁县	tai ning xian	80
+泰安	tai an	250
+泰安市	tai an shi	250
+泰安市泰山区	tai an shi tai shan qu	80
+泰山	tai shan	80
+泰山区	tai shan qu	80
+泰州	tai zhou	250
+泰州市	tai zhou shi	250
+泰来	tai lai	80
+泰来县	tai lai xian	80
+泰顺	tai shun	80
+泰顺县	tai shun xian	80
+泸县	lu xian	80
+泸定	lu ding	80
+泸定县	lu ding xian	80
+泸州	lu zhou	250
+泸州市	lu zhou shi	250
+泸水	lu shui	80
+泸水市	lu shui shi	80
+泸溪	lu xi	80
+泸溪县	lu xi xian	80
+泸西	lu xi	80
+泸西县	lu xi xian	80
+泽州	ze zhou	80
+泽州县	ze zhou xian	80
+泽库	ze ku	80
+泽库县	ze ku xian	80
+泽普	ze pu	80
+泽普县	ze pu xian	80
+泾县	jing xian	80
+泾川	jing chuan	80
+泾川县	jing chuan xian	80
+泾源	jing yuan	80
+泾源县	jing yuan xian	80
+泾阳	jing yang	80
+泾阳县	jing yang xian	80
+洋县	yang xian	80
+洛南	luo nan	80
+洛南县	luo nan xian	80
+洛宁	luo ning	80
+洛宁县	luo ning xian	80
+洛川	luo chuan	80
+洛川县	luo chuan xian	80
+洛扎	luo zha	80
+洛扎县	luo zha xian	80
+洛江	luo jiang	80
+洛江区	luo jiang qu	80
+洛浦	luo pu	80
+洛浦县	luo pu xian	80
+洛阳	luo yang	250
+洛阳市	luo yang shi	250
+洛隆	luo long	80
+洛隆县	luo long xian	80
+洛龙	luo long	80
+洛龙区	luo long qu	80
+洞口	dong kou	80
+洞口县	dong kou xian	80
+洞头	dong tou	80
+洞头区	dong tou qu	80
+津南	jin nan	80
+津南区	jin nan qu	80
+津市	jin shi	80
+津市市	jin shi shi	80
+洪山	hong shan	80
+洪山区	hong shan qu	80
+洪江	hong jiang	80
+洪江市	hong jiang shi	80
+洪泽	hong ze	80
+洪泽区	hong ze qu	80
+洪洞	hong dong	80
+洪洞县	hong dong xian	80
+洪湖	hong hu	80
+洪湖市	hong hu shi	80
+洪雅	hong ya	80
+洪雅县	hong ya xian	80
+洮北	tao bei	80
+洮北区	tao bei qu	80
+洮南	tao nan	80
+洮南市	tao nan shi	80
+洱源	er yuan	80
+洱源县	er yuan xian	80
+浈江	zhen jiang	80
+浈江区	zhen jiang qu	80
+浉河	shi he	80
+浉河区	shi he qu	80
+济南	ji nan	250
+济南市	ji nan shi	250
+济南市市中区	ji nan shi shi zhong qu	80
+济宁	ji ning	250
+济宁市	ji ning shi	250
+济源	ji yuan	80
+济源市	ji yuan shi	80
+济阳	ji yang	80
+济阳区	ji yang qu	80
+浏阳	liu yang	80
+浏阳市	liu yang shi	80
+浑南	hun nan	80
+浑南区	hun nan qu	80
+浑江	hun jiang	80
+浑江区	hun jiang qu	80
+浑源	hun yuan	80
+浑源县	hun yuan xian	80
+浔阳	xun yang	80
+浔阳区	xun yang qu	80
+浙江	zhe jiang	500
+浙江省	zhe jiang sheng	500
+浚县	xun xian	80
+浠水	xi shui	80
+浠水县	xi shui xian	80
+浦东	pu dong	80
+浦东新区	pu dong xin qu	80
+浦北	pu bei	80
+浦北县	pu bei xian	80
+浦口	pu kou	80
+浦口区	pu kou qu	80
+浦城	pu cheng	80
+浦城县	pu cheng xian	80
+浦江	pu jiang	80
+浦江县	pu jiang xian	80
+浪卡子	lang qia zi	80
+浪卡子县	lang qia zi xian	80
+浮山	fu shan	80
+浮山县	fu shan xian	80
+浮梁	fu liang	80
+浮梁县	fu liang xian	80
+海东	hai dong	250
+海东市	hai dong shi	250
+海丰	hai feng	80
+海丰县	hai feng xian	80
+海伦	hai lun	80
+海伦市	hai lun shi	80
+海兴	hai xing	80
+海兴县	hai xing xian	80
+海勃湾	hai bo wan	80
+海勃湾区	hai bo wan qu	80
+海北	hai bei	250
+海北藏族自治州	hai bei zang zu zi zhi zhou	250
+海南	hai nan	500
+海南区	hai nan qu	80
+海南省	hai nan sheng	500
+海南藏族自治州	hai nan zang zu zi zhi zhou	250
+海原	hai yuan	80
+海原县	hai yuan xian	80
+海口	hai kou	250
+海口市	hai kou shi	250
+海口市龙华区	hai kou shi long hua qu	80
+海城	hai cheng	80
+海城区	hai cheng qu	80
+海城市	hai cheng shi	80
+海宁	hai ning	80
+海宁市	hai ning shi	80
+海安	hai an	80
+海安市	hai an shi	80
+海州	hai zhou	80
+海州区	hai zhou qu	80
+海拉尔	hai la er	80
+海拉尔区	hai la er qu	80
+海晏	hai yan	80
+海晏县	hai yan xian	80
+海曙	hai shu	80
+海曙区	hai shu qu	80
+海林	hai lin	80
+海林市	hai lin shi	80
+海棠	hai tang	80
+海棠区	hai tang qu	80
+海沧	hai cang	80
+海沧区	hai cang qu	80
+海淀	hai dian	80
+海淀区	hai dian qu	80
+海港	hai gang	80
+海港区	hai gang qu	80
+海珠	hai zhu	80
+海珠区	hai zhu qu	80
+海盐	hai yan	80
+海盐县	hai yan xian	80
+海西	hai xi	250
+海西蒙古族藏族自治州	hai xi meng gu zu zang zu zi zhi zhou	250
+海门	hai men	80
+海门区	hai men qu	80
+海阳	hai yang	80
+海阳市	hai yang shi	80
+海陵	hai ling	80
+海陵区	hai ling qu	80
+涉县	she xian	80
+涞水	lai shui	80
+涞水县	lai shui xian	80
+涞源	lai yuan	80
+涞源县	lai yuan xian	80
+涟水	lian shui	80
+涟水县	lian shui xian	80
+涟源	lian yuan	80
+涟源市	lian yuan shi	80
+涡阳	guo yang	80
+涡阳县	guo yang xian	80
+润州	run zhou	80
+润州区	run zhou qu	80
+涧西	jian xi	80
+涧西区	jian xi qu	80
+涪城	fu cheng	80
+涪城区	fu cheng qu	80
+涪陵	fu ling	80
+涪陵区	fu ling qu	80
+涵江	han jiang	80
+涵江区	han jiang qu	80
+涿州	zhuo zhou	80
+涿州市	zhuo zhou shi	80
+涿鹿	zhuo lu	80
+涿鹿县	zhuo lu xian	80
+淄博	zi bo	250
+淄博市	zi bo shi	250
+淄川	zi chuan	80
+淄川区	zi chuan qu	80
+淅川	xi chuan	80
+淅川县	xi chuan xian	80
+淇县	qi xian	80
+淇滨	qi bin	80
+淇滨区	qi bin qu	80
+淡水	dan shui	80
+淡水区	dan shui qu	80
+淮上	huai shang	80
+淮上区	huai shang qu	80
+淮北	huai bei	250
+淮北市	huai bei shi	250
+淮南	huai nan	250
+淮南市	huai nan shi	250
+淮安	huai an	250
+淮安区	huai an qu	80
+淮安市	huai an shi	250
+淮滨	huai bin	80
+淮滨县	huai bin xian	80
+淮阳	huai yang	80
+淮阳区	huai yang qu	80
+淮阴	huai yin	80
+淮阴区	huai yin qu	80
+深圳	shen zhen	250
+深圳市	shen zhen shi	250
+深圳市南山区	shen zhen shi nan shan qu	80
+深圳市龙华区	shen zhen shi long hua qu	80
+深坑	shen keng	80
+深坑区	shen keng qu	80
+深州	shen zhou	80
+深州市	shen zhou shi	80
+深水埗	shen shui bu	80
+深水埗区	shen shui bu qu	80
+深水埗區	shen shui bu qu	80
+深泽	shen ze	80
+深泽县	shen ze xian	80
+淳化	chun hua	80
+淳化县	chun hua xian	80
+淳安	chun an	80
+淳安县	chun an xian	80
+清丰	qing feng	80
+清丰县	qing feng xian	80
+清原	qing yuan	80
+清原满族自治县	qing yuan man zu zi zhi xian	80
+清城	qing cheng	80
+清城区	qing cheng qu	80
+清徐	qing xu	80
+清徐县	qing xu xian	80
+清新区	qing xin qu	80
+清水	qing shui	80
+清水区	qing shui qu	80
+清水县	qing shui xian	80
+清水河	qing shui he	80
+清水河县	qing shui he xian	80
+清江浦	qing jiang pu	80
+清江浦区	qing jiang pu qu	80
+清河	qing he	80
+清河区	qing he qu	80
+清河县	qing he xian	80
+清河门	qing he men	80
+清河门区	qing he men qu	80
+清流	qing liu	80
+清流县	qing liu xian	80
+清涧	qing jian	80
+清涧县	qing jian xian	80
+清苑	qing yuan	80
+清苑区	qing yuan qu	80
+清远	qing yuan	250
+清远市	qing yuan shi	250
+清镇	qing zhen	80
+清镇市	qing zhen shi	80
+渌口	lu kou	80
+渌口区	lu kou qu	80
+渑池	mian chi	80
+渑池县	mian chi xian	80
+渝中	yu zhong	80
+渝中区	yu zhong qu	80
+渝水	yu shui	80
+渝水区	yu shui qu	80
+渠县	qu xian	80
+温县	wen xian	80
+温宿	wen su	80
+温宿县	wen su xian	80
+温岭	wen ling	80
+温岭市	wen ling shi	80
+温州	wen zhou	250
+温州市	wen zhou shi	250
+温江	wen jiang	80
+温江区	wen jiang qu	80
+温泉	wen quan	80
+温泉县	wen quan xian	80
+渭南	wei nan	250
+渭南市	wei nan shi	250
+渭城	wei cheng	80
+渭城区	wei cheng qu	80
+渭源	wei yuan	80
+渭源县	wei yuan xian	80
+渭滨	wei bin	80
+渭滨区	wei bin qu	80
+港北	gang bei	80
+港北区	gang bei qu	80
+港南	gang nan	80
+港南区	gang nan qu	80
+港口	gang kou	80
+港口区	gang kou qu	80
+游仙	you xian	80
+游仙区	you xian qu	80
+湄潭	mei tan	80
+湄潭县	mei tan xian	80
+湖内	hu nei	80
+湖内区	hu nei qu	80
+湖北	hu bei	500
+湖北省	hu bei sheng	500
+湖南	hu nan	500
+湖南省	hu nan sheng	500
+湖口	hu kou	80
+湖口县	hu kou xian	80
+湖州	hu zhou	250
+湖州市	hu zhou shi	250
+湖滨	hu bin	80
+湖滨区	hu bin qu	80
+湖里	hu li	80
+湖里区	hu li qu	80
+湘东	xiang dong	80
+湘东区	xiang dong qu	80
+湘乡	xiang xiang	80
+湘乡市	xiang xiang shi	80
+湘桥	xiang qiao	80
+湘桥区	xiang qiao qu	80
+湘潭	xiang tan	250
+湘潭县	xiang tan xian	80
+湘潭市	xiang tan shi	250
+湘西	xiang xi	250
+湘西土家族苗族自治州	xiang xi tu jia zu miao zu zi zhi zhou	250
+湘阴	xiang yin	80
+湘阴县	xiang yin xian	80
+湛江	zhan jiang	250
+湛江市	zhan jiang shi	250
+湛河	zhan he	80
+湛河区	zhan he qu	80
+湟中	huang zhong	80
+湟中区	huang zhong qu	80
+湟源	huang yuan	80
+湟源县	huang yuan xian	80
+湾仔	wan zai	80
+湾仔区	wan zai qu	80
+湾沚	wan zhi	80
+湾沚区	wan zhi qu	80
+溆浦	xu pu	80
+溆浦县	xu pu xian	80
+源城	yuan cheng	80
+源城区	yuan cheng qu	80
+源汇	yuan hui	80
+源汇区	yuan hui qu	80
+溧水	li shui	80
+溧水区	li shui qu	80
+溧阳	li yang	80
+溧阳市	li yang shi	80
+溪湖	xi hu	80
+溪湖区	xi hu qu	80
+滁州	chu zhou	250
+滁州市	chu zhou shi	250
+滑县	hua xian	80
+滕州	teng zhou	80
+滕州市	teng zhou shi	80
+满城	man cheng	80
+满城区	man cheng qu	80
+满洲里	man zhou li	80
+满洲里市	man zhou li shi	80
+滦南	luan nan	80
+滦南县	luan nan xian	80
+滦州	luan zhou	80
+滦州市	luan zhou shi	80
+滦平	luan ping	80
+滦平县	luan ping xian	80
+滨城	bin cheng	80
+滨城区	bin cheng qu	80
+滨州	bin zhou	250
+滨州市	bin zhou shi	250
+滨江	bin jiang	80
+滨江区	bin jiang qu	80
+滨海	bin hai	80
+滨海县	bin hai xian	80
+滨海新区	bin hai xin qu	80
+滨湖	bin hu	80
+滨湖区	bin hu qu	80
+滴道	di dao	80
+滴道区	di dao qu	80
+漠河	mo he	80
+漠河市	mo he shi	80
+漯河	ta he	250
+漯河市	ta he shi	250
+漳县	zhang xian	80
+漳州	zhang zhou	250
+漳州市	zhang zhou shi	250
+漳平	zhang ping	80
+漳平市	zhang ping shi	80
+漳浦	zhang pu	80
+漳浦县	zhang pu xian	80
+漾濞	yang bi	80
+漾濞彝族自治县	yang bi yi zu zi zhi xian	80
+潍坊	wei fang	250
+潍坊市	wei fang shi	250
+潍城	wei cheng	80
+潍城区	wei cheng qu	80
+潘集	pan ji	80
+潘集区	pan ji qu	80
+潜山	qian shan	80
+潜山市	qian shan shi	80
+潜江	qian jiang	80
+潜江市	qian jiang shi	80
+潞城	lu cheng	80
+潞城区	lu cheng qu	80
+潞州	lu zhou	80
+潞州区	lu zhou qu	80
+潢川	huang chuan	80
+潢川县	huang chuan xian	80
+潭子	tan zi	80
+潭子区	tan zi qu	80
+潮南	chao nan	80
+潮南区	chao nan qu	80
+潮安	chao an	80
+潮安区	chao an qu	80
+潮州	chao zhou	250
+潮州市	chao zhou shi	250
+潮阳	chao yang	80
+潮阳区	chao yang qu	80
+潼关	tong guan	80
+潼关县	tong guan xian	80
+潼南	tong nan	80
+潼南区	tong nan qu	80
+澄城	cheng cheng	80
+澄城县	cheng cheng xian	80
+澄江	cheng jiang	80
+澄江市	cheng jiang shi	80
+澄海	cheng hai	80
+澄海区	cheng hai qu	80
+澄迈	cheng mai	80
+澄迈县	cheng mai xian	80
+澎湖	peng hu	80
+澎湖县	peng hu xian	80
+澜沧	lan cang	80
+澜沧拉祜族自治县	lan cang la hu zu zi zhi xian	80
+澧县	li xian	80
+澳门	ao men	500
+澳门半岛	ao men ban dao	80
+澳门特别行政区	ao men te bie xing zheng qu	500
+濂溪	lian xi	80
+濂溪区	lian xi qu	80
+濉溪	sui xi	80
+濉溪县	sui xi xian	80
+濠江	hao jiang	80
+濠江区	hao jiang qu	80
+濮阳	pu yang	250
+濮阳县	pu yang xian	80
+濮阳市	pu yang shi	250
+瀍河回族	chan he hui zu	80
+瀍河回族区	chan he hui zu qu	80
+灌云	guan yun	80
+灌云县	guan yun xian	80
+灌南	guan nan	80
+灌南县	guan nan xian	80
+灌阳	guan yang	80
+灌阳县	guan yang xian	80
+灞桥	ba qiao	80
+灞桥区	ba qiao qu	80
+灣仔區	wan zai qu	80
+灯塔	deng ta	80
+灯塔市	deng ta shi	80
+灵丘	ling qiu	80
+灵丘县	ling qiu xian	80
+灵台	ling tai	80
+灵台县	ling tai xian	80
+灵宝	ling bao	80
+灵宝市	ling bao shi	80
+灵寿	ling shou	80
+灵寿县	ling shou xian	80
+灵山	ling shan	80
+灵山县	ling shan xian	80
+灵川	ling chuan	80
+灵川县	ling chuan xian	80
+灵武	ling wu	80
+灵武市	ling wu shi	80
+灵璧	ling bi	80
+灵璧县	ling bi xian	80
+灵石	ling shi	80
+灵石县	ling shi xian	80
+炉霍	lu huo	80
+炉霍县	lu huo xian	80
+炎陵	yan ling	80
+炎陵县	yan ling xian	80
+点军	dian jun	80
+点军区	dian jun qu	80
+烈山	lie shan	80
+烈山区	lie shan qu	80
+烟台	yan tai	250
+烟台市	yan tai shi	250
+焉耆	yan qi	80
+焉耆回族自治县	yan qi hui zu zi zhi xian	80
+焦作	jiao zuo	250
+焦作市	jiao zuo shi	250
+燕巢	yan chao	80
+燕巢区	yan chao qu	80
+爱民	ai min	80
+爱民区	ai min qu	80
+爱辉	ai hui	80
+爱辉区	ai hui qu	80
+牙克石	ya ke shi	80
+牙克石市	ya ke shi shi	80
+牟定	mou ding	80
+牟定县	mou ding xian	80
+牟平	mu ping	80
+牟平区	mu ping qu	80
+牡丹	mu dan	80
+牡丹区	mu dan qu	80
+牡丹江	mu dan jiang	250
+牡丹江市	mu dan jiang shi	250
+牡丹江市西安区	mu dan jiang shi xi an qu	80
+牧野	mu ye	80
+牧野区	mu ye qu	80
+特克斯	te ke si	80
+特克斯县	te ke si xian	80
+犍为	qian wei	80
+犍为县	qian wei xian	80
+独山	du shan	80
+独山县	du shan xian	80
+独山子	du shan zi	80
+独山子区	du shan zi qu	80
+猇亭	xiao ting	80
+猇亭区	xiao ting qu	80
+献县	xian xian	80
+玄武	xuan wu	80
+玄武区	xuan wu qu	80
+玉井	yu jing	80
+玉井区	yu jing qu	80
+玉屏	yu ping	80
+玉屏侗族自治县	yu ping dong zu zi zhi xian	80
+玉山	yu shan	80
+玉山县	yu shan xian	80
+玉州	yu zhou	80
+玉州区	yu zhou qu	80
+玉林	yu lin	250
+玉林市	yu lin shi	250
+玉树	yu shu	250
+玉树市	yu shu shi	80
+玉树藏族自治州	yu shu zang zu zi zhi zhou	250
+玉泉	yu quan	80
+玉泉区	yu quan qu	80
+玉溪	yu xi	250
+玉溪市	yu xi shi	250
+玉环	yu huan	80
+玉环市	yu huan shi	80
+玉田	yu tian	80
+玉田县	yu tian xian	80
+玉门	yu men	80
+玉门市	yu men shi	80
+玉龙	yu long	80
+玉龙纳西族自治县	yu long na xi zu zi zhi xian	80
+王益	wang yi	80
+王益区	wang yi qu	80
+玛多	ma duo	80
+玛多县	ma duo xian	80
+玛曲	ma qu	80
+玛曲县	ma qu xian	80
+玛沁	ma qin	80
+玛沁县	ma qin xian	80
+玛纳斯	ma na si	80
+玛纳斯县	ma na si xian	80
+环县	huan xian	80
+环江	huan jiang	80
+环江毛南族自治县	huan jiang mao nan zu zi zhi xian	80
+环翠	huan cui	80
+环翠区	huan cui qu	80
+珙县	gong xian	80
+珠山	zhu shan	80
+珠山区	zhu shan qu	80
+珠晖	zhu hui	80
+珠晖区	zhu hui qu	80
+珠海	zhu hai	250
+珠海市	zhu hai shi	250
+班戈	ban ge	80
+班戈县	ban ge xian	80
+班玛	ban ma	80
+班玛县	ban ma xian	80
+珲春	hun chun	80
+珲春市	hun chun shi	80
+琅琊	lang ya	80
+琅琊区	lang ya qu	80
+理县	li xian	80
+理塘	li tang	80
+理塘县	li tang xian	80
+琼中	qiong zhong	80
+琼中黎族苗族自治县	qiong zhong li zu miao zu zi zhi xian	80
+琼山	qiong shan	80
+琼山区	qiong shan qu	80
+琼海	qiong hai	80
+琼海市	qiong hai shi	80
+琼结	qiong jie	80
+琼结县	qiong jie xian	80
+瑞丽	rui li	80
+瑞丽市	rui li shi	80
+瑞安	rui an	80
+瑞安市	rui an shi	80
+瑞昌	rui chang	80
+瑞昌市	rui chang shi	80
+瑞芳	rui fang	80
+瑞芳区	rui fang qu	80
+瑞金	rui jin	80
+瑞金市	rui jin shi	80
+瑶海	yao hai	80
+瑶海区	yao hai qu	80
+璧山	bi shan	80
+璧山区	bi shan qu	80
+瓜州	gua zhou	80
+瓜州县	gua zhou xian	80
+瓦房店	wa fang dian	80
+瓦房店市	wa fang dian shi	80
+瓮安	weng an	80
+瓮安县	weng an xian	80
+瓯海	ou hai	80
+瓯海区	ou hai qu	80
+甘井子	gan jing zi	80
+甘井子区	gan jing zi qu	80
+甘南	gan nan	250
+甘南县	gan nan xian	80
+甘南藏族自治州	gan nan zang zu zi zhi zhou	250
+甘孜	gan zi	250
+甘孜县	gan zi xian	80
+甘孜藏族自治州	gan zi zang zu zi zhi zhou	250
+甘州	gan zhou	80
+甘州区	gan zhou qu	80
+甘德	gan de	80
+甘德县	gan de xian	80
+甘泉	gan quan	80
+甘泉县	gan quan xian	80
+甘洛	gan luo	80
+甘洛县	gan luo xian	80
+甘肃	gan su	500
+甘肃省	gan su sheng	500
+甘谷	gan gu	80
+甘谷县	gan gu xian	80
+田东	tian dong	80
+田东县	tian dong xian	80
+田家庵	tian jia an	80
+田家庵区	tian jia an qu	80
+田寮	tian liao	80
+田寮区	tian liao qu	80
+田林	tian lin	80
+田林县	tian lin xian	80
+田阳	tian yang	80
+田阳区	tian yang qu	80
+甲仙	jia xian	80
+甲仙区	jia xian qu	80
+申扎	shen zha	80
+申扎县	shen zha xian	80
+电白	dian bai	80
+电白区	dian bai qu	80
+界首	jie shou	80
+界首市	jie shou shi	80
+留坝	liu ba	80
+留坝县	liu ba xian	80
+略阳	lve yang	80
+略阳县	lve yang xian	80
+番禺	pan yu	80
+番禺区	pan yu qu	80
+疏勒	shu le	80
+疏勒县	shu le xian	80
+疏附	shu fu	80
+疏附县	shu fu xian	80
+登封	deng feng	80
+登封市	deng feng shi	80
+白云	bai yun	80
+白云区	bai yun qu	80
+白云鄂博矿	bai yun e bo kuang	80
+白云鄂博矿区	bai yun e bo kuang qu	80
+白城	bai cheng	250
+白城市	bai cheng shi	250
+白塔	bai ta	80
+白塔区	bai ta qu	80
+白山	bai shan	250
+白山市	bai shan shi	250
+白朗	bai lang	80
+白朗县	bai lang xian	80
+白杨	bai yang	80
+白杨市	bai yang shi	80
+白水	bai shui	80
+白水县	bai shui xian	80
+白沙	bai sha	80
+白沙黎族自治县	bai sha li zu zi zhi xian	80
+白河	bai he	80
+白河区	bai he qu	80
+白河县	bai he xian	80
+白玉	bai yu	80
+白玉县	bai yu xian	80
+白碱滩	bai jian tan	80
+白碱滩区	bai jian tan qu	80
+白银	bai yin	250
+白银区	bai yin qu	80
+白银市	bai yin shi	250
+百色	bai se	250
+百色市	bai se shi	250
+皇姑	huang gu	80
+皇姑区	huang gu qu	80
+皋兰	gao lan	80
+皋兰县	gao lan xian	80
+皮山	pi shan	80
+皮山县	pi shan xian	80
+盂县	yu xian	80
+盈江	ying jiang	80
+盈江县	ying jiang xian	80
+益阳	yi yang	250
+益阳市	yi yang shi	250
+盐亭	yan ting	80
+盐亭县	yan ting xian	80
+盐城	yan cheng	250
+盐城市	yan cheng shi	250
+盐埕	yan cheng	80
+盐埕区	yan cheng qu	80
+盐山	yan shan	80
+盐山县	yan shan xian	80
+盐水	yan shui	80
+盐水区	yan shui qu	80
+盐池	yan chi	80
+盐池县	yan chi xian	80
+盐津	yan jin	80
+盐津县	yan jin xian	80
+盐湖	yan hu	80
+盐湖区	yan hu qu	80
+盐源	yan yuan	80
+盐源县	yan yuan xian	80
+盐田	yan tian	80
+盐田区	yan tian qu	80
+盐边	yan bian	80
+盐边县	yan bian xian	80
+盐都	yan dou	80
+盐都区	yan dou qu	80
+监利	jian li	80
+监利市	jian li shi	80
+盖州	gai zhou	80
+盖州市	gai zhou shi	80
+盘山	pan shan	80
+盘山县	pan shan xian	80
+盘州	pan zhou	80
+盘州市	pan zhou shi	80
+盘锦	pan jin	250
+盘锦市	pan jin shi	250
+盘龙	pan long	80
+盘龙区	pan long qu	80
+盱眙	xu yi	80
+盱眙县	xu yi xian	80
+相城	xiang cheng	80
+相城区	xiang cheng qu	80
+相山	xiang shan	80
+相山区	xiang shan qu	80
+眉县	mei xian	80
+眉山	mei shan	250
+眉山市	mei shan shi	250
+睢县	sui xian	80
+睢宁	sui ning	80
+睢宁县	sui ning xian	80
+睢阳	sui yang	80
+睢阳区	sui yang qu	80
+石冈	shi gang	80
+石冈区	shi gang qu	80
+石台	shi tai	80
+石台县	shi tai xian	80
+石嘴山	shi zui shan	250
+石嘴山市	shi zui shan shi	250
+石城	shi cheng	80
+石城县	shi cheng xian	80
+石家庄	shi jia zhuang	250
+石家庄市	shi jia zhuang shi	250
+石家庄市新华区	shi jia zhuang shi xin hua qu	80
+石家庄市桥西区	shi jia zhuang shi qiao xi qu	80
+石家庄市长安区	shi jia zhuang shi chang an qu	80
+石屏	shi ping	80
+石屏县	shi ping xian	80
+石峰	shi feng	80
+石峰区	shi feng qu	80
+石拐	shi guai	80
+石拐区	shi guai qu	80
+石景山	shi jing shan	80
+石景山区	shi jing shan qu	80
+石林	shi lin	80
+石林彝族自治县	shi lin yi zu zi zhi xian	80
+石柱	shi zhu	80
+石柱土家族自治县	shi zhu tu jia zu zi zhi xian	80
+石棉	shi mian	80
+石棉县	shi mian xian	80
+石楼	shi lou	80
+石楼县	shi lou xian	80
+石河子	shi he zi	80
+石河子市	shi he zi shi	80
+石泉	shi quan	80
+石泉县	shi quan xian	80
+石渠	shi qu	80
+石渠县	shi qu xian	80
+石狮	shi shi	80
+石狮市	shi shi shi	80
+石碇	shi ding	80
+石碇区	shi ding qu	80
+石门	shi men	80
+石门区	shi men qu	80
+石门县	shi men xian	80
+石阡	shi qian	80
+石阡县	shi qian xian	80
+石首	shi shou	80
+石首市	shi shou shi	80
+石鼓	shi gu	80
+石鼓区	shi gu qu	80
+石龙	shi long	80
+石龙区	shi long qu	80
+矿区	kuang qu	80
+砀山	dang shan	80
+砀山县	dang shan xian	80
+砚山	yan shan	80
+砚山县	yan shan xian	80
+硚口	qiao kou	80
+硚口区	qiao kou qu	80
+确山	que shan	80
+确山县	que shan xian	80
+碌曲	lu qu	80
+碌曲县	lu qu xian	80
+碑林区	bei lin qu	80
+碧江	bi jiang	80
+碧江区	bi jiang qu	80
+碾子山	nian zi shan	80
+碾子山区	nian zi shan qu	80
+磁县	ci xian	80
+磐安	pan an	80
+磐安县	pan an xian	80
+磐石	pan shi	80
+磐石市	pan shi shi	80
+磴口	deng kou	80
+磴口县	deng kou xian	80
+礼县	li xian	80
+礼泉	li quan	80
+礼泉县	li quan xian	80
+社旗	she qi	80
+社旗县	she qi xian	80
+祁东	qi dong	80
+祁东县	qi dong xian	80
+祁县	qi xian	80
+祁连	qi lian	80
+祁连县	qi lian xian	80
+祁门	qi men	80
+祁门县	qi men xian	80
+祁阳	qi yang	80
+祁阳市	qi yang shi	80
+神冈	shen gang	80
+神冈区	shen gang qu	80
+神农架	shen nong jia	80
+神农架林区	shen nong jia lin qu	80
+神木	shen mu	80
+神木市	shen mu shi	80
+神池	shen chi	80
+神池县	shen chi xian	80
+祥云	xiang yun	80
+祥云县	xiang yun xian	80
+祥符	xiang fu	80
+祥符区	xiang fu qu	80
+禄丰	lu feng	80
+禄丰市	lu feng shi	80
+禄劝	lu quan	80
+禄劝彝族苗族自治县	lu quan yi zu miao zu zi zhi xian	80
+禅城	chan cheng	80
+禅城区	chan cheng qu	80
+福安	fu an	80
+福安市	fu an shi	80
+福山	fu shan	80
+福山区	fu shan qu	80
+福州	fu zhou	250
+福州市	fu zhou shi	250
+福州市连江县	fu zhou shi lian jiang xian	80
+福州市鼓楼区	fu zhou shi gu lou qu	80
+福建	fu jian	500
+福建省	fu jian sheng	500
+福泉	fu quan	80
+福泉市	fu quan shi	80
+福海	fu hai	80
+福海县	fu hai xian	80
+福清	fu qing	80
+福清市	fu qing shi	80
+福田	fu tian	80
+福田区	fu tian qu	80
+福绵	fu mian	80
+福绵区	fu mian qu	80
+福贡	fu gong	80
+福贡县	fu gong xian	80
+福鼎	fu ding	80
+福鼎市	fu ding shi	80
+禹会	yu hui	80
+禹会区	yu hui qu	80
+禹城	yu cheng	80
+禹城市	yu cheng shi	80
+禹州	yu zhou	80
+禹州市	yu zhou shi	80
+禹王台	yu wang tai	80
+禹王台区	yu wang tai qu	80
+离岛	li dao	80
+离岛区	li dao qu	80
+离石	li shi	80
+离石区	li shi qu	80
+秀山	xiu shan	80
+秀山土家族苗族自治县	xiu shan tu jia zu miao zu zi zhi xian	80
+秀屿	xiu yu	80
+秀屿区	xiu yu qu	80
+秀峰	xiu feng	80
+秀峰区	xiu feng qu	80
+秀洲	xiu zhou	80
+秀洲区	xiu zhou qu	80
+秀英	xiu ying	80
+秀英区	xiu ying qu	80
+科尔沁	ke er qin	80
+科尔沁区	ke er qin qu	80
+科尔沁右翼中	ke er qin you yi zhong	80
+科尔沁右翼中旗	ke er qin you yi zhong qi	80
+科尔沁右翼前	ke er qin you yi qian	80
+科尔沁右翼前旗	ke er qin you yi qian qi	80
+科尔沁左翼中	ke er qin zuo yi zhong	80
+科尔沁左翼中旗	ke er qin zuo yi zhong qi	80
+科尔沁左翼后	ke er qin zuo yi hou	80
+科尔沁左翼后旗	ke er qin zuo yi hou qi	80
+秦安	qin an	80
+秦安县	qin an xian	80
+秦州	qin zhou	80
+秦州区	qin zhou qu	80
+秦淮	qin huai	80
+秦淮区	qin huai qu	80
+秦皇岛	qin huang dao	250
+秦皇岛市	qin huang dao shi	250
+秦都	qin dou	80
+秦都区	qin dou qu	80
+秭归	zi gui	80
+秭归县	zi gui xian	80
+积石山	ji shi shan	80
+积石山保安族东乡族撒拉族自治县	ji shi shan bao an zu dong xiang zu sa la zu zi zhi xian	80
+称多	cheng duo	80
+称多县	cheng duo xian	80
+稷山	ji shan	80
+稷山县	ji shan xian	80
+稻城	dao cheng	80
+稻城县	dao cheng xian	80
+穆棱	mu leng	80
+穆棱市	mu leng shi	80
+突泉	tu quan	80
+突泉县	tu quan xian	80
+立山	li shan	80
+立山区	li shan qu	80
+站前	zhan qian	80
+站前区	zhan qian qu	80
+竞秀	jing xiu	80
+竞秀区	jing xiu qu	80
+章丘	zhang qiu	80
+章丘区	zhang qiu qu	80
+章贡	zhang gong	80
+章贡区	zhang gong qu	80
+端州	duan zhou	80
+端州区	duan zhou qu	80
+竹山	zhu shan	80
+竹山县	zhu shan xian	80
+竹溪	zhu xi	80
+竹溪县	zhu xi xian	80
+策勒	ce lei	80
+策勒县	ce lei xian	80
+筠连	yun lian	80
+筠连县	yun lian xian	80
+简阳	jian yang	80
+简阳市	jian yang shi	80
+管城回族	guan cheng hui zu	80
+管城回族区	guan cheng hui zu qu	80
+米东	mi dong	80
+米东区	mi dong qu	80
+米易	mi yi	80
+米易县	mi yi xian	80
+米林	mi lin	80
+米林市	mi lin shi	80
+米脂	mi zhi	80
+米脂县	mi zhi xian	80
+类乌齐	lei wu qi	80
+类乌齐县	lei wu qi xian	80
+精河	jing he	80
+精河县	jing he xian	80
+索县	suo xian	80
+紫云	zi yun	80
+紫云苗族布依族自治县	zi yun miao zu bu yi zu zi zhi xian	80
+紫金	zi jin	80
+紫金县	zi jin xian	80
+紫阳	zi yang	80
+紫阳县	zi yang xian	80
+綦江	qi jiang	80
+綦江区	qi jiang qu	80
+繁峙	fan shi	80
+繁峙县	fan shi xian	80
+繁昌	fan chang	80
+繁昌区	fan chang qu	80
+红原	hong yuan	80
+红原县	hong yuan xian	80
+红古	hong gu	80
+红古区	hong gu qu	80
+红塔	hong ta	80
+红塔区	hong ta qu	80
+红安	hong an	80
+红安县	hong an xian	80
+红寺堡	hong si bao	80
+红寺堡区	hong si bao qu	80
+红山	hong shan	80
+红山区	hong shan qu	80
+红岗	hong gang	80
+红岗区	hong gang qu	80
+红旗	hong qi	80
+红旗区	hong qi qu	80
+红桥	hong qiao	80
+红桥区	hong qiao qu	80
+红河	hong he	250
+红河县	hong he xian	80
+红河哈尼族彝族自治州	hong he ha ni zu yi zu zi zhi zhou	250
+红花岗	hong hua gang	80
+红花岗区	hong hua gang qu	80
+红谷滩	hong gu tan	80
+红谷滩区	hong gu tan qu	80
+纳溪	na xi	80
+纳溪区	na xi qu	80
+纳雍	na yong	80
+纳雍县	na yong xian	80
+细河	xi he	80
+细河区	xi he qu	80
+织金	zhi jin	80
+织金县	zhi jin xian	80
+绍兴	shao xing	250
+绍兴市	shao xing shi	250
+绛县	jiang xian	80
+绥中	sui zhong	80
+绥中县	sui zhong xian	80
+绥化	sui hua	250
+绥化市	sui hua shi	250
+绥宁	sui ning	80
+绥宁县	sui ning xian	80
+绥德	sui de	80
+绥德县	sui de xian	80
+绥棱	sui leng	80
+绥棱县	sui leng xian	80
+绥江	sui jiang	80
+绥江县	sui jiang xian	80
+绥滨	sui bin	80
+绥滨县	sui bin xian	80
+绥芬河	sui fen he	80
+绥芬河市	sui fen he shi	80
+绥阳	sui yang	80
+绥阳县	sui yang xian	80
+绩溪	ji xi	80
+绩溪县	ji xi xian	80
+维西	wei xi	80
+维西傈僳族自治县	wei xi li su zu zi zhi xian	80
+绵竹	mian zhu	80
+绵竹市	mian zhu shi	80
+绵阳	mian yang	250
+绵阳市	mian yang shi	250
+绿园	lv yuan	80
+绿园区	lv yuan qu	80
+绿春	lv chun	80
+绿春县	lv chun xian	80
+缙云	jin yun	80
+缙云县	jin yun xian	80
+罗城	luo cheng	80
+罗城仫佬族自治县	luo cheng mu lao zu zi zhi xian	80
+罗定	luo ding	80
+罗定市	luo ding shi	80
+罗山	luo shan	80
+罗山县	luo shan xian	80
+罗平	luo ping	80
+罗平县	luo ping xian	80
+罗庄	luo zhuang	80
+罗庄区	luo zhuang qu	80
+罗江	luo jiang	80
+罗江区	luo jiang qu	80
+罗湖	luo hu	80
+罗湖区	luo hu qu	80
+罗源	luo yuan	80
+罗源县	luo yuan xian	80
+罗田	luo tian	80
+罗田县	luo tian xian	80
+罗甸	luo dian	80
+罗甸县	luo dian xian	80
+美兰	mei lan	80
+美兰区	mei lan qu	80
+美姑	mei gu	80
+美姑县	mei gu xian	80
+美浓	mei nong	80
+美浓区	mei nong qu	80
+翁源	weng yuan	80
+翁源县	weng yuan xian	80
+翁牛特	weng niu te	80
+翁牛特旗	weng niu te qi	80
+翔安	xiang an	80
+翔安区	xiang an qu	80
+翠屏	cui ping	80
+翠屏区	cui ping qu	80
+翼城	yi cheng	80
+翼城县	yi cheng xian	80
+耀州	yao zhou	80
+耀州区	yao zhou qu	80
+老城	lao cheng	80
+老城区	lao cheng qu	80
+老河口	lao he kou	80
+老河口市	lao he kou shi	80
+老边	lao bian	80
+老边区	lao bian qu	80
+耒阳	lei yang	80
+耒阳市	lei yang shi	80
+耿马	geng ma	80
+耿马傣族佤族自治县	geng ma dai zu wa zu zi zhi xian	80
+聂拉木	nie la mu	80
+聂拉木县	nie la mu xian	80
+聂荣	nie rong	80
+聂荣县	nie rong xian	80
+聊城	liao cheng	250
+聊城市	liao cheng shi	250
+肃北	su bei	80
+肃北蒙古族自治县	su bei meng gu zu zi zhi xian	80
+肃南	su nan	80
+肃南裕固族自治县	su nan yu gu zu zi zhi xian	80
+肃宁	su ning	80
+肃宁县	su ning xian	80
+肃州	su zhou	80
+肃州区	su zhou qu	80
+肇东	zhao dong	80
+肇东市	zhao dong shi	80
+肇州	zhao zhou	80
+肇州县	zhao zhou xian	80
+肇庆	zhao qing	250
+肇庆市	zhao qing shi	250
+肇源	zhao yuan	80
+肇源县	zhao yuan xian	80
+肥东	fei dong	80
+肥东县	fei dong xian	80
+肥乡	fei xiang	80
+肥乡区	fei xiang qu	80
+肥城	fei cheng	80
+肥城市	fei cheng shi	80
+肥西	fei xi	80
+肥西县	fei xi xian	80
+胡杨河	hu yang he	80
+胡杨河市	hu yang he shi	80
+胶州	jiao zhou	80
+胶州市	jiao zhou shi	80
+腾冲	teng chong	80
+腾冲市	teng chong shi	80
+自流井	zi liu jing	80
+自流井区	zi liu jing qu	80
+自贡	zi gong	250
+自贡市	zi gong shi	250
+自贡市大安区	zi gong shi da an qu	80
+舒兰	shu lan	80
+舒兰市	shu lan shi	80
+舒城	shu cheng	80
+舒城县	shu cheng xian	80
+舞钢	wu gang	80
+舞钢市	wu gang shi	80
+舞阳	wu yang	80
+舞阳县	wu yang xian	80
+舟山	zhou shan	250
+舟山市	zhou shan shi	250
+舟山市普陀区	zhou shan shi pu tuo qu	80
+舟曲	zhou qu	80
+舟曲县	zhou qu xian	80
+船山	chuan shan	80
+船山区	chuan shan qu	80
+船营	chuan ying	80
+船营区	chuan ying qu	80
+良庆	liang qing	80
+良庆区	liang qing qu	80
+色尼	se ni	80
+色尼区	se ni qu	80
+色达	se da	80
+色达县	se da xian	80
+芒市	mang shi	80
+芒康	mang kang	80
+芒康县	mang kang xian	80
+芗城	xiang cheng	80
+芗城区	xiang cheng qu	80
+芙蓉	fu rong	80
+芙蓉区	fu rong qu	80
+芜湖	wu hu	250
+芜湖市	wu hu shi	250
+芝罘	zhi fu	80
+芝罘区	zhi fu qu	80
+芦山	lu shan	80
+芦山县	lu shan xian	80
+芦洲	lu zhou	80
+芦洲区	lu zhou qu	80
+芦淞	lu song	80
+芦淞区	lu song qu	80
+芦溪	lu xi	80
+芦溪县	lu xi xian	80
+芦竹	lu zhu	80
+芦竹区	lu zhu qu	80
+芮城	rui cheng	80
+芮城县	rui cheng xian	80
+花地玛堂	hua di ma tang	80
+花地玛堂区	hua di ma tang qu	80
+花垣	hua yuan	80
+花垣县	hua yuan xian	80
+花山	hua shan	80
+花山区	hua shan qu	80
+花溪	hua xi	80
+花溪区	hua xi qu	80
+花王堂	hua wang tang	80
+花王堂区	hua wang tang qu	80
+花莲	hua lian	80
+花莲县	hua lian xian	80
+花都	hua dou	80
+花都区	hua dou qu	80
+芷江	zhi jiang	80
+芷江侗族自治县	zhi jiang dong zu zi zhi xian	80
+苍南	cang nan	80
+苍南县	cang nan xian	80
+苍梧	cang wu	80
+苍梧县	cang wu xian	80
+苍溪	cang xi	80
+苍溪县	cang xi xian	80
+苏仙	su xian	80
+苏仙区	su xian qu	80
+苏家屯	su jia tun	80
+苏家屯区	su jia tun qu	80
+苏尼特右	su ni te you	80
+苏尼特右旗	su ni te you qi	80
+苏尼特左	su ni te zuo	80
+苏尼特左旗	su ni te zuo qi	80
+苏州	su zhou	250
+苏州市	su zhou shi	250
+苓雅	ling ya	80
+苓雅区	ling ya qu	80
+苗栗	miao li	80
+苗栗县	miao li xian	80
+若尔盖	ruo er gai	80
+若尔盖县	ruo er gai xian	80
+若羌	ruo qiang	80
+若羌县	ruo qiang xian	80
+英吉沙	ying ji sha	80
+英吉沙县	ying ji sha xian	80
+英山	ying shan	80
+英山县	ying shan xian	80
+英德	ying de	80
+英德市	ying de shi	80
+茂南	mao nan	80
+茂南区	mao nan qu	80
+茂县	mao xian	80
+茂名	mao ming	250
+茂名市	mao ming shi	250
+茂林区	mao lin qu	80
+范县	fan xian	80
+茄子河	qie zi he	80
+茄子河区	qie zi he qu	80
+茄萣	jia ding	80
+茄萣区	jia ding qu	80
+茅箭	mao jian	80
+茅箭区	mao jian qu	80
+茌平	chi ping	80
+茌平区	chi ping qu	80
+茫崖	mang ya	80
+茫崖市	mang ya shi	80
+茶陵	cha ling	80
+茶陵县	cha ling xian	80
+荃湾	quan wan	80
+荃湾区	quan wan qu	80
+荃灣區	quan wan qu	80
+荆州	jing zhou	250
+荆州区	jing zhou qu	80
+荆州市	jing zhou shi	250
+荆门	jing men	250
+荆门市	jing men shi	250
+荔城	li cheng	80
+荔城区	li cheng qu	80
+荔波	li bo	80
+荔波县	li bo xian	80
+荔浦	li pu	80
+荔浦市	li pu shi	80
+荔湾	li wan	80
+荔湾区	li wan qu	80
+荣县	rong xian	80
+荣成	rong cheng	80
+荣成市	rong cheng shi	80
+荣昌	rong chang	80
+荣昌区	rong chang qu	80
+荥经	ying jing	80
+荥经县	ying jing xian	80
+荥阳	xing yang	80
+荥阳市	xing yang shi	80
+荷塘	he tang	80
+荷塘区	he tang qu	80
+莆田	pu tian	250
+莆田市	pu tian shi	250
+莎车	sha che	80
+莎车县	sha che xian	80
+莒南	ju nan	80
+莒南县	ju nan xian	80
+莒县	ju xian	80
+莘县	shen xian	80
+莫力达瓦	mo li da wa	80
+莫力达瓦达斡尔族自治旗	mo li da wa da wo er zu zi zhi qi	80
+莱山	lai shan	80
+莱山区	lai shan qu	80
+莱州	lai zhou	80
+莱州市	lai zhou shi	80
+莱芜	lai wu	80
+莱芜区	lai wu qu	80
+莱西	lai xi	80
+莱西市	lai xi shi	80
+莱阳	lai yang	80
+莱阳市	lai yang shi	80
+莲池	lian chi	80
+莲池区	lian chi qu	80
+莲湖	lian hu	80
+莲湖区	lian hu qu	80
+莲花	lian hua	80
+莲花县	lian hua xian	80
+莲都	lian dou	80
+莲都区	lian dou qu	80
+获嘉	huo jia	80
+获嘉县	huo jia xian	80
+莺歌	ying ge	80
+莺歌区	ying ge qu	80
+菏泽	he ze	250
+菏泽市	he ze shi	250
+萍乡	ping xiang	250
+萍乡市	ping xiang shi	250
+萝北	luo bei	80
+萝北县	luo bei xian	80
+营口	ying kou	250
+营口市	ying kou shi	250
+营山	ying shan	80
+营山县	ying shan xian	80
+萧县	xiao xian	80
+萧山	xiao shan	80
+萧山区	xiao shan qu	80
+萨嘎	sa ga	80
+萨嘎县	sa ga xian	80
+萨尔图	sa er tu	80
+萨尔图区	sa er tu qu	80
+萨迦	sa jia	80
+萨迦县	sa jia xian	80
+葫芦岛	hu lu dao	250
+葫芦岛市	hu lu dao shi	250
+葵青	kui qing	80
+葵青区	kui qing qu	80
+葵青區	kui qing qu	80
+蒙城	meng cheng	80
+蒙城县	meng cheng xian	80
+蒙山	meng shan	80
+蒙山县	meng shan xian	80
+蒙自	meng zi	80
+蒙自市	meng zi shi	80
+蒙阴	meng yin	80
+蒙阴县	meng yin xian	80
+蒲县	pu xian	80
+蒲城	pu cheng	80
+蒲城县	pu cheng xian	80
+蒲江	pu jiang	80
+蒲江县	pu jiang xian	80
+蒸湘	zheng xiang	80
+蒸湘区	zheng xiang qu	80
+蓝山	lan shan	80
+蓝山县	lan shan xian	80
+蓝田	lan tian	80
+蓝田县	lan tian xian	80
+蓟州	ji zhou	80
+蓟州区	ji zhou qu	80
+蓬安	peng an	80
+蓬安县	peng an xian	80
+蓬江	peng jiang	80
+蓬江区	peng jiang qu	80
+蓬溪	peng xi	80
+蓬溪县	peng xi xian	80
+蓬莱	peng lai	80
+蓬莱区	peng lai qu	80
+蔚县	yu xian	80
+蔡甸	cai dian	80
+蔡甸区	cai dian qu	80
+蕉城	jiao cheng	80
+蕉城区	jiao cheng qu	80
+蕉岭	jiao ling	80
+蕉岭县	jiao ling xian	80
+蕲春	qi chun	80
+蕲春县	qi chun xian	80
+薛城	xue cheng	80
+薛城区	xue cheng qu	80
+藁城	gao cheng	80
+藁城区	gao cheng qu	80
+藤县	teng xian	80
+虎丘	hu qiu	80
+虎丘区	hu qiu qu	80
+虎林	hu lin	80
+虎林市	hu lin shi	80
+虞城	yu cheng	80
+虞城县	yu cheng xian	80
+虹口	hong kou	80
+虹口区	hong kou qu	80
+蚌埠	beng bu	250
+蚌埠市	beng bu shi	250
+蚌山	bang shan	80
+蚌山区	bang shan qu	80
+蛟河	jiao he	80
+蛟河市	jiao he shi	80
+蜀山	shu shan	80
+蜀山区	shu shan qu	80
+融安	rong an	80
+融安县	rong an xian	80
+融水苗族自治县	rong shui miao zu zi zhi xian	80
+蠡县	li xian	80
+行唐	xing tang	80
+行唐县	xing tang xian	80
+衡东	heng dong	80
+衡东县	heng dong xian	80
+衡南	heng nan	80
+衡南县	heng nan xian	80
+衡山	heng shan	80
+衡山县	heng shan xian	80
+衡水	heng shui	250
+衡水市	heng shui shi	250
+衡阳	heng yang	250
+衡阳县	heng yang xian	80
+衡阳市	heng yang shi	250
+衢州	qu zhou	250
+衢州市	qu zhou shi	250
+衢江	qu jiang	80
+衢江区	qu jiang qu	80
+袁州	yuan zhou	80
+袁州区	yuan zhou qu	80
+裕华	yu hua	80
+裕华区	yu hua qu	80
+裕安	yu an	80
+裕安区	yu an qu	80
+裕民	yu min	80
+裕民县	yu min xian	80
+襄垣	xiang yuan	80
+襄垣县	xiang yuan xian	80
+襄城	xiang cheng	80
+襄城区	xiang cheng qu	80
+襄城县	xiang cheng xian	80
+襄州	xiang zhou	80
+襄州区	xiang zhou qu	80
+襄汾	xiang fen	80
+襄汾县	xiang fen xian	80
+襄都	xiang dou	80
+襄都区	xiang dou qu	80
+襄阳	xiang yang	250
+襄阳市	xiang yang shi	250
+西丰	xi feng	80
+西丰县	xi feng xian	80
+西乌珠穆沁	xi wu zhu mu qin	80
+西乌珠穆沁旗	xi wu zhu mu qin qi	80
+西乡	xi xiang	80
+西乡县	xi xiang xian	80
+西乡塘	xi xiang tang	80
+西乡塘区	xi xiang tang qu	80
+西充	xi chong	80
+西充县	xi chong xian	80
+西区	xi qu	80
+西华	xi hua	80
+西华县	xi hua xian	80
+西双版纳	xi shuang ban na	250
+西双版纳傣族自治州	xi shuang ban na dai zu zi zhi zhou	250
+西吉	xi ji	80
+西吉县	xi ji xian	80
+西和	xi he	80
+西和县	xi he xian	80
+西固	xi gu	80
+西固区	xi gu qu	80
+西城	xi cheng	80
+西城区	xi cheng qu	80
+西塞山	xi sai shan	80
+西塞山区	xi sai shan qu	80
+西夏	xi xia	80
+西夏区	xi xia qu	80
+西宁	xi ning	250
+西宁市	xi ning shi	250
+西宁市城中区	xi ning shi cheng zhong qu	80
+西安	xi an	250
+西安区	xi an qu	80
+西安市	xi an shi	250
+西安市新城区	xi an shi xin cheng qu	80
+西安市长安区	xi an shi chang an qu	80
+西屯	xi tun	80
+西屯区	xi tun qu	80
+西山	xi shan	80
+西山区	xi shan qu	80
+西岗	xi gang	80
+西岗区	xi gang qu	80
+西峡	xi xia	80
+西峡县	xi xia xian	80
+西峰	xi feng	80
+西峰区	xi feng qu	80
+西工	xi gong	80
+西工区	xi gong qu	80
+西市	xi shi	80
+西市区	xi shi qu	80
+西平	xi ping	80
+西平县	xi ping xian	80
+西昌	xi chang	80
+西昌市	xi chang shi	80
+西林	xi lin	80
+西林县	xi lin xian	80
+西沙	xi sha	80
+西沙区	xi sha qu	80
+西港	xi gang	80
+西港区	xi gang qu	80
+西湖	xi hu	80
+西湖区	xi hu qu	80
+西畴	xi chou	80
+西畴县	xi chou xian	80
+西盟	xi meng	80
+西盟佤族自治县	xi meng wa zu zi zhi xian	80
+西秀	xi xiu	80
+西秀区	xi xiu qu	80
+西藏自治区	xi zang zi zhi qu	500
+西貢區	xi gong qu	80
+西贡	xi gong	80
+西贡区	xi gong qu	80
+西陵	xi ling	80
+西陵区	xi ling qu	80
+西青	xi qing	80
+西青区	xi qing qu	80
+覃塘	tan tang	80
+覃塘区	tan tang qu	80
+觀塘區	guan tang qu	80
+观塘	guan tang	80
+观塘区	guan tang qu	80
+观山湖	guan shan hu	80
+观山湖区	guan shan hu qu	80
+观音	guan yin	80
+观音区	guan yin qu	80
+解放	jie fang	80
+解放区	jie fang qu	80
+让胡路	rang hu lu	80
+让胡路区	rang hu lu qu	80
+讷河	ne he	80
+讷河市	ne he shi	80
+许昌	xu chang	250
+许昌市	xu chang shi	250
+诏安	zhao an	80
+诏安县	zhao an xian	80
+诸城	zhu cheng	80
+诸城市	zhu cheng shi	80
+诸暨	zhu ji	80
+诸暨市	zhu ji shi	80
+调兵山	diao bing shan	80
+调兵山市	diao bing shan shi	80
+谢家集	xie jia ji	80
+谢家集区	xie jia ji qu	80
+谢通门	xie tong men	80
+谢通门县	xie tong men xian	80
+谯城	qiao cheng	80
+谯城区	qiao cheng qu	80
+谷城	gu cheng	80
+谷城县	gu cheng xian	80
+象山	xiang shan	80
+象山区	xiang shan qu	80
+象山县	xiang shan xian	80
+象州	xiang zhou	80
+象州县	xiang zhou xian	80
+贞丰	zhen feng	80
+贞丰县	zhen feng xian	80
+贡井	gong jing	80
+贡井区	gong jing qu	80
+贡嘎	gong ga	80
+贡嘎县	gong ga xian	80
+贡寮	gong liao	80
+贡寮区	gong liao qu	80
+贡山	gong shan	80
+贡山独龙族怒族自治县	gong shan du long zu nu zu zi zhi xian	80
+贡觉	gong jue	80
+贡觉县	gong jue xian	80
+贵南	gui nan	80
+贵南县	gui nan xian	80
+贵定	gui ding	80
+贵定县	gui ding xian	80
+贵州	gui zhou	500
+贵州省	gui zhou sheng	500
+贵德	gui de	80
+贵德县	gui de xian	80
+贵池	gui chi	80
+贵池区	gui chi qu	80
+贵港	gui gang	250
+贵港市	gui gang shi	250
+贵溪	gui xi	80
+贵溪市	gui xi shi	80
+贵阳	gui yang	250
+贵阳市	gui yang shi	250
+贵阳市白云区	gui yang shi bai yun qu	80
+费县	fei xian	80
+贺兰	he lan	80
+贺兰县	he lan xian	80
+贺州	he zhou	250
+贺州市	he zhou shi	250
+贾汪	jia wang	80
+贾汪区	jia wang qu	80
+资中	zi zhong	80
+资中县	zi zhong xian	80
+资兴	zi xing	80
+资兴市	zi xing shi	80
+资源	zi yuan	80
+资源县	zi yuan xian	80
+资溪	zi xi	80
+资溪县	zi xi xian	80
+资阳	zi yang	250
+资阳区	zi yang qu	80
+资阳市	zi yang shi	250
+赛罕	sai han	80
+赛罕区	sai han qu	80
+赞皇	zan huang	80
+赞皇县	zan huang xian	80
+赣县	gan xian	80
+赣县区	gan xian qu	80
+赣州	gan zhou	250
+赣州市	gan zhou shi	250
+赣榆	gan yu	80
+赣榆区	gan yu qu	80
+赤坎	chi kan	80
+赤坎区	chi kan qu	80
+赤城	chi cheng	80
+赤城县	chi cheng xian	80
+赤壁	chi bi	80
+赤壁市	chi bi shi	80
+赤峰	chi feng	250
+赤峰市	chi feng shi	250
+赤峰市松山区	chi feng shi song shan qu	80
+赤水	chi shui	80
+赤水市	chi shui shi	80
+赫山	he shan	80
+赫山区	he shan qu	80
+赫章	he zhang	80
+赫章县	he zhang xian	80
+赵县	zhao xian	80
+越城	yue cheng	80
+越城区	yue cheng qu	80
+越秀	yue xiu	80
+越秀区	yue xiu qu	80
+越西	yue xi	80
+越西县	yue xi xian	80
+路北	lu bei	80
+路北区	lu bei qu	80
+路南	lu nan	80
+路南区	lu nan qu	80
+路桥	lu qiao	80
+路桥区	lu qiao qu	80
+路氹填海	lu dang tian hai	80
+路氹填海区	lu dang tian hai qu	80
+路竹	lu zhu	80
+路竹区	lu zhu qu	80
+轮台	lun tai	80
+轮台县	lun tai xian	80
+辉南	hui nan	80
+辉南县	hui nan xian	80
+辉县	hui xian	80
+辉县市	hui xian shi	80
+辛集	xin ji	80
+辛集市	xin ji shi	80
+辰溪	chen xi	80
+辰溪县	chen xi xian	80
+边坝	bian ba	80
+边坝县	bian ba xian	80
+辽中	liao zhong	80
+辽中区	liao zhong qu	80
+辽宁	liao ning	500
+辽宁省	liao ning sheng	500
+辽源	liao yuan	250
+辽源市	liao yuan shi	250
+辽源市西安区	liao yuan shi xi an qu	80
+辽阳	liao yang	250
+辽阳县	liao yang xian	80
+辽阳市	liao yang shi	250
+达坂城	da ban cheng	80
+达坂城区	da ban cheng qu	80
+达孜	da zi	80
+达孜区	da zi qu	80
+达尔罕茂明安联合	da er han mao ming an lian he	80
+达尔罕茂明安联合旗	da er han mao ming an lian he qi	80
+达川	da chuan	80
+达川区	da chuan qu	80
+达州	da zhou	250
+达州市	da zhou shi	250
+达拉特	da la te	80
+达拉特旗	da la te qi	80
+达日	da ri	80
+达日县	da ri xian	80
+迁安	qian an	80
+迁安市	qian an shi	80
+迁西	qian xi	80
+迁西县	qian xi xian	80
+迎江	ying jiang	80
+迎江区	ying jiang qu	80
+迎泽	ying ze	80
+迎泽区	ying ze qu	80
+运城	yun cheng	250
+运城市	yun cheng shi	250
+运河	yun he	80
+运河区	yun he qu	80
+进贤	jin xian	80
+进贤县	jin xian xian	80
+远安	yuan an	80
+远安县	yuan an xian	80
+连云	lian yun	80
+连云区	lian yun qu	80
+连云港	lian yun gang	250
+连云港市	lian yun gang shi	250
+连云港市海州区	lian yun gang shi hai zhou qu	80
+连南	lian nan	80
+连南瑶族自治县	lian nan yao zu zi zhi xian	80
+连城	lian cheng	80
+连城县	lian cheng xian	80
+连山	lian shan	80
+连山区	lian shan qu	80
+连山壮族瑶族自治县	lian shan zhuang zu yao zu zi zhi xian	80
+连州	lian zhou	80
+连州市	lian zhou shi	80
+连平	lian ping	80
+连平县	lian ping xian	80
+连江	lian jiang	80
+连江县	lian jiang xian	80
+迪庆	di qing	250
+迪庆藏族自治州	di qing zang zu zi zhi zhou	250
+迭部	die bu	80
+迭部县	die bu xian	80
+逊克	xun ke	80
+逊克县	xun ke xian	80
+通化	tong hua	250
+通化县	tong hua xian	80
+通化市	tong hua shi	250
+通城	tong cheng	80
+通城县	tong cheng xian	80
+通山	tong shan	80
+通山县	tong shan xian	80
+通川	tong chuan	80
+通川区	tong chuan qu	80
+通州	tong zhou	80
+通州区	tong zhou qu	80
+通榆	tong yu	80
+通榆县	tong yu xian	80
+通江	tong jiang	80
+通江县	tong jiang xian	80
+通河	tong he	80
+通河县	tong he xian	80
+通海	tong hai	80
+通海县	tong hai xian	80
+通渭	tong wei	80
+通渭县	tong wei xian	80
+通许	tong xu	80
+通许县	tong xu xian	80
+通辽	tong liao	250
+通辽市	tong liao shi	250
+通道	tong dao	80
+通道侗族自治县	tong dao dong zu zi zhi xian	80
+遂宁	sui ning	250
+遂宁市	sui ning shi	250
+遂川	sui chuan	80
+遂川县	sui chuan xian	80
+遂平	sui ping	80
+遂平县	sui ping xian	80
+遂昌	sui chang	80
+遂昌县	sui chang xian	80
+遂溪	sui xi	80
+遂溪县	sui xi xian	80
+道县	dao xian	80
+道外	dao wai	80
+道外区	dao wai qu	80
+道孚	dao fu	80
+道孚县	dao fu xian	80
+道真	dao zhen	80
+道真仡佬族苗族自治县	dao zhen ge lao zu miao zu zi zhi xian	80
+道里	dao li	80
+道里区	dao li qu	80
+遵义	zun yi	250
+遵义市	zun yi shi	250
+遵化	zun hua	80
+遵化市	zun hua shi	80
+邓州	deng zhou	80
+邓州市	deng zhou shi	80
+邕宁	yong ning	80
+邕宁区	yong ning qu	80
+邗江	han jiang	80
+邗江区	han jiang qu	80
+邛崃	qiong lai	80
+邛崃市	qiong lai shi	80
+邢台	xing tai	250
+邢台市	xing tai shi	250
+那坡	na po	80
+那坡县	na po xian	80
+那曲	na qu	250
+那曲市	na qu shi	250
+那玛夏	na ma xia	80
+那玛夏区	na ma xia qu	80
+邯山	han shan	80
+邯山区	han shan qu	80
+邯郸	han dan	250
+邯郸市	han dan shi	250
+邯郸市复兴区	han dan shi fu xing qu	80
+邱县	qiu xian	80
+邳州	pi zhou	80
+邳州市	pi zhou shi	80
+邵东	shao dong	80
+邵东市	shao dong shi	80
+邵武	shao wu	80
+邵武市	shao wu shi	80
+邵阳	shao yang	250
+邵阳县	shao yang xian	80
+邵阳市	shao yang shi	250
+邹城	zou cheng	80
+邹城市	zou cheng shi	80
+邹平	zou ping	80
+邹平市	zou ping shi	80
+邻水	lin shui	80
+邻水县	lin shui xian	80
+郁南	yu nan	80
+郁南县	yu nan xian	80
+郊区	jiao qu	80
+郎溪	lang xi	80
+郎溪县	lang xi xian	80
+郏县	jia xian	80
+郑州	zheng zhou	250
+郑州市	zheng zhou shi	250
+郓城	yun cheng	80
+郓城县	yun cheng xian	80
+郧西	yun xi	80
+郧西县	yun xi xian	80
+郧阳	yun yang	80
+郧阳区	yun yang qu	80
+郫都	pi dou	80
+郫都区	pi dou qu	80
+郯城	tan cheng	80
+郯城县	tan cheng xian	80
+郴州	chen zhou	250
+郴州市	chen zhou shi	250
+郸城	dan cheng	80
+郸城县	dan cheng xian	80
+都兰	dou lan	80
+都兰县	dou lan xian	80
+都匀	dou yun	80
+都匀市	dou yun shi	80
+都安	dou an	80
+都安瑶族自治县	dou an yao zu zi zhi xian	80
+都昌	dou chang	80
+都昌县	dou chang xian	80
+都江堰	du jiang yan	80
+都江堰市	du jiang yan shi	80
+郾城	yan cheng	80
+郾城区	yan cheng qu	80
+鄂伦春自治旗	e lun chun zi zhi qi	80
+鄂城	e cheng	80
+鄂城区	e cheng qu	80
+鄂尔多斯	e er duo si	250
+鄂尔多斯市	e er duo si shi	250
+鄂州	e zhou	250
+鄂州市	e zhou shi	250
+鄂托克	e tuo ke	80
+鄂托克前	e tuo ke qian	80
+鄂托克前旗	e tuo ke qian qi	80
+鄂托克旗	e tuo ke qi	80
+鄂温克族自治旗	e wen ke zu zi zhi qi	80
+鄄城	juan cheng	80
+鄄城县	juan cheng xian	80
+鄞州	yin zhou	80
+鄞州区	yin zhou qu	80
+鄠邑	hu yi	80
+鄠邑区	hu yi qu	80
+鄢陵	yan ling	80
+鄢陵县	yan ling xian	80
+鄯善	shan shan	80
+鄯善县	shan shan xian	80
+鄱阳	po yang	80
+鄱阳县	po yang xian	80
+酉阳	you yang	80
+酉阳土家族苗族自治县	you yang tu jia zu miao zu zi zhi xian	80
+酒泉	jiu quan	250
+酒泉市	jiu quan shi	250
+醴陵	li ling	80
+醴陵市	li ling shi	80
+重庆	chong qing	500
+重庆市	chong qing shi	500
+金东	jin dong	80
+金东区	jin dong qu	80
+金乡	jin xiang	80
+金乡县	jin xiang xian	80
+金凤	jin feng	80
+金凤区	jin feng qu	80
+金华	jin hua	250
+金华市	jin hua shi	250
+金口河	jin kou he	80
+金口河区	jin kou he qu	80
+金台	jin tai	80
+金台区	jin tai qu	80
+金坛	jin tan	80
+金坛区	jin tan qu	80
+金城江	jin cheng jiang	80
+金城江区	jin cheng jiang qu	80
+金堂	jin tang	80
+金堂县	jin tang xian	80
+金塔	jin ta	80
+金塔县	jin ta xian	80
+金安	jin an	80
+金安区	jin an qu	80
+金寨	jin zhai	80
+金寨县	jin zhai xian	80
+金山	jin shan	80
+金山区	jin shan qu	80
+金川	jin chuan	80
+金川区	jin chuan qu	80
+金川县	jin chuan xian	80
+金州	jin zhou	80
+金州区	jin zhou qu	80
+金平	jin ping	80
+金平区	jin ping qu	80
+金平苗族瑶族傣族自治县	jin ping miao zu yao zu dai zu zi zhi xian	80
+金昌	jin chang	250
+金昌市	jin chang shi	250
+金林区	jin lin qu	80
+金水	jin shui	80
+金水区	jin shui qu	80
+金沙	jin sha	80
+金沙县	jin sha xian	80
+金湖	jin hu	80
+金湖县	jin hu xian	80
+金湾	jin wan	80
+金湾区	jin wan qu	80
+金溪	jin xi	80
+金溪县	jin xi xian	80
+金牛	jin niu	80
+金牛区	jin niu qu	80
+金秀	jin xiu	80
+金秀瑶族自治县	jin xiu yao zu zi zhi xian	80
+金门	jin men	80
+金门县	jin men xian	80
+金阳	jin yang	80
+金阳县	jin yang xian	80
+钟山	zhong shan	80
+钟山区	zhong shan qu	80
+钟山县	zhong shan xian	80
+钟楼	zhong lou	80
+钟楼区	zhong lou qu	80
+钟祥	zhong xiang	80
+钟祥市	zhong xiang shi	80
+钢城	gang cheng	80
+钢城区	gang cheng qu	80
+钦北	qin bei	80
+钦北区	qin bei qu	80
+钦南	qin nan	80
+钦南区	qin nan qu	80
+钦州	qin zhou	250
+钦州市	qin zhou shi	250
+钱塘	qian tang	80
+钱塘区	qian tang qu	80
+铁东	tie dong	80
+铁东区	tie dong qu	80
+铁力	tie li	80
+铁力市	tie li shi	80
+铁山	tie shan	80
+铁山区	tie shan qu	80
+铁山港	tie shan gang	80
+铁山港区	tie shan gang qu	80
+铁岭	tie ling	250
+铁岭县	tie ling xian	80
+铁岭市	tie ling shi	250
+铁西	tie xi	80
+铁西区	tie xi qu	80
+铁锋	tie feng	80
+铁锋区	tie feng qu	80
+铁门关	tie men guan	80
+铁门关市	tie men guan shi	80
+铅山	yan shan	80
+铅山县	yan shan xian	80
+铜仁	tong ren	250
+铜仁市	tong ren shi	250
+铜官	tong guan	80
+铜官区	tong guan qu	80
+铜山	tong shan	80
+铜山区	tong shan qu	80
+铜川	tong chuan	250
+铜川市	tong chuan shi	250
+铜梁	tong liang	80
+铜梁区	tong liang qu	80
+铜陵	tong ling	250
+铜陵市	tong ling shi	250
+铜陵市郊区	tong ling shi jiao qu	80
+铜鼓	tong gu	80
+铜鼓县	tong gu xian	80
+银川	yin chuan	250
+银川市	yin chuan shi	250
+银州	yin zhou	80
+银州区	yin zhou qu	80
+银海	yin hai	80
+银海区	yin hai qu	80
+错那	cuo na	80
+错那市	cuo na shi	80
+锡山	xi shan	80
+锡山区	xi shan qu	80
+锡林浩特	xi lin hao te	80
+锡林浩特市	xi lin hao te shi	80
+锡林郭勒	xi lin guo lei	250
+锡林郭勒盟	xi lin guo lei meng	250
+锦屏	jin ping	80
+锦屏县	jin ping xian	80
+锦州	jin zhou	250
+锦州市	jin zhou shi	250
+锦江	jin jiang	80
+锦江区	jin jiang qu	80
+镇原	zhen yuan	80
+镇原县	zhen yuan xian	80
+镇坪	zhen ping	80
+镇坪县	zhen ping xian	80
+镇宁	zhen ning	80
+镇宁布依族苗族自治县	zhen ning bu yi zu miao zu zi zhi xian	80
+镇安	zhen an	80
+镇安县	zhen an xian	80
+镇巴	zhen ba	80
+镇巴县	zhen ba xian	80
+镇平	zhen ping	80
+镇平县	zhen ping xian	80
+镇康	zhen kang	80
+镇康县	zhen kang xian	80
+镇江	zhen jiang	250
+镇江市	zhen jiang shi	250
+镇沅	zhen yuan	80
+镇沅彝族哈尼族拉祜族自治县	zhen yuan yi zu ha ni zu la hu zu zi zhi xian	80
+镇海	zhen hai	80
+镇海区	zhen hai qu	80
+镇赉	zhen lai	80
+镇赉县	zhen lai xian	80
+镇远	zhen yuan	80
+镇远县	zhen yuan xian	80
+镇雄	zhen xiong	80
+镇雄县	zhen xiong xian	80
+镜湖	jing hu	80
+镜湖区	jing hu qu	80
+镶黄	xiang huang	80
+镶黄旗	xiang huang qi	80
+长丰	zhang feng	80
+长丰县	zhang feng xian	80
+长乐	chang le	80
+长乐区	chang le qu	80
+长兴	chang xing	80
+长兴县	chang xing xian	80
+长垣	zhang yuan	80
+长垣市	zhang yuan shi	80
+长子	zhang zi	80
+长子县	zhang zi xian	80
+长宁	zhang ning	80
+长宁区	zhang ning qu	80
+长宁县	zhang ning xian	80
+长安	chang an	80
+长安区	chang an qu	80
+长寿	chang shou	80
+长寿区	chang shou qu	80
+长岭	zhang ling	80
+长岭县	zhang ling xian	80
+长春	chang chun	250
+长春市	chang chun shi	250
+长春市朝阳区	chang chun shi chao yang qu	80
+长武	zhang wu	80
+长武县	zhang wu xian	80
+长汀	chang ting	80
+长汀县	chang ting xian	80
+长沙	chang sha	250
+长沙县	chang sha xian	80
+长沙市	chang sha shi	250
+长治	zhang zhi	250
+长治市	zhang zhi shi	250
+长泰	zhang tai	80
+长泰区	zhang tai qu	80
+长洲	zhang zhou	80
+长洲区	zhang zhou qu	80
+长海	zhang hai	80
+长海县	zhang hai xian	80
+长清	zhang qing	80
+长清区	zhang qing qu	80
+长白朝鲜族自治县	zhang bai chao xian zu zi zhi xian	80
+长葛	zhang ge	80
+长葛市	zhang ge shi	80
+长阳	zhang yang	80
+长阳土家族自治县	zhang yang tu jia zu zi zhi xian	80
+长顺	zhang shun	80
+长顺县	zhang shun xian	80
+门头沟	men tou gou	80
+门头沟区	men tou gou qu	80
+门源	men yuan	80
+门源回族自治县	men yuan hui zu zi zhi xian	80
+闵行	min xing	80
+闵行区	min xing qu	80
+闻喜	wen xi	80
+闻喜县	wen xi xian	80
+闽侯	min hou	80
+闽侯县	min hou xian	80
+闽清	min qing	80
+闽清县	min qing xian	80
+阆中	lang zhong	80
+阆中市	lang zhong shi	80
+阎良	yan liang	80
+阎良区	yan liang qu	80
+阜南	fu nan	80
+阜南县	fu nan xian	80
+阜城	fu cheng	80
+阜城县	fu cheng xian	80
+阜宁	fu ning	80
+阜宁县	fu ning xian	80
+阜平	fu ping	80
+阜平县	fu ping xian	80
+阜康	fu kang	80
+阜康市	fu kang shi	80
+阜新	fu xin	250
+阜新市	fu xin shi	250
+阜新市太平区	fu xin shi tai ping qu	80
+阜新市海州区	fu xin shi hai zhou qu	80
+阜新蒙古族自治县	fu xin meng gu zu zi zhi xian	80
+阜阳	fu yang	250
+阜阳市	fu yang shi	250
+防城	fang cheng	80
+防城区	fang cheng qu	80
+防城港	fang cheng gang	250
+防城港市	fang cheng gang shi	250
+阳东	yang dong	80
+阳东区	yang dong qu	80
+阳信	yang xin	80
+阳信县	yang xin xian	80
+阳原	yang yuan	80
+阳原县	yang yuan xian	80
+阳城	yang cheng	80
+阳城县	yang cheng xian	80
+阳山	yang shan	80
+阳山县	yang shan xian	80
+阳新	yang xin	80
+阳新县	yang xin xian	80
+阳明	yang ming	80
+阳明区	yang ming qu	80
+阳春	yang chun	80
+阳春市	yang chun shi	80
+阳曲	yang qu	80
+阳曲县	yang qu xian	80
+阳朔	yang shuo	80
+阳朔县	yang shuo xian	80
+阳江	yang jiang	250
+阳江市	yang jiang shi	250
+阳泉	yang quan	250
+阳泉市	yang quan shi	250
+阳泉市城区	yang quan shi cheng qu	80
+阳泉市郊区	yang quan shi jiao qu	80
+阳西	yang xi	80
+阳西县	yang xi xian	80
+阳谷	yang gu	80
+阳谷县	yang gu xian	80
+阳高	yang gao	80
+阳高县	yang gao xian	80
+阿克塞	a ke sai	80
+阿克塞哈萨克族自治县	a ke sai ha sa ke zu zi zhi xian	80
+阿克苏	a ke su	250
+阿克苏地区	a ke su di qu	250
+阿克苏市	a ke su shi	80
+阿克陶	a ke tao	80
+阿克陶县	a ke tao xian	80
+阿勒泰	a lei tai	250
+阿勒泰地区	a lei tai di qu	250
+阿勒泰市	a lei tai shi	80
+阿合奇	a he qi	80
+阿合奇县	a he qi xian	80
+阿图什	a tu shen	80
+阿图什市	a tu shen shi	80
+阿坝	a ba	250
+阿坝县	a ba xian	80
+阿坝藏族羌族自治州	a ba zang zu qiang zu zi zhi zhou	250
+阿城	a cheng	80
+阿城区	a cheng qu	80
+阿尔山	a er shan	80
+阿尔山市	a er shan shi	80
+阿巴嘎	a ba ga	80
+阿巴嘎旗	a ba ga qi	80
+阿拉善	a la shan	250
+阿拉善右	a la shan you	80
+阿拉善右旗	a la shan you qi	80
+阿拉善左	a la shan zuo	80
+阿拉善左旗	a la shan zuo qi	80
+阿拉善盟	a la shan meng	250
+阿拉尔	a la er	80
+阿拉尔市	a la er shi	80
+阿拉山口	a la shan kou	80
+阿拉山口市	a la shan kou shi	80
+阿瓦提	a wa ti	80
+阿瓦提县	a wa ti xian	80
+阿荣	a rong	80
+阿荣旗	a rong qi	80
+阿莲	a lian	80
+阿莲区	a lian qu	80
+阿里	a li	250
+阿里地区	a li di qu	250
+阿鲁科尔沁	a lu ke er qin	80
+阿鲁科尔沁旗	a lu ke er qin qi	80
+陆丰	lu feng	80
+陆丰市	lu feng shi	80
+陆川	lu chuan	80
+陆川县	lu chuan xian	80
+陆河	lu he	80
+陆河县	lu he xian	80
+陆良	lu liang	80
+陆良县	lu liang xian	80
+陇南	long nan	250
+陇南市	long nan shi	250
+陇县	long xian	80
+陇川	long chuan	80
+陇川县	long chuan xian	80
+陇西	long xi	80
+陇西县	long xi xian	80
+陈仓	chen cang	80
+陈仓区	chen cang qu	80
+陈巴尔虎	chen ba er hu	80
+陈巴尔虎旗	chen ba er hu qi	80
+陕州	shan zhou	80
+陕州区	shan zhou qu	80
+陕西	shan xi	500
+陕西省	shan xi sheng	500
+陵城	ling cheng	80
+陵城区	ling cheng qu	80
+陵川	ling chuan	80
+陵川县	ling chuan xian	80
+陵水黎族自治县	ling shui li zu zi zhi xian	80
+隆化	long hua	80
+隆化县	long hua xian	80
+隆回	long hui	80
+隆回县	long hui xian	80
+隆子	long zi	80
+隆子县	long zi xian	80
+隆安	long an	80
+隆安县	long an xian	80
+隆尧	long yao	80
+隆尧县	long yao xian	80
+隆德	long de	80
+隆德县	long de xian	80
+隆昌	long chang	80
+隆昌市	long chang shi	80
+隆林各族	long lin ge zu	80
+隆林各族自治县	long lin ge zu zi zhi xian	80
+隆阳	long yang	80
+隆阳区	long yang qu	80
+随县	sui xian	80
+随州	sui zhou	250
+随州市	sui zhou shi	250
+隰县	xi xian	80
+雁塔	yan ta	80
+雁塔区	yan ta qu	80
+雁山	yan shan	80
+雁山区	yan shan qu	80
+雁峰	yan feng	80
+雁峰区	yan feng qu	80
+雁江	yan jiang	80
+雁江区	yan jiang qu	80
+雄县	xiong xian	80
+雅安	ya an	250
+雅安市	ya an shi	250
+雅江	ya jiang	80
+雅江县	ya jiang xian	80
+集宁	ji ning	80
+集宁区	ji ning qu	80
+集安	ji an	80
+集安市	ji an shi	80
+集美	ji mei	80
+集美区	ji mei qu	80
+集贤	ji xian	80
+集贤县	ji xian xian	80
+離島區	li dao qu	80
+雨城	yu cheng	80
+雨城区	yu cheng qu	80
+雨山	yu shan	80
+雨山区	yu shan qu	80
+雨湖	yu hu	80
+雨湖区	yu hu qu	80
+雨花	yu hua	80
+雨花区	yu hua qu	80
+雨花台	yu hua tai	80
+雨花台区	yu hua tai qu	80
+零陵	ling ling	80
+零陵区	ling ling qu	80
+雷山	lei shan	80
+雷山县	lei shan xian	80
+雷州	lei zhou	80
+雷州市	lei zhou shi	80
+雷波	lei bo	80
+雷波县	lei bo xian	80
+雾峰	wu feng	80
+雾峰区	wu feng qu	80
+霍城	huo cheng	80
+霍城县	huo cheng xian	80
+霍尔果斯	huo er guo si	80
+霍尔果斯市	huo er guo si shi	80
+霍山	huo shan	80
+霍山县	huo shan xian	80
+霍州	huo zhou	80
+霍州市	huo zhou shi	80
+霍林郭勒	huo lin guo lei	80
+霍林郭勒市	huo lin guo lei shi	80
+霍邱	huo qiu	80
+霍邱县	huo qiu xian	80
+霞山	xia shan	80
+霞山区	xia shan qu	80
+霞浦	xia pu	80
+霞浦县	xia pu xian	80
+霸州	ba zhou	80
+霸州市	ba zhou shi	80
+青云谱	qing yun pu	80
+青云谱区	qing yun pu qu	80
+青冈	qing gang	80
+青冈县	qing gang xian	80
+青原	qing yuan	80
+青原区	qing yuan qu	80
+青县	qing xian	80
+青山	qing shan	80
+青山区	qing shan qu	80
+青山湖	qing shan hu	80
+青山湖区	qing shan hu qu	80
+青岛	qing dao	250
+青岛市	qing dao shi	250
+青川	qing chuan	80
+青川县	qing chuan xian	80
+青州	qing zhou	80
+青州市	qing zhou shi	80
+青河	qing he	80
+青河县	qing he xian	80
+青浦	qing pu	80
+青浦区	qing pu qu	80
+青海	qing hai	500
+青海省	qing hai sheng	500
+青田	qing tian	80
+青田县	qing tian xian	80
+青白江	qing bai jiang	80
+青白江区	qing bai jiang qu	80
+青神	qing shen	80
+青神县	qing shen xian	80
+青秀	qing xiu	80
+青秀区	qing xiu qu	80
+青羊	qing yang	80
+青羊区	qing yang qu	80
+青铜峡	qing tong xia	80
+青铜峡市	qing tong xia shi	80
+青阳	qing yang	80
+青阳县	qing yang xian	80
+青龙	qing long	80
+青龙满族自治县	qing long man zu zi zhi xian	80
+靖宇	jing yu	80
+靖宇县	jing yu xian	80
+靖安	jing an	80
+靖安县	jing an xian	80
+靖州	jing zhou	80
+靖州苗族侗族自治县	jing zhou miao zu dong zu zi zhi xian	80
+靖江	jing jiang	80
+靖江市	jing jiang shi	80
+靖西	jing xi	80
+靖西市	jing xi shi	80
+靖边	jing bian	80
+靖边县	jing bian xian	80
+靖远	jing yuan	80
+靖远县	jing yuan xian	80
+静乐	jing le	80
+静乐县	jing le xian	80
+静宁	jing ning	80
+静宁县	jing ning xian	80
+静安	jing an	80
+静安区	jing an qu	80
+静海	jing hai	80
+静海区	jing hai qu	80
+革吉	ge ji	80
+革吉县	ge ji xian	80
+鞍山	an shan	250
+鞍山市	an shan shi	250
+鞍山市铁东区	an shan shi tie dong qu	80
+鞍山市铁西区	an shan shi tie xi qu	80
+韩城	han cheng	80
+韩城市	han cheng shi	80
+韶关	shao guan	250
+韶关市	shao guan shi	250
+韶山	shao shan	80
+韶山市	shao shan shi	80
+项城	xiang cheng	80
+项城市	xiang cheng shi	80
+顺义	shun yi	80
+顺义区	shun yi qu	80
+顺城	shun cheng	80
+顺城区	shun cheng qu	80
+顺平	shun ping	80
+顺平县	shun ping xian	80
+顺庆	shun qing	80
+顺庆区	shun qing qu	80
+顺德	shun de	80
+顺德区	shun de qu	80
+顺昌	shun chang	80
+顺昌县	shun chang xian	80
+顺河回族	shun he hui zu	80
+顺河回族区	shun he hui zu qu	80
+颍上	ying shang	80
+颍上县	ying shang xian	80
+颍东	ying dong	80
+颍东区	ying dong qu	80
+颍州	ying zhou	80
+颍州区	ying zhou qu	80
+颍泉	ying quan	80
+颍泉区	ying quan qu	80
+额尔古纳	e er gu na	80
+额尔古纳市	e er gu na shi	80
+额敏	e min	80
+额敏县	e min xian	80
+额济纳	e ji na	80
+额济纳旗	e ji na qi	80
+风顺堂	feng shun tang	80
+风顺堂区	feng shun tang qu	80
+饶平	rao ping	80
+饶平县	rao ping xian	80
+饶河	rao he	80
+饶河县	rao he xian	80
+饶阳	rao yang	80
+饶阳县	rao yang xian	80
+馆陶	guan tao	80
+馆陶县	guan tao xian	80
+香坊	xiang fang	80
+香坊区	xiang fang qu	80
+香山	xiang shan	80
+香山区	xiang shan qu	80
+香格里拉	xiang ge li la	80
+香格里拉市	xiang ge li la shi	80
+香河	xiang he	80
+香河县	xiang he xian	80
+香洲	xiang zhou	80
+香洲区	xiang zhou qu	80
+香港	xiang gang	500
+香港岛	xiang gang dao	80
+香港岛东区	xiang gang dao dong qu	80
+香港岛中西区	xiang gang dao zhong xi qu	80
+香港岛南区	xiang gang dao nan qu	80
+香港島	xiang gang dao	80
+香港特别行政区	xiang gang te bie xing zheng qu	500
+马关	ma guan	80
+马关县	ma guan xian	80
+马尔康	ma er kang	80
+马尔康市	ma er kang shi	80
+马尾	ma yi	80
+马尾区	ma yi qu	80
+马山	ma shan	80
+马山县	ma shan xian	80
+马村	ma cun	80
+马村区	ma cun qu	80
+马边	ma bian	80
+马边彝族自治县	ma bian yi zu zi zhi xian	80
+马鞍山	ma an shan	250
+马鞍山市	ma an shan shi	250
+马龙	ma long	80
+马龙区	ma long qu	80
+驻马店	zhu ma dian	250
+驻马店市	zhu ma dian shi	250
+驿城	yi cheng	80
+驿城区	yi cheng qu	80
+高县	gao xian	80
+高台	gao tai	80
+高台县	gao tai xian	80
+高唐	gao tang	80
+高唐县	gao tang xian	80
+高坪	gao ping	80
+高坪区	gao ping qu	80
+高安	gao an	80
+高安市	gao an shi	80
+高密	gao mi	80
+高密市	gao mi shi	80
+高州	gao zhou	80
+高州市	gao zhou shi	80
+高平	gao ping	80
+高平市	gao ping shi	80
+高昌	gao chang	80
+高昌区	gao chang qu	80
+高明	gao ming	80
+高明区	gao ming qu	80
+高淳	gao chun	80
+高淳区	gao chun qu	80
+高港	gao gang	80
+高港区	gao gang qu	80
+高碑店	gao bei dian	80
+高碑店市	gao bei dian shi	80
+高要	gao yao	80
+高要区	gao yao qu	80
+高邑	gao yi	80
+高邑县	gao yi xian	80
+高邮	gao you	80
+高邮市	gao you shi	80
+高阳	gao yang	80
+高阳县	gao yang xian	80
+高陵	gao ling	80
+高陵区	gao ling qu	80
+高雄	gao xiong	80
+高雄市	gao xiong shi	80
+高雄市新兴区	gao xiong shi xin xing qu	80
+高青	gao qing	80
+高青县	gao qing xian	80
+魏县	wei xian	80
+魏都	wei dou	80
+魏都区	wei dou qu	80
+鱼台	yu tai	80
+鱼台县	yu tai xian	80
+鱼峰	yu feng	80
+鱼峰区	yu feng qu	80
+鲁山	lu shan	80
+鲁山县	lu shan xian	80
+鲁甸	lu dian	80
+鲁甸县	lu dian xian	80
+鲅鱼圈	ba yu quan	80
+鲅鱼圈区	ba yu quan qu	80
+鲤城	li cheng	80
+鲤城区	li cheng qu	80
+鸟松	niao song	80
+鸟松区	niao song qu	80
+鸠江	jiu jiang	80
+鸠江区	jiu jiang qu	80
+鸡东	ji dong	80
+鸡东县	ji dong xian	80
+鸡冠	ji guan	80
+鸡冠区	ji guan qu	80
+鸡泽	ji ze	80
+鸡泽县	ji ze xian	80
+鸡西	ji xi	250
+鸡西市	ji xi shi	250
+鹤城	he cheng	80
+鹤城区	he cheng qu	80
+鹤壁	he bi	250
+鹤壁市	he bi shi	250
+鹤山	he shan	80
+鹤山区	he shan qu	80
+鹤山市	he shan shi	80
+鹤岗	he gang	250
+鹤岗市	he gang shi	250
+鹤岗市东山区	he gang shi dong shan qu	80
+鹤岗市南山区	he gang shi nan shan qu	80
+鹤岗市向阳区	he gang shi xiang yang qu	80
+鹤峰	he feng	80
+鹤峰县	he feng xian	80
+鹤庆	he qing	80
+鹤庆县	he qing xian	80
+鹰手营子矿	ying shou ying zi kuang	80
+鹰手营子矿区	ying shou ying zi kuang qu	80
+鹰潭	ying tan	250
+鹰潭市	ying tan shi	250
+鹿城	lu cheng	80
+鹿城区	lu cheng qu	80
+鹿寨	lu zhai	80
+鹿寨县	lu zhai xian	80
+鹿泉	lu quan	80
+鹿泉区	lu quan qu	80
+鹿邑	lu yi	80
+鹿邑县	lu yi xian	80
+麒麟	qi lin	80
+麒麟区	qi lin qu	80
+麟游	lin you	80
+麟游县	lin you xian	80
+麦盖提	mai gai ti	80
+麦盖提县	mai gai ti xian	80
+麦积	mai ji	80
+麦积区	mai ji qu	80
+麻城	ma cheng	80
+麻城市	ma cheng shi	80
+麻山	ma shan	80
+麻山区	ma shan qu	80
+麻栗坡	ma li po	80
+麻栗坡县	ma li po xian	80
+麻江	ma jiang	80
+麻江县	ma jiang xian	80
+麻章	ma zhang	80
+麻章区	ma zhang qu	80
+麻豆	ma dou	80
+麻豆区	ma dou qu	80
+麻阳	ma yang	80
+麻阳苗族自治县	ma yang miao zu zi zhi xian	80
+黃大仙區	huang da xian qu	80
+黄冈	huang gang	250
+黄冈市	huang gang shi	250
+黄南	huang nan	250
+黄南藏族自治州	huang nan zang zu zi zhi zhou	250
+黄埔	huang pu	80
+黄埔区	huang pu qu	80
+黄大仙	huang da xian	80
+黄大仙区	huang da xian qu	80
+黄山	huang shan	250
+黄山区	huang shan qu	80
+黄山市	huang shan shi	250
+黄岛	huang dao	80
+黄岛区	huang dao qu	80
+黄岩	huang yan	80
+黄岩区	huang yan qu	80
+黄州	huang zhou	80
+黄州区	huang zhou qu	80
+黄平	huang ping	80
+黄平县	huang ping xian	80
+黄梅	huang mei	80
+黄梅县	huang mei xian	80
+黄浦	huang pu	80
+黄浦区	huang pu qu	80
+黄石	huang shi	250
+黄石市	huang shi shi	250
+黄石港	huang shi gang	80
+黄石港区	huang shi gang qu	80
+黄陂	huang pi	80
+黄陂区	huang pi qu	80
+黄陵	huang ling	80
+黄陵县	huang ling xian	80
+黄骅	huang hua	80
+黄骅市	huang hua shi	80
+黄龙	huang long	80
+黄龙县	huang long xian	80
+黎城	li cheng	80
+黎城县	li cheng xian	80
+黎川	li chuan	80
+黎川县	li chuan xian	80
+黎平	li ping	80
+黎平县	li ping xian	80
+黑山	hei shan	80
+黑山县	hei shan xian	80
+黑水	hei shui	80
+黑水县	hei shui xian	80
+黑河	hei he	250
+黑河市	hei he shi	250
+黑龙江	hei long jiang	500
+黑龙江省	hei long jiang sheng	500
+黔东南	qian dong nan	250
+黔东南苗族侗族自治州	qian dong nan miao zu dong zu zi zhi zhou	250
+黔南	qian nan	250
+黔南布依族苗族自治州	qian nan bu yi zu miao zu zi zhi zhou	250
+黔江	qian jiang	80
+黔江区	qian jiang qu	80
+黔西	qian xi	80
+黔西南	qian xi nan	250
+黔西南布依族苗族自治州	qian xi nan bu yi zu miao zu zi zhi zhou	250
+黔西市	qian xi shi	80
+黟县	yi xian	80
+鼎城	ding cheng	80
+鼎城区	ding cheng qu	80
+鼎湖	ding hu	80
+鼎湖区	ding hu qu	80
+鼓山	gu shan	80
+鼓山区	gu shan qu	80
+鼓楼	gu lou	80
+鼓楼区	gu lou qu	80
+齐河	qi he	80
+齐河县	qi he xian	80
+齐齐哈尔	qi qi ha er	250
+齐齐哈尔市	qi qi ha er shi	250
+龙井	long jing	80
+龙井区	long jing qu	80
+龙井市	long jing shi	80
+龙亭	long ting	80
+龙亭区	long ting qu	80
+龙凤	long feng	80
+龙凤区	long feng qu	80
+龙华	long hua	80
+龙华区	long hua qu	80
+龙南	long nan	80
+龙南市	long nan shi	80
+龙口	long kou	80
+龙口市	long kou shi	80
+龙圩	long wei	80
+龙圩区	long wei qu	80
+龙城	long cheng	80
+龙城区	long cheng qu	80
+龙子湖	long zi hu	80
+龙子湖区	long zi hu qu	80
+龙安	long an	80
+龙安区	long an qu	80
+龙山	long shan	80
+龙山区	long shan qu	80
+龙山县	long shan xian	80
+龙岗	long gang	80
+龙岗区	long gang qu	80
+龙岩	long yan	250
+龙岩市	long yan shi	250
+龙岩市永定区	long yan shi yong ding qu	80
+龙崎	long qi	80
+龙崎区	long qi qu	80
+龙川	long chuan	80
+龙川县	long chuan xian	80
+龙州	long zhou	80
+龙州县	long zhou xian	80
+龙文	long wen	80
+龙文区	long wen qu	80
+龙江	long jiang	80
+龙江县	long jiang xian	80
+龙沙	long sha	80
+龙沙区	long sha qu	80
+龙泉	long quan	80
+龙泉市	long quan shi	80
+龙泉驿	long quan yi	80
+龙泉驿区	long quan yi qu	80
+龙海	long hai	80
+龙海区	long hai qu	80
+龙港	long gang	80
+龙港区	long gang qu	80
+龙港市	long gang shi	80
+龙游	long you	80
+龙游县	long you xian	80
+龙湖	long hu	80
+龙湖区	long hu qu	80
+龙湾	long wan	80
+龙湾区	long wan qu	80
+龙潭	long tan	80
+龙潭区	long tan qu	80
+龙胜各族	long sheng ge zu	80
+龙胜各族自治县	long sheng ge zu zi zhi xian	80
+龙里	long li	80
+龙里县	long li xian	80
+龙门	long men	80
+龙门县	long men xian	80
+龙陵	long ling	80
+龙陵县	long ling xian	80
+龙马潭	long ma tan	80
+龙马潭区	long ma tan qu	80
+龟山	gui shan	80
+龟山区	gui shan qu	80

@@ -1,4 +1,5 @@
 #![cfg(feature = "native-librime")]
+// Copyright © 2026 立方田 <managecode@gmail.com>
 
 use std::path::PathBuf;
 
@@ -7,8 +8,8 @@ use ime_engine_rime::{native::NativeRimeBackend, RimeEngine};
 
 #[test]
 fn native_librime_composes_and_commits_real_dictionary_text() {
-    let shared_dir = std::env::var("SHURUFA_RIME_TEST_DATA")
-        .expect("SHURUFA_RIME_TEST_DATA must point to librime's data/minimal directory");
+    let shared_dir = std::env::var("ZHIMO_RIME_TEST_DATA")
+        .expect("ZHIMO_RIME_TEST_DATA must point to librime's data/minimal directory");
     let user_dir = unique_user_dir();
     std::fs::create_dir_all(&user_dir).expect("create isolated Rime user directory");
 
@@ -59,7 +60,7 @@ fn native_librime_composes_and_commits_real_dictionary_text() {
 
 fn unique_user_dir() -> PathBuf {
     std::env::temp_dir().join(format!(
-        "shurufa-rime-test-{}-{:?}",
+        "zhimo-rime-test-{}-{:?}",
         std::process::id(),
         std::thread::current().id()
     ))

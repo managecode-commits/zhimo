@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 #pragma once
 
 #include <filesystem>
@@ -7,7 +8,7 @@
 
 struct ImeHandle;
 
-namespace shurufa {
+namespace zhimo {
 struct Candidate final {
   std::string id;
   std::string display;
@@ -46,4 +47,4 @@ class CoreSession final {
  private:
   ImeHandle* handle_ = nullptr;
 };
-}  // namespace shurufa
+}  // namespace zhimo

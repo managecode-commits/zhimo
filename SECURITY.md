@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # Security
 
 Zhimo currently has no supported production release or guaranteed security response time. Do not assume development builds are suitable for sensitive production environments.

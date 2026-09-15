@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # iOS/iPadOS Keyboard Extension
 
 本目录包含 Custom Keyboard `UIInputViewController`，通过共享 Swift/C ABI 会话处理字母、候选、空格和退格，并保留系统“下一个键盘”键。

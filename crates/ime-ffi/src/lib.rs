@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Minimal C ABI proving ownership and UTF-8 transfer across platform bridges.
 
 mod handwriting;
@@ -520,6 +521,7 @@ pub unsafe extern "C" fn ime_runtime_action_kind(
         Action::CloseComposition => 4,
         Action::Ignored => 5,
         Action::CandidatePage { .. } => 6,
+        Action::PinyinReadings { .. } => 7,
     }
 }
 
@@ -1042,7 +1044,7 @@ mod tests {
             std::env::var("WHISPER_CPP_EXPECTED").unwrap_or_else(|_| "country".to_owned());
         let language_value =
             std::env::var("WHISPER_CPP_LANGUAGE").unwrap_or_else(|_| "en".to_owned());
-        let temporary = std::env::temp_dir().join("shurufa-ffi-speech");
+        let temporary = std::env::temp_dir().join("zhimo-ffi-speech");
         let (samples, sample_rate, channels) = read_pcm16_wav(Path::new(&wav));
         let executable = CString::new(executable).expect("executable");
         let model = CString::new(model).expect("model");
@@ -1126,7 +1128,7 @@ mod tests {
     #[test]
     fn c_abi_persists_learning_across_runtime_process_lifetimes() {
         let data_dir =
-            std::env::temp_dir().join(format!("shurufa-ffi-learning-{}", std::process::id()));
+            std::env::temp_dir().join(format!("zhimo-ffi-learning-{}", std::process::id()));
         std::fs::create_dir_all(&data_dir).expect("data directory");
         let engine = CString::new("bilingual").expect("engine");
         let directory = CString::new(data_dir.to_str().expect("UTF-8 path")).expect("directory");
@@ -1159,8 +1161,8 @@ mod tests {
     #[cfg(feature = "native-librime")]
     #[test]
     fn c_abi_runs_native_rime_through_the_public_boundary() {
-        let shared = std::env::var("SHURUFA_RIME_TEST_DATA").expect("Rime test data");
-        let base = std::env::temp_dir().join(format!("shurufa-ffi-rime-{}", std::process::id()));
+        let shared = std::env::var("ZHIMO_RIME_TEST_DATA").expect("Rime test data");
+        let base = std::env::temp_dir().join(format!("zhimo-ffi-rime-{}", std::process::id()));
         let user = base.join("rime-user");
         std::fs::create_dir_all(&user).expect("Rime user directory");
         let engine = CString::new("rime").expect("engine");

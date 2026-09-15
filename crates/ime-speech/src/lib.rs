@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Provider-neutral speech transcription contracts.
 
 pub mod audio;

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Provider-facing audio normalization and lightweight endpoint detection.
 
 use crate::{AudioFrame, SpeechError};

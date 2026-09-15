@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 #ifdef _WIN32
 #include <msctf.h>
 #include <objbase.h>
@@ -8,6 +9,7 @@
 
 #include "text_service.h"
 #include "tsf_guids.h"
+#include "language_bar.h"
 
 namespace {
 HINSTANCE module_instance = nullptr;
@@ -36,8 +38,13 @@ class ClassFactory final : public IClassFactory {
     return value;
   }
   HRESULT STDMETHODCALLTYPE CreateInstance(IUnknown* outer, REFIID iid, void** object) override {
+    if (!object) return E_POINTER;
+    *object = nullptr;
     if (outer) return CLASS_E_NOAGGREGATION;
-    auto* service = new (std::nothrow) shurufa::TextService();
+    zhimo::TextService* service = nullptr;
+    try { service = new (std::nothrow) zhimo::TextService(); }
+    catch (const std::bad_alloc&) { return E_OUTOFMEMORY; }
+    catch (...) { return E_FAIL; }
     if (!service) return E_OUTOFMEMORY;
     const HRESULT result = service->QueryInterface(iid, object);
     service->Release();
@@ -53,7 +60,7 @@ HRESULT RegisterComServer() {
   wchar_t module_path[MAX_PATH] = {};
   if (!GetModuleFileNameW(module_instance, module_path, MAX_PATH)) return HRESULT_FROM_WIN32(GetLastError());
   const std::wstring key = L"Software\\Classes\\CLSID\\" +
-                           GuidString(CLSID_ShurufaTextService) + L"\\InprocServer32";
+                           GuidString(CLSID_ZhimoTextService) + L"\\InprocServer32";
   HKEY handle = nullptr;
   LONG status = RegCreateKeyExW(HKEY_CURRENT_USER, key.c_str(), 0, nullptr, 0,
                                 KEY_SET_VALUE, nullptr, &handle, nullptr);
@@ -73,27 +80,32 @@ HRESULT RegisterProfile() {
   HRESULT result = CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr,
       CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&profiles));
   if (FAILED(result)) return result;
-  result = profiles->Register(CLSID_ShurufaTextService);
+  result = profiles->Register(CLSID_ZhimoTextService);
   const wchar_t description[] = L"知墨输入法 · Zhimo";
+  wchar_t icon_path[32768] = {};
+  const DWORD icon_length = GetModuleFileNameW(module_instance, icon_path, 32768);
+  if (!icon_length || icon_length >= 32768) {
+    profiles->Release();
+    return E_FAIL;
+  }
   if (SUCCEEDED(result)) result = profiles->AddLanguageProfile(
-      CLSID_ShurufaTextService, 0x0804, GUID_ShurufaProfile, description,
-      static_cast<ULONG>(wcslen(description)), nullptr, 0, 0);
+      CLSID_ZhimoTextService, 0x0804, GUID_ZhimoProfile, description,
+      static_cast<ULONG>(wcslen(description)), icon_path, icon_length, 0);
   profiles->Release();
   if (FAILED(result)) return result;
   ITfCategoryMgr* categories = nullptr;
   result = CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER,
                             IID_PPV_ARGS(&categories));
   if (FAILED(result)) return result;
-  const GUID category_ids[] = {GUID_TFCAT_TIP_KEYBOARD
+  const GUID category_ids[] = {GUID_TFCAT_TIP_KEYBOARD, zhimo::kSystraySupport
 #ifdef _MSC_VER
                                ,
-                               GUID_TFCAT_TIPCAP_IMMERSIVESUPPORT,
-                               GUID_TFCAT_TIPCAP_SYSTRAYSUPPORT
+                               GUID_TFCAT_TIPCAP_IMMERSIVESUPPORT
 #endif
   };
   for (const auto& category : category_ids) {
-    result = categories->RegisterCategory(CLSID_ShurufaTextService, category,
-                                          CLSID_ShurufaTextService);
+    result = categories->RegisterCategory(CLSID_ZhimoTextService, category,
+                                          CLSID_ZhimoTextService);
     if (FAILED(result)) break;
   }
   categories->Release();
@@ -104,23 +116,22 @@ void UnregisterProfile() {
   ITfCategoryMgr* categories = nullptr;
   if (SUCCEEDED(CoCreateInstance(CLSID_TF_CategoryMgr, nullptr, CLSCTX_INPROC_SERVER,
                                  IID_PPV_ARGS(&categories)))) {
-    const GUID category_ids[] = {GUID_TFCAT_TIP_KEYBOARD
+    const GUID category_ids[] = {GUID_TFCAT_TIP_KEYBOARD, zhimo::kSystraySupport
 #ifdef _MSC_VER
                                  ,
-                                 GUID_TFCAT_TIPCAP_IMMERSIVESUPPORT,
-                                 GUID_TFCAT_TIPCAP_SYSTRAYSUPPORT
+                                 GUID_TFCAT_TIPCAP_IMMERSIVESUPPORT
 #endif
     };
     for (const auto& category : category_ids)
-      categories->UnregisterCategory(CLSID_ShurufaTextService, category,
-                                     CLSID_ShurufaTextService);
+      categories->UnregisterCategory(CLSID_ZhimoTextService, category,
+                                     CLSID_ZhimoTextService);
     categories->Release();
   }
   ITfInputProcessorProfiles* profiles = nullptr;
   if (SUCCEEDED(CoCreateInstance(CLSID_TF_InputProcessorProfiles, nullptr,
                                  CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&profiles)))) {
-    profiles->RemoveLanguageProfile(CLSID_ShurufaTextService, 0x0804, GUID_ShurufaProfile);
-    profiles->Unregister(CLSID_ShurufaTextService);
+    profiles->RemoveLanguageProfile(CLSID_ZhimoTextService, 0x0804, GUID_ZhimoProfile);
+    profiles->Unregister(CLSID_ZhimoTextService);
     profiles->Release();
   }
 }
@@ -134,17 +145,17 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID) {
   return TRUE;
 }
 
-extern "C" HRESULT __declspec(dllexport) DllGetClassObject(REFCLSID clsid, REFIID iid,
+extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllGetClassObject(REFCLSID clsid, REFIID iid,
                                                             void** object) {
-  if (!IsEqualCLSID(clsid, CLSID_ShurufaTextService)) return CLASS_E_CLASSNOTAVAILABLE;
+  if (!IsEqualCLSID(clsid, CLSID_ZhimoTextService)) return CLASS_E_CLASSNOTAVAILABLE;
   auto* factory = new (std::nothrow) ClassFactory();
   if (!factory) return E_OUTOFMEMORY;
   const HRESULT result = factory->QueryInterface(iid, object);
   factory->Release();
   return result;
 }
-extern "C" HRESULT __declspec(dllexport) DllCanUnloadNow() { return S_FALSE; }
-extern "C" HRESULT __declspec(dllexport) DllRegisterServer() {
+extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllCanUnloadNow() { return S_FALSE; }
+extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllRegisterServer() {
   HRESULT result = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
   const bool uninitialize = SUCCEEDED(result);
   result = RegisterComServer();
@@ -152,11 +163,11 @@ extern "C" HRESULT __declspec(dllexport) DllRegisterServer() {
   if (uninitialize) CoUninitialize();
   return result;
 }
-extern "C" HRESULT __declspec(dllexport) DllUnregisterServer() {
+extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllUnregisterServer() {
   HRESULT result = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
   const bool uninitialize = SUCCEEDED(result);
   UnregisterProfile();
-  const std::wstring key = L"Software\\Classes\\CLSID\\" + GuidString(CLSID_ShurufaTextService);
+  const std::wstring key = L"Software\\Classes\\CLSID\\" + GuidString(CLSID_ZhimoTextService);
   RegDeleteTreeW(HKEY_CURRENT_USER, key.c_str());
   if (uninitialize) CoUninitialize();
   return S_OK;

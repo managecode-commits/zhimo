@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Model handles are caller-owned and must be serialized by the host's worker.
 use ime_handwriting::{
     zinnia::{Model, MODEL_SIZE},

@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$repo_dir/tools/android-env.sh"
-: "${SHURUFA_ANDROID_KEYSTORE:?SHURUFA_ANDROID_KEYSTORE must point to the release keystore}"
-: "${SHURUFA_ANDROID_KEY_ALIAS:?SHURUFA_ANDROID_KEY_ALIAS is required}"
-: "${SHURUFA_ANDROID_STORE_PASSWORD:?SHURUFA_ANDROID_STORE_PASSWORD is required}"
-: "${SHURUFA_ANDROID_KEY_PASSWORD:?SHURUFA_ANDROID_KEY_PASSWORD is required}"
-: "${SHURUFA_ANDROID_CERT_SHA256:?SHURUFA_ANDROID_CERT_SHA256 is required}"
+: "${ZHIMO_ANDROID_KEYSTORE:?ZHIMO_ANDROID_KEYSTORE must point to the release keystore}"
+: "${ZHIMO_ANDROID_KEY_ALIAS:?ZHIMO_ANDROID_KEY_ALIAS is required}"
+: "${ZHIMO_ANDROID_STORE_PASSWORD:?ZHIMO_ANDROID_STORE_PASSWORD is required}"
+: "${ZHIMO_ANDROID_KEY_PASSWORD:?ZHIMO_ANDROID_KEY_PASSWORD is required}"
+: "${ZHIMO_ANDROID_CERT_SHA256:?ZHIMO_ANDROID_CERT_SHA256 is required}"
 
-[[ "$SHURUFA_ANDROID_KEYSTORE" = /* ]] || {
-  echo "SHURUFA_ANDROID_KEYSTORE must be an absolute path" >&2
+[[ "$ZHIMO_ANDROID_KEYSTORE" = /* ]] || {
+  echo "ZHIMO_ANDROID_KEYSTORE must be an absolute path" >&2
   exit 2
 }
-test -f "$SHURUFA_ANDROID_KEYSTORE"
+test -f "$ZHIMO_ANDROID_KEYSTORE"
 command -v unzip >/dev/null
 command -v sha256sum >/dev/null
 cd "$repo_dir"
+bash ./tools/prepare-offline-speech.sh
 ./tools/build-android-core.sh
 
 cd platform/android-ime

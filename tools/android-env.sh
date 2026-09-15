@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 # Sourced by Android build scripts. Discovers tools but never accepts licenses.
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 if [[ -z "${JAVA_HOME:-}" ]]; then
-  for candidate in /tmp/shurufa-jdk17 "${HOME:-}/.sdkman/candidates/java/current"; do
+  for candidate in /tmp/zhimo-jdk17 "${HOME:-}/.sdkman/candidates/java/current"; do
     if [[ -x "$candidate/bin/java" ]]; then
       export JAVA_HOME="$candidate"
       break
@@ -32,7 +33,7 @@ if [[ -z "${ANDROID_HOME:-}" ]]; then
   fi
 fi
 if [[ -z "${ANDROID_HOME:-}" ]]; then
-  for candidate in "${HOME:-}/Android/Sdk" "${HOME:-}/Library/Android/sdk" /tmp/shurufa-android-sdk; do
+  for candidate in "${HOME:-}/Android/Sdk" "${HOME:-}/Library/Android/sdk" /tmp/zhimo-android-sdk; do
     if [[ -f "$candidate/licenses/android-sdk-license" && -f "$candidate/platforms/android-37.0/android.jar" ]]; then
       export ANDROID_HOME="$candidate"
       break

@@ -1,0 +1,113 @@
+---
+name: zhimo_beta
+version: "1.1"
+sort: by_weight
+columns:
+  - text
+  - code
+  - weight
+...
+
+你好	ni hao	10000
+知墨	zhi mo	10000
+你	ni	9000
+呢	ni	5000
+泥	ni	3000
+好	hao	9000
+输入法	shu ru fa	10000
+输入	shu ru	9000
+中文	zhong wen	9000
+英文	ying wen	9000
+世界	shi jie	8000
+谢谢	xie xie	8000
+再见	zai jian	8000
+我们	wo men	8000
+可以	ke yi	8000
+项目	xiang mu	7000
+架构	jia gou	7000
+语音	yu yin	7000
+转录	zhuan lu	7000
+中国	zhong guo	10000
+北京	bei jing	9000
+上海	shang hai	9000
+广州	guang zhou	8500
+深圳	shen zhen	8500
+今天	jin tian	9500
+明天	ming tian	9000
+昨天	zuo tian	8500
+现在	xian zai	9500
+时间	shi jian	9000
+天气	tian qi	9000
+对不起	dui bu qi	9500
+没关系	mei guan xi	9000
+请问	qing wen	9000
+欢迎	huan ying	8500
+工作	gong zuo	9000
+学习	xue xi	9000
+生活	sheng huo	8500
+家庭	jia ting	8000
+朋友	peng you	9000
+老师	lao shi	8500
+学生	xue sheng	8500
+公司	gong si	8500
+开发	kai fa	9000
+测试	ce shi	9000
+代码	dai ma	9000
+软件	ruan jian	9000
+应用	ying yong	8500
+系统	xi tong	9000
+拼音	pin yin	9500
+词库	ci ku	9000
+候选	hou xuan	8500
+按键	an jian	8500
+显示	xian shi	8500
+文字	wen zi	9000
+数字	shu zi	8500
+符号	fu hao	8500
+设置	she zhi	9000
+文档	wen dang	8500
+编译	bian yi	8500
+安装	an zhuang	9000
+更新	geng xin	9000
+版本	ban ben	8500
+数据	shu ju	9000
+安全	an quan	9000
+隐私	yin si	9000
+本地	ben di	8500
+离线	li xian	8500
+网络	wang luo	8500
+服务	fu wu	8500
+同步	tong bu	9000
+备份	bei fen	8500
+恢复	hui fu	8500
+用户	yong hu	9000
+密码	mi ma	9000
+打开	da kai	8500
+关闭	guan bi	8500
+确认	que ren	9000
+取消	qu xiao	9000
+删除	shan chu	9000
+保存	bao cun	9000
+发送	fa song	9000
+搜索	sou suo	9000
+成功	cheng gong	9000
+失败	shi bai	9000
+错误	cuo wu	9000
+问题	wen ti	9000
+解决	jie jue	9000
+帮助	bang zhu	8500
+支持	zhi chi	9000
+完成	wan cheng	9000
+继续	ji xu	9000
+开始	kai shi	9000
+停止	ting zhi	8500
+运行	yun xing	9000
+连接	lian jie	8500
+设备	she bei	9000
+手机	shou ji	9000
+电脑	dian nao	9000
+安卓	an zhuo	8500
+苹果	ping guo	8500
+键盘	jian pan	9000
+屏幕	ping mu	8500
+西安	xi an	8500

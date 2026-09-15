@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Cryptographic boundaries for opaque sync payloads and signed packages.
 //!
 //! Key generation, backup and OS key-store integration remain platform duties;
@@ -13,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
 const SYNC_VERSION: u32 = 1;
-const SYNC_AAD: &[u8] = b"shurufa-sync-envelope-v1";
+const SYNC_AAD: &[u8] = b"zhimo-sync-envelope-v1";
 
 #[derive(Debug)]
 pub enum SecurityError {

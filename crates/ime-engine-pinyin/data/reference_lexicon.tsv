@@ -1,5 +1,7 @@
-# Shurufa-owned Beta reference lexicon. Columns: pinyin, text, weight.
+# Zhimo-owned Beta reference lexicon. Columns: pinyin, text, weight.
 # This remains a compact offline fallback; production packages use the isolated librime adapter.
+lv dai	履带	10000
+wu lian wang	物联网	10000
 ni	你	10000
 ni	呢	7000
 ni	泥	5000

@@ -1,5 +1,7 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 <resources>
-    <string name="handwriting_privacy">内置离线手写：安装后无需联网，笔迹不上传、不保存，无手写遥测服务。默认轨迹模型支持简体中文单字，采用 BSD 授权 Zinnia 算法及 LGPL-2.1 Tegaki/Tomoe 模型，源数据和许可证随包附带。可选实验性字形模型为 PP-OCRv5，相关 Apache-2.0、ONNX Runtime MIT 许可和第三方声明也随包附带；它仍是单字实验功能，不代表多语言、连续或重叠手写已验收。默认模型来源：https://tegaki.github.io/</string>
+    <string name="handwriting_privacy">内置离线手写：安装后无需联网，笔迹不上传、不保存，无手写遥测服务。默认轨迹模型支持简体中文单字，采用 BSD 授权 Zinnia 算法及 LGPL-2.1 Tegaki/Tomoe 模型，源数据和许可证随包附带。可选实验性字形模型为 PP-OCRv5，相关 Apache-2.0、ONNX Runtime MIT 许可和第三方声明也随包附带；它仍是单字实验功能，不代表多语言、连续或重叠手写已验收。</string>
+    <string name="project_github">Zhimo 开源项目（GitHub）：\nhttps://github.com/managecode-commits/zhimo\n\nCopyright © 2026 立方田\n作者：立方田\n电子邮箱：managecode@gmail.com</string>
     <string name="keyboard_text_size">按键文字大小：%1$s</string>
     <string name="app_name">知墨输入法 · Zhimo</string>
     <string name="subtype_bilingual">中文 / English</string>
@@ -8,6 +10,8 @@
     <string name="default_pinyin">默认使用中文拼音</string>
     <string name="local_learning">允许在本机学习候选习惯</string>
     <string name="allow_online_speech">无端侧识别器时允许系统语音服务联网</string>
+    <string name="bundled_offline_speech">使用内置离线语音模型（默认，无需系统语音服务）</string>
+    <string name="bundled_offline_speech_help">内置 Base Q5_1 和离线人声检测；中文/英文跟随键盘。长按空格，显示停止后说话；松手继续录音，轻点停止转录，识别中轻点取消。默认确认后上屏，可取消、删尾或重录。最长 60 秒，音频不落盘、不上传。关闭内置模式后才使用系统服务。热词仅作提示，数字和姓名请确认。</string>
     <string name="keyboard_position">键盘位置：%1$s</string>
     <string name="keyboard_size">键盘高度：%1$s</string>
     <string name="high_contrast">高对比度键盘</string>

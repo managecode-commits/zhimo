@@ -1,9 +1,10 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Small, dependency-free Pinyin reference engine.
 //!
 //! This validates product behavior and the generic engine contract. Production dictionaries
 //! and segmentation will be supplied by the isolated librime adapter.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Mutex, OnceLock};
 
 use ime_core::{
@@ -12,9 +13,38 @@ use ime_core::{
 };
 use ime_data::{LearningModel, LearningRecord};
 
+mod abbreviation;
+
 pub struct PinyinEngine {
     sessions: Mutex<HashMap<SessionId, String>>,
+    phrases: Mutex<HashMap<SessionId, PhraseProgress>>,
     learning: Mutex<LearningModel>,
+    readings: Mutex<HashMap<SessionId, String>>,
+}
+
+#[derive(Default)]
+struct PhraseProgress {
+    signature: String,
+    reading: String,
+    text: String,
+    parts: usize,
+}
+
+fn learning_signature(input: &str) -> String {
+    normalized_t9_input(input).unwrap_or_else(|| normalized_pinyin(input))
+}
+
+fn learn_selection(learning: &mut LearningModel, signature: &str, reading: &str, text: &str) {
+    let mut keys = HashSet::from([learning_signature(signature)]);
+    let pinyin = normalized_pinyin(reading);
+    if !pinyin.is_empty() {
+        keys.insert(reading.split([' ', '\'']).filter(|s| !s.is_empty()).collect::<Vec<_>>().join("'"));
+        keys.insert(t9_signature(&pinyin));
+        keys.insert(pinyin);
+    }
+    for key in keys.into_iter().filter(|key| !key.is_empty()) {
+        learning.selected(&key, text);
+    }
 }
 
 impl Default for PinyinEngine {
@@ -33,7 +63,9 @@ impl PinyinEngine {
     pub fn with_learning(learning: LearningModel) -> Self {
         Self {
             sessions: Mutex::new(HashMap::new()),
+            phrases: Mutex::new(HashMap::new()),
             learning: Mutex::new(learning),
+            readings: Mutex::new(HashMap::new()),
         }
     }
 
@@ -46,6 +78,10 @@ impl PinyinEngine {
     }
 
     fn lookup(&self, input: &str) -> Vec<Candidate> {
+        self.lookup_reading(input, None)
+    }
+
+    fn lookup_reading(&self, input: &str, selected: Option<&str>) -> Vec<Candidate> {
         let Some(lookup) = LookupInput::new(input) else {
             return Vec::new();
         };
@@ -53,16 +89,19 @@ impl PinyinEngine {
             .learning
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner);
-        let mut unique_candidates = HashMap::<String, (bool, Candidate)>::new();
+        let signature = learning_signature(input);
+        let mut unique_candidates = HashMap::<String, (u8, i64, Candidate)>::new();
         for entry in lookup
             .entries()
             .iter()
             .copied()
-            .filter(|entry| lookup.matches(entry))
+            .chain(abbreviation::lookup(input))
+            .filter(|entry| (lookup.matches(entry) || abbreviation::matches(&entry.display_pinyin, input))
+                && reading_matches(entry, input, selected))
         {
-            let learned_score = learning.score(input, &entry.text);
+            let learned_score = learning.score(&signature, &entry.text);
             let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
-            let exact = lookup.exact(entry);
+            let exact = if lookup.exact(entry) { 2 } else if abbreviation::matches(&entry.display_pinyin, input) { 1 } else { 0 };
             let candidate = Candidate {
                 id: CandidateId(format!("pinyin:{}", entry.text)),
                 display_text: entry.text.clone(),
@@ -75,29 +114,209 @@ impl PinyinEngine {
             };
             let existing = unique_candidates
                 .entry(entry.text.clone())
-                .or_insert_with(|| (exact, candidate.clone()));
-            if (exact && !existing.0) || (exact == existing.0 && candidate.score > existing.1.score)
+                .or_insert_with(|| (exact, learned_score, candidate.clone()));
+            if exact > existing.0 || (exact == existing.0 && candidate.score > existing.2.score)
             {
-                *existing = (exact, candidate);
+                *existing = (exact, learned_score, candidate);
             }
+        }
+        // Learned phrases are real lexicon entries, not only bonuses on static words.
+        let records = learning.records();
+        for record in &records {
+            if record.effective_weight() <= 0
+                || !record
+                    .key
+                    .value
+                    .chars()
+                    .all(|ch| ('\u{3400}'..='\u{9fff}').contains(&ch))
+            {
+                continue;
+            }
+            let reading = records
+                .iter()
+                .filter(|other| {
+                    other.key.value == record.key.value
+                        && other.effective_weight() > 0
+                        && other
+                            .key
+                            .input_signature
+                            .chars()
+                            .all(|ch| ch.is_ascii_lowercase() || ch == '\'')
+                })
+                .max_by_key(|other| (other.key.input_signature.matches('\'').count(), other.key.input_signature.len()))
+                .map_or_else(
+                    || signature.clone(),
+                    |other| other.key.input_signature.clone(),
+                );
+            let learned_entry = LexiconEntry {
+                pinyin: normalized_pinyin(&reading), t9: t9_signature(&reading),
+                display_pinyin: reading.clone(), text: record.key.value.clone(), weight: 0,
+            };
+            if record.key.input_signature != signature
+                && !abbreviation::matches(&learned_entry.display_pinyin, input) { continue; }
+            if !reading_matches(&learned_entry, input, selected) { continue; }
+            let exact = if lookup.exact(&learned_entry) { 2 } else { 1 };
+            let candidate = Candidate {
+                id: CandidateId(format!("pinyin:{}", record.key.value)),
+                display_text: record.key.value.clone(),
+                commit_text: record.key.value.clone(),
+                language: Some("zh-CN".to_owned()),
+                source: "pinyin.reference".to_owned(),
+                score: record.effective_weight() as f64,
+                annotation: Some(reading),
+                learning_allowed: true,
+            };
+            unique_candidates
+                .entry(record.key.value.clone())
+                .and_modify(|existing| {
+                    existing.0 = existing.0.max(exact);
+                    existing.1 = existing.1.max(record.effective_weight());
+                })
+                .or_insert((exact, record.effective_weight(), candidate));
         }
         let mut candidates = unique_candidates.into_values().collect::<Vec<_>>();
         candidates.sort_by(|left, right| {
             right
                 .0
                 .cmp(&left.0)
-                .then_with(|| right.1.score.total_cmp(&left.1.score))
-                .then_with(|| left.1.commit_text.cmp(&right.1.commit_text))
+                .then_with(|| right.1.cmp(&left.1))
+                .then_with(|| right.2.score.total_cmp(&left.2.score))
+                .then_with(|| left.2.commit_text.cmp(&right.2.commit_text))
         });
+        // T9 has many exact single-character readings. Keep the best exact
+        // candidates first, but reserve reachable slots for phrase abbreviations.
+        let abbreviations = candidates.iter().filter(|candidate| candidate.0 == 1)
+            .take(5).map(|candidate| candidate.2.id.clone()).collect::<Vec<_>>();
+        for id in abbreviations.into_iter().rev() {
+            if let Some(position) = candidates.iter().position(|candidate| candidate.2.id == id) {
+                if position > 15 {
+                    let candidate = candidates.remove(position);
+                    candidates.insert(15, candidate);
+                }
+            }
+        }
         candidates.truncate(50);
-        candidates
+        let mut result: Vec<_> = candidates
             .into_iter()
-            .map(|(_, candidate)| candidate)
-            .collect()
+            .map(|(_, _, candidate)| candidate)
+            .collect();
+        // A missing phrase must not strand the whole buffer. Offer characters
+        // for the leading syllable, carrying the exact raw prefix consumed.
+        let normalized = match &lookup {
+            LookupInput::Pinyin(s) | LookupInput::T9(s) => s,
+        };
+        let mut partial = Vec::new();
+        for length in (1..normalized.len().min(7)).rev() {
+            let prefix = &normalized[..length];
+            let Some(prefix_lookup) = LookupInput::new(prefix) else {
+                continue;
+            };
+            let mut entries: Vec<_> = prefix_lookup
+                .entries()
+                .iter()
+                .copied()
+                .filter(|entry| prefix_lookup.exact(entry) && entry.text.chars().count() == 1
+                    && selected.is_none_or(|reading| entry.pinyin == reading))
+                .collect();
+            entries.sort_by(|a, b| {
+                learning
+                    .score(prefix, &b.text)
+                    .cmp(&learning.score(prefix, &a.text))
+                    .then_with(|| b.weight.cmp(&a.weight))
+                    .then_with(|| a.text.cmp(&b.text))
+            });
+            let mut consumed = 0;
+            let mut units = 0;
+            for (offset, ch) in input.char_indices() {
+                if ch.is_ascii_alphabetic() || ('2'..='9').contains(&ch) {
+                    units += 1;
+                }
+                if units == length {
+                    consumed = offset + ch.len_utf8();
+                    break;
+                }
+            }
+            if consumed == 0 || input[..consumed].trim_start_matches('\'').contains('\'') {
+                continue;
+            }
+            for entry in entries.into_iter().take(40) {
+                partial.push(Candidate {
+                    id: CandidateId(format!("pinyin-part:{consumed}:{}", entry.text)),
+                    display_text: entry.text.clone(),
+                    commit_text: entry.text.clone(),
+                    language: Some("zh-CN".to_owned()),
+                    source: "pinyin.reference".to_owned(),
+                    score: f64::from(entry.weight),
+                    annotation: Some(entry.display_pinyin.clone()),
+                    learning_allowed: true,
+                });
+            }
+        }
+        if !partial.is_empty() {
+            result.truncate(20);
+            result.extend(partial.into_iter().take(80));
+        }
+        result
     }
 
-    fn composing_actions(&self, input: &str) -> ActionBatch {
-        let candidates = self.lookup(input);
+    fn commit_candidate(
+        &self,
+        session: &SessionId,
+        input: &mut String,
+        candidate: &Candidate,
+        context: &InputContext,
+    ) -> Result<ActionBatch, EngineError> {
+        let consumed = candidate
+            .id
+            .0
+            .strip_prefix("pinyin-part:")
+            .and_then(|value| value.split(':').next())
+            .and_then(|value| value.parse::<usize>().ok())
+            .unwrap_or(input.len());
+        let signature = input[..consumed].to_owned();
+        *input = input[consumed..].trim_start_matches('\'').to_owned();
+        if context.effective_learning_allowed() {
+            let mut progress = self.phrases.lock().map_err(lock_error)?;
+            let phrase = progress.entry(session.clone()).or_default();
+            phrase.signature.push_str(&learning_signature(&signature));
+            phrase
+                .reading
+                .push_str(candidate.annotation.as_deref().unwrap_or(""));
+            phrase.reading.push(' ');
+            phrase.text.push_str(&candidate.commit_text);
+            phrase.parts += 1;
+            let mut learning = self.learning.lock().map_err(lock_error)?;
+            learn_selection(
+                &mut learning,
+                &signature,
+                candidate.annotation.as_deref().unwrap_or(""),
+                &candidate.commit_text,
+            );
+            if input.is_empty() {
+                if phrase.parts > 1 {
+                    learn_selection(
+                        &mut learning,
+                        &phrase.signature,
+                        &phrase.reading,
+                        &phrase.text,
+                    );
+                }
+                progress.remove(session);
+            }
+        }
+        let mut actions = vec![Action::CommitText(candidate.commit_text.clone())];
+        self.readings.lock().map_err(lock_error)?.remove(session);
+        if input.is_empty() {
+            actions.push(Action::CloseComposition);
+        } else {
+            actions.extend(self.composing_actions(session, input).0);
+        }
+        Ok(ActionBatch(actions))
+    }
+
+    fn composing_actions(&self, session: &SessionId, input: &str) -> ActionBatch {
+        let selected = self.readings.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(session).cloned();
+        let candidates = self.lookup_reading(input, selected.as_deref());
         // Keep the editable buffer truthful. Ambiguous T9 interpretations belong
         // in candidate annotations, not in a guessed/pre-completed preedit.
         let display_input = input.to_owned();
@@ -112,6 +331,7 @@ impl PinyinEngine {
         ActionBatch(vec![
             Action::UpdateComposition(composition),
             Action::ShowCandidates(candidates),
+            Action::PinyinReadings { readings: t9_readings(input), selected },
         ])
     }
 }
@@ -143,6 +363,14 @@ impl InputEngine for PinyinEngine {
         let input = sessions.get_mut(session).ok_or_else(|| EngineError {
             message: "pinyin session not found".to_owned(),
         })?;
+        if matches!(event, InputEvent::Reset | InputEvent::SpeechFinal(_))
+            || matches!(event, InputEvent::Key(key) if key.pressed && matches!(key.key, Key::Backspace | Key::Escape))
+        {
+            self.readings.lock().map_err(lock_error)?.remove(session);
+        }
+        if !context.effective_learning_allowed() {
+            self.phrases.lock().map_err(lock_error)?.remove(session);
+        }
         match event {
             InputEvent::Key(key) if key.pressed => match key.key {
                 Key::Character(character)
@@ -150,24 +378,23 @@ impl InputEngine for PinyinEngine {
                         || ('2'..='9').contains(&character)
                         || character == '\'' =>
                 {
-                    input.push(character.to_ascii_lowercase());
+                    if character != '\'' || (!input.is_empty() && !input.ends_with('\'')) {
+                        input.push(character.to_ascii_lowercase());
+                    }
                 }
                 Key::Backspace => {
                     input.pop();
+                    if input.is_empty() {
+                        self.phrases.lock().map_err(lock_error)?.remove(session);
+                    }
                 }
                 Key::Space | Key::Enter => {
-                    let input_signature = input.clone();
-                    let commit = self
-                        .lookup(input)
-                        .first()
-                        .map_or_else(|| input.clone(), |candidate| candidate.commit_text.clone());
-                    input.clear();
-                    if context.effective_learning_allowed() {
-                        self.learning
-                            .lock()
-                            .map_err(lock_error)?
-                            .selected(&input_signature, &commit);
+                    let selected = self.readings.lock().map_err(lock_error)?.get(session).cloned();
+                    if let Some(candidate) = self.lookup_reading(input, selected.as_deref()).first() {
+                        return self.commit_candidate(session, input, candidate, context);
                     }
+                    let commit = std::mem::take(input);
+                    self.phrases.lock().map_err(lock_error)?.remove(session);
                     return Ok(ActionBatch(vec![
                         Action::CommitText(commit),
                         Action::CloseComposition,
@@ -175,6 +402,7 @@ impl InputEngine for PinyinEngine {
                 }
                 Key::Escape => {
                     input.clear();
+                    self.phrases.lock().map_err(lock_error)?.remove(session);
                     return Ok(ActionBatch(vec![
                         Action::UpdateComposition(Composition::default()),
                         Action::CloseComposition,
@@ -183,26 +411,29 @@ impl InputEngine for PinyinEngine {
                 _ => return Ok(ActionBatch(vec![Action::Ignored])),
             },
             InputEvent::SelectCandidate(id) => {
-                let commit =
-                    id.0.strip_prefix("pinyin:")
-                        .ok_or_else(|| EngineError {
-                            message: "candidate does not belong to pinyin engine".to_owned(),
-                        })?
-                        .to_owned();
-                let input_signature = std::mem::take(input);
-                if context.effective_learning_allowed() {
-                    self.learning
-                        .lock()
-                        .map_err(lock_error)?
-                        .selected(&input_signature, &commit);
+                if let Some(reading) = id.0.strip_prefix("pinyin-reading:") {
+                    if reading.is_empty() {
+                        self.readings.lock().map_err(lock_error)?.remove(session);
+                    } else if t9_readings(input).iter().any(|value| value == reading) {
+                        self.readings.lock().map_err(lock_error)?.insert(session.clone(), reading.to_owned());
+                    } else {
+                        return Err(EngineError { message: "reading is not in the current pinyin menu".to_owned() });
+                    }
+                    return Ok(self.composing_actions(session, input));
                 }
-                return Ok(ActionBatch(vec![
-                    Action::CommitText(commit),
-                    Action::CloseComposition,
-                ]));
+                let selected = self.readings.lock().map_err(lock_error)?.get(session).cloned();
+                let candidate = self
+                    .lookup_reading(input, selected.as_deref())
+                    .into_iter()
+                    .find(|candidate| candidate.id == *id)
+                    .ok_or_else(|| EngineError {
+                        message: "candidate is not in the current pinyin menu".to_owned(),
+                    })?;
+                return self.commit_candidate(session, input, &candidate, context);
             }
             InputEvent::Reset => {
                 input.clear();
+                self.phrases.lock().map_err(lock_error)?.remove(session);
                 return Ok(ActionBatch(vec![
                     Action::UpdateComposition(Composition::default()),
                     Action::CloseComposition,
@@ -221,6 +452,7 @@ impl InputEngine for PinyinEngine {
             }
             InputEvent::SpeechFinal(hypothesis) => {
                 input.clear();
+                self.phrases.lock().map_err(lock_error)?.remove(session);
                 return Ok(ActionBatch(vec![
                     Action::CommitText(hypothesis.text.clone()),
                     Action::CloseComposition,
@@ -230,7 +462,13 @@ impl InputEngine for PinyinEngine {
                 return Ok(ActionBatch(vec![Action::Ignored]));
             }
         }
-        Ok(self.composing_actions(input))
+        {
+            let mut readings = self.readings.lock().map_err(lock_error)?;
+            if input.is_empty() || readings.get(session).is_some_and(|reading| !t9_readings(input).contains(reading)) {
+                readings.remove(session);
+            }
+        }
+        Ok(self.composing_actions(session, input))
     }
 
     fn apply_feedback(&self, event: &FeedbackEvent) -> Result<(), EngineError> {
@@ -250,8 +488,12 @@ impl InputEngine for PinyinEngine {
     }
 
     fn close_session(&self, session: &SessionId) {
+        if let Ok(mut readings) = self.readings.lock() { readings.remove(session); }
         if let Ok(mut sessions) = self.sessions.lock() {
             sessions.remove(session);
+        }
+        if let Ok(mut phrases) = self.phrases.lock() {
+            phrases.remove(session);
         }
     }
 }
@@ -276,6 +518,50 @@ fn normalized_pinyin(value: &str) -> String {
         .filter(char::is_ascii_alphabetic)
         .map(|character| character.to_ascii_lowercase())
         .collect()
+}
+
+fn reading_matches(entry: &LexiconEntry, input: &str, selected: Option<&str>) -> bool {
+    if selected.is_none() && !input.contains('\'') { return true; }
+    let syllables = entry.display_pinyin.split([' ', '\'']).filter(|s| !s.is_empty()).collect::<Vec<_>>();
+    if selected.is_some_and(|reading| syllables.first().copied() != Some(reading)) {
+        return false;
+    }
+    if abbreviation::matches(&entry.display_pinyin, input) { return true; }
+    if !input.contains('\'') { return true; }
+    let mut boundaries = HashSet::new();
+    let mut offset = 0;
+    for syllable in syllables {
+        offset += normalized_pinyin(syllable).len();
+        boundaries.insert(offset);
+    }
+    let mut offset = 0;
+    for ch in input.chars() {
+        if ch == '\'' {
+            if !boundaries.contains(&offset) { return false; }
+        } else if ch.is_ascii_alphabetic() || ('2'..='9').contains(&ch) {
+            offset += 1;
+        }
+    }
+    true
+}
+
+fn t9_readings(input: &str) -> Vec<String> {
+    let Some(_) = normalized_t9_input(input) else { return Vec::new(); };
+    static SYLLABLES: OnceLock<Vec<(String, String)>> = OnceLock::new();
+    let syllables = SYLLABLES.get_or_init(|| {
+        let unique = lexicon().iter().filter(|entry| entry.text.chars().count() == 1)
+            .map(|entry| entry.pinyin.clone()).collect::<HashSet<_>>();
+        unique.into_iter().map(|reading| (t9_signature(&reading), reading)).collect()
+    });
+    let first = input.split('\'').next().unwrap_or("");
+    let explicit = input.contains('\'');
+    let mut choices = syllables.iter().filter(|(digits, _)| {
+        if explicit { digits == first } else { digits.starts_with(first) || first.starts_with(digits) }
+    }).collect::<Vec<_>>();
+    choices.sort_by(|a, b| (b.0 == first).cmp(&(a.0 == first))
+        .then_with(|| b.0.len().min(first.len()).cmp(&a.0.len().min(first.len())))
+        .then_with(|| a.1.cmp(&b.1)));
+    choices.into_iter().map(|(_, reading)| reading.clone()).collect()
 }
 
 #[derive(Debug)]
@@ -353,7 +639,12 @@ fn lexicon() -> &'static [LexiconEntry] {
         let mut entries = HashMap::<(String, String), LexiconEntry>::new();
         for (source, priority_bonus) in [
             (include_str!("../data/pinyin_simp_lexicon.tsv"), 0),
+            (include_str!("../data/common_phrase_lexicon.tsv"), 0),
+            (include_str!("../data/geography_lexicon.tsv"), 0),
             (include_str!("../data/reference_lexicon.tsv"), 10_000_000),
+            // Product name is compiled into every reference-engine build,
+            // independent of downloaded dictionaries and user learning.
+            ("zhi mo\t知墨\t10000", 10_000_000),
         ] {
             for line in source
                 .lines()
@@ -442,6 +733,154 @@ mod tests {
     use super::*;
 
     #[test]
+    fn abbreviations_and_mixed_spelling_work_in_both_layouts() {
+        let engine = PinyinEngine::new();
+        for (input, word) in [("nh", "你好"), ("wm", "我们"), ("zg", "中国"),
+            ("wlw", "物联网"), ("nih", "你好"), ("nhao", "你好"), ("wulw", "物联网"),
+            ("n'h", "你好"), ("ni'h", "你好"), ("zhg", "中国"), ("zm", "知墨")] {
+            for code in [input.to_owned(), t9_signature(input)] {
+                let values = engine.lookup(&code);
+                assert!(values.iter().any(|c| c.commit_text == word), "{code}: {word}");
+                assert_eq!(values.iter().map(|c| &c.id).collect::<HashSet<_>>().len(), values.len());
+            }
+        }
+        assert!(!abbreviation::matches("ni hao", "n'ihao"));
+        assert!(!abbreviation::matches("ni hao", "nhx"));
+        assert!(!abbreviation::matches("ni hao", "n''h"));
+        assert!(!abbreviation::matches("ni hao", "n"));
+        assert!(!abbreviation::matches("jian", "j'an"));
+    }
+
+    #[test]
+    fn abbreviation_selection_commits_and_is_learned_without_beating_exact_spelling() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("abbreviation".into());
+        let context = InputContext::default();
+        engine.create_session(&session).unwrap();
+        engine.process(&session, &InputEvent::Text("nh".into()), &context).unwrap();
+        let actions = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin:你好".into())), &context).unwrap();
+        assert_eq!(actions.committed_text(), Some("你好"));
+        assert_eq!(engine.lookup("nh")[0].commit_text, "你好");
+        assert!(engine.learning_records().iter().any(|r| r.key.input_signature == "nh" && r.key.value == "你好"));
+        assert_eq!(engine.lookup("ren")[0].commit_text, "人");
+        assert!(engine.lookup("nihao").iter().any(|c| c.commit_text == "你好"));
+    }
+
+    #[test]
+    #[ignore = "manual release-mode latency measurement"]
+    fn abbreviation_lookup_latency() {
+        let engine = PinyinEngine::new();
+        let cases = ["nh", "wm", "wulw", "64", "96", "9859"];
+        let start = std::time::Instant::now();
+        for code in cases { engine.lookup(code); }
+        eprintln!("abbreviation cold indexes and six lookups: {:?}", start.elapsed());
+        let start = std::time::Instant::now();
+        for _ in 0..20 { for code in cases { engine.lookup(code); } }
+        eprintln!("abbreviation 120 warm lookups: {:?}", start.elapsed());
+    }
+
+    #[test]
+    fn product_name_is_built_in_for_full_pinyin_and_t9() {
+        let engine = PinyinEngine::new();
+        for input in ["zhimo", "zhi'mo", "94466", "944'66"] {
+            let candidates = engine.lookup(input);
+            let matches: Vec<_> = candidates.iter().filter(|c| c.commit_text == "知墨").collect();
+            assert_eq!(matches.len(), 1, "{input}: missing or duplicate product name");
+            assert_eq!(matches[0].annotation.as_deref(), Some("zhi mo"));
+        }
+    }
+
+    #[test]
+    fn geographic_names_support_full_pinyin_and_nine_key() {
+        let engine = PinyinEngine::new();
+        for (reading, word) in [
+            ("hebeisheng", "河北省"), ("neimengguzizhiqu", "内蒙古自治区"),
+            ("shijiazhuangshi", "石家庄市"), ("wulumuqishi", "乌鲁木齐市"),
+            ("liangjiangxinqu", "两江新区"), ("shennongjialinqu", "神农架林区"),
+            ("kekedalashi", "可克达拉市"), ("baiyangshi", "白杨市"),
+            ("xianggangtebiexingzhengqu", "香港特别行政区"),
+            ("aomentebiexingzhengqu", "澳门特别行政区"), ("taibeishi", "台北市"),
+            ("jinmenxian", "金门县"), ("shanxian", "单县"),
+            ("fanshixian", "繁峙县"), ("yingjingxian", "荥经县"),
+            ("xunxian", "浚县"), ("guoyangxian", "涡阳县"),
+            ("zhongmouxian", "中牟县"), ("hunchunshi", "珲春市"), ("tanchangxian", "宕昌县"),
+        ] {
+            for input in [reading.to_owned(), t9_signature(reading)] {
+                assert!(engine.lookup(&input).iter().any(|c| c.commit_text == word), "{input}: {word}");
+            }
+        }
+    }
+
+    #[test]
+    fn geographic_overlay_is_loaded_without_losing_syllable_boundaries() {
+        for line in include_str!("../data/geography_lexicon.tsv").lines().filter(|line| !line.starts_with('#')) {
+            let fields = line.split('\t').collect::<Vec<_>>();
+            assert_eq!(fields.len(), 3);
+            assert_eq!(fields[0].split_whitespace().count(), fields[1].chars().count());
+            let lookup = LookupInput::new(fields[0]).unwrap();
+            assert!(lookup.entries().iter().any(|entry| entry.text == fields[1] && lookup.exact(entry)), "{}", fields[1]);
+        }
+    }
+
+    #[test]
+    fn manual_boundary_excludes_unsplit_reading() {
+        let engine = PinyinEngine::new();
+        assert!(engine.lookup("jian").iter().any(|c| c.commit_text == "间"));
+        let split = engine.lookup("ji'an");
+        assert!(split.iter().any(|c| c.commit_text == "吉安"));
+        assert!(!split.iter().any(|c| c.commit_text == "间"));
+        assert!(!engine.lookup("xi'an").iter().any(|c| c.commit_text == "先"));
+    }
+
+    #[test]
+    fn t9_sidebar_contains_ambiguous_readings_without_candidate_limit() {
+        let choices = t9_readings("5426");
+        for reading in ["jian", "jiao", "lian", "liao"] { assert!(choices.contains(&reading.to_owned())); }
+        assert!(t9_readings("ji'an").is_empty());
+        assert!(t9_readings("54'26").iter().all(|reading| t9_signature(reading) == "54"));
+    }
+
+    #[test]
+    fn t9_reading_selection_filters_without_committing_and_can_be_reset() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("reading".into());
+        engine.create_session(&session).unwrap();
+        let context = InputContext::default();
+        engine.process(&session, &InputEvent::Text("5426".into()), &context).unwrap();
+        let selected = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
+        assert!(selected.committed_text().is_none());
+        assert!(selected.0.iter().any(|a| matches!(a, Action::PinyinReadings { selected: Some(s), .. } if s == "lian")));
+        let menu = selected.0.iter().find_map(|a| match a { Action::ShowCandidates(c) => Some(c), _ => None }).unwrap();
+        for word in ["连", "脸", "练"] { assert!(menu.iter().any(|c| c.commit_text == word)); }
+        assert!(menu.iter().all(|c| c.annotation.as_deref().unwrap_or("").split([' ', '\'']).next() == Some("lian")));
+        assert!(engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:hao".into())), &context).is_err());
+        let automatic = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:".into())), &context).unwrap();
+        assert!(automatic.0.iter().any(|a| matches!(a, Action::PinyinReadings { selected: None, .. })));
+        engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
+        let committed = engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)), &context).unwrap();
+        assert!(committed.committed_text().is_some());
+        assert!(!engine.readings.lock().unwrap().contains_key(&session));
+    }
+
+    #[test]
+    fn deleting_selected_reading_and_repeated_boundary_are_safe() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("editing".into());
+        engine.create_session(&session).unwrap();
+        let context = InputContext::default();
+        for ch in "'ji''an".chars() {
+            engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Character(ch))), &context).unwrap();
+        }
+        assert_eq!(engine.sessions.lock().unwrap()[&session], "ji'an");
+        engine.process(&session, &InputEvent::Reset, &context).unwrap();
+        engine.process(&session, &InputEvent::Text("5426".into()), &context).unwrap();
+        engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
+        engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Backspace)), &context).unwrap();
+        assert!(!engine.readings.lock().unwrap().contains_key(&session));
+        assert_eq!(engine.sessions.lock().unwrap()[&session], "542");
+    }
+
+    #[test]
     fn nihao_commits_first_chinese_candidate() {
         let engine = PinyinEngine::new();
         let session = SessionId("test".to_owned());
@@ -525,7 +964,8 @@ mod tests {
     #[test]
     fn t9_signature_uses_standard_phone_mapping() {
         assert_eq!(t9_signature("nihao"), "64426");
-        assert_eq!(t9_signature("shurufa"), "7487832");
+        // Linguistic input for 输入法, not a project identifier.
+        assert_eq!(t9_signature("shu'ru'fa"), "7487832");
         assert_eq!(t9_signature("zhongwen"), "94664936");
         assert!(pinyin_exact_match("nihao", "64'426"));
     }
@@ -538,7 +978,7 @@ mod tests {
         engine
             .process(
                 &session,
-                &InputEvent::Text("xyz".to_owned()),
+                &InputEvent::Text("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz".to_owned()),
                 &InputContext::default(),
             )
             .expect("input");
@@ -549,7 +989,7 @@ mod tests {
                 &InputContext::default(),
             )
             .expect("commit");
-        assert_eq!(actions.committed_text(), Some("xyz"));
+        assert_eq!(actions.committed_text(), Some("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
     }
 
     #[test]
@@ -564,9 +1004,30 @@ mod tests {
                 &InputContext::default(),
             )
             .expect("input");
-        assert!(actions.0.iter().any(
-            |action| matches!(action, Action::ShowCandidates(candidates) if candidates.is_empty())
-        ));
+        let values = actions
+            .0
+            .iter()
+            .find_map(|action| match action {
+                Action::ShowCandidates(values) => Some(values),
+                _ => None,
+            })
+            .unwrap();
+        assert!(!values
+            .iter()
+            .any(|candidate| candidate.commit_text == "你好"));
+        let first = values
+            .iter()
+            .find(|candidate| candidate.commit_text == "你")
+            .unwrap();
+        let selected = engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(first.id.clone()),
+                &InputContext::default(),
+            )
+            .unwrap();
+        assert_eq!(selected.committed_text(), Some("你"));
+        assert!(selected.0.iter().any(|action| matches!(action, Action::UpdateComposition(value) if value.segments[0].text == "haox")));
     }
 
     #[test]
@@ -610,8 +1071,14 @@ mod tests {
         for (pinyin, expected) in [
             ("putao", "葡萄"),
             ("dianshiju", "电视剧"),
-            ("shurufa", "输入法"),
+            ("shu'ru'fa", "输入法"),
             ("rengongzhineng", "人工智能"),
+            ("lvdai", "履带"),
+            ("lv'dai", "履带"),
+            ("wulianwang", "物联网"),
+            ("wu'lian'wang", "物联网"),
+            ("58324", "履带"),
+            ("9854269264", "物联网"),
         ] {
             assert!(
                 engine
@@ -625,6 +1092,99 @@ mod tests {
             .lookup("78826")
             .iter()
             .any(|candidate| candidate.commit_text == "葡萄"));
+    }
+
+    #[test]
+    fn unknown_phrase_can_be_selected_one_character_at_a_time() {
+        for code in ["maolvbei", "mao'lv'bei", "62658234"] {
+            let engine = PinyinEngine::new();
+            let session = SessionId(code.to_owned());
+            engine.create_session(&session).unwrap();
+            let context = InputContext::default();
+            let mut actions = engine
+                .process(&session, &InputEvent::Text(code.to_owned()), &context)
+                .unwrap();
+            for (index, expected) in ["猫", "驴", "杯"].iter().enumerate() {
+                let selected = actions
+                    .0
+                    .iter()
+                    .find_map(|action| match action {
+                        Action::ShowCandidates(values) => values
+                            .iter()
+                            .find(|c| c.commit_text == *expected)
+                            .map(|c| c.id.clone()),
+                        _ => None,
+                    })
+                    .unwrap_or_else(|| panic!("missing {expected} for {code}: {actions:?}"));
+                actions = engine
+                    .process(&session, &InputEvent::SelectCandidate(selected), &context)
+                    .unwrap();
+                assert_eq!(actions.committed_text().as_deref(), Some(*expected));
+                assert_eq!(
+                    actions
+                        .0
+                        .iter()
+                        .any(|a| matches!(a, Action::CloseComposition)),
+                    index == 2
+                );
+                if index < 2 {
+                    assert!(!engine
+                        .learning_records()
+                        .iter()
+                        .any(|record| record.key.value == "猫驴杯"));
+                }
+            }
+            let restored = PinyinEngine::with_learning(LearningModel::from_records(
+                "learned-lexicon",
+                "zh-CN",
+                "reopened",
+                engine.learning_records(),
+            ));
+            for spelling in ["maolvbei", "mao'lv'bei", "62658234", "mlb", "mao'lb", "652"] {
+                assert_eq!(restored.lookup(spelling)[0].commit_text, "猫驴杯");
+            }
+        }
+    }
+
+    #[test]
+    fn frequency_beats_static_priority_and_cancelled_groups_are_not_learned() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("frequency".into());
+        engine.create_session(&session).unwrap();
+        let context = InputContext::default();
+        for word in ["泥", "泥", "你"] {
+            engine
+                .process(&session, &InputEvent::Text("ni".into()), &context)
+                .unwrap();
+            engine
+                .process(
+                    &session,
+                    &InputEvent::SelectCandidate(CandidateId(format!("pinyin:{word}"))),
+                    &context,
+                )
+                .unwrap();
+        }
+        assert_eq!(engine.lookup("ni")[0].commit_text, "泥");
+        assert_eq!(engine.lookup("64")[0].commit_text, "泥");
+        engine
+            .process(&session, &InputEvent::Text("maolvbei".into()), &context)
+            .unwrap();
+        let choice = engine
+            .lookup("maolvbei")
+            .into_iter()
+            .find(|c| c.commit_text == "猫")
+            .unwrap();
+        engine
+            .process(&session, &InputEvent::SelectCandidate(choice.id), &context)
+            .unwrap();
+        engine
+            .process(&session, &InputEvent::Reset, &context)
+            .unwrap();
+        assert!(!engine
+            .learning_records()
+            .iter()
+            .any(|record| record.key.value == "猫驴杯"));
+        assert!(engine.phrases.lock().unwrap().is_empty());
     }
 
     #[test]

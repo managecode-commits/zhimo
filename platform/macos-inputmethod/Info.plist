@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>dev.zhimo.inputmethod</string>
+  <key>CFBundleName</key><string>Zhimo</string>
+  <key>CFBundleDisplayName</key><string>知墨输入法</string>
+  <key>CFBundleExecutable</key><string>Zhimo</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>20260915.1</string>
+  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>CFBundleIconFile</key><string>Zhimo.icns</string>
+  <key>LSMinimumSystemVersion</key><string>12.0</string>
+  <key>LSBackgroundOnly</key><true/>
+  <key>NSHighResolutionCapable</key><true/>
+  <key>NSMicrophoneUsageDescription</key><string>仅在您点击录音后使用麦克风，在本机离线转录，不上传音频。</string>
+  <key>NSHumanReadableCopyright</key><string>Copyright © 2026 立方田 &lt;managecode@gmail.com&gt;</string>
+  <key>InputMethodConnectionName</key><string>Zhimo_Connection</string>
+  <key>InputMethodServerControllerClass</key><string>ZhimoInputController</string>
+  <key>tsInputMethodIconFileKey</key><string>menu-icon.png</string>
+  <key>tsInputMethodCharacterRepertoireKey</key><array><string>zh-Hans</string><string>en</string></array>
+  <key>tsInputMethodPrimaryLanguage</key><string>zh-Hans</string>
+  <key>TISInputSourceID</key><string>dev.zhimo.inputmethod</string>
+  <key>tsInputMethodScriptKey</key><string>smUnicodeScript</string>
+</dict></plist>

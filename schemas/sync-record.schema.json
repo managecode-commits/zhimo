@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://shurufa.dev/schemas/sync-record-v1.json",
-  "title": "Shurufa logical sync record",
+  "$id": "https://zhimo.dev/schemas/sync-record-v1.json",
+  "title": "Zhimo logical sync record",
   "type": "object",
   "required": ["schemaVersion", "namespace", "language", "key", "clock", "deviceId", "deleted"],
   "properties": {

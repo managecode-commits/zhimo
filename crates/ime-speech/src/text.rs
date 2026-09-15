@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Conservative transcript cleanup shared by ASR providers.
 
 /// Normalizes whitespace and common spoken punctuation without changing words.

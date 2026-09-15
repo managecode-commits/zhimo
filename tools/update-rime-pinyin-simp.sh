@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 root_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)

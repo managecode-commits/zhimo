@@ -1,14 +1,21 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 #include "core_session.h"
 
-#include "shurufa_ime.h"
+#include "zhimo_ime.h"
 
 #include <utility>
 
-namespace shurufa {
+namespace zhimo {
 CoreSession::CoreSession(const std::filesystem::path& data_directory) {
   const auto native_utf8 = data_directory.u8string();
   const std::string directory(native_utf8.begin(), native_utf8.end());
   handle_ = ime_runtime_new_with_data_dir("bilingual", directory.c_str());
+  // The bilingual Runtime defaults to Latin, while the Windows service starts
+  // with pinyin_=true. Establish the same mode before accepting the first key.
+  if (handle_ && ime_runtime_switch_engine(handle_, "pinyin.reference") != 0) {
+    ime_runtime_free(handle_);
+    handle_ = nullptr;
+  }
 }
 
 CoreSession::~CoreSession() {
@@ -95,4 +102,4 @@ std::vector<Action> CoreSession::structured_actions() {
   return result;
 }
 bool CoreSession::flush() const { return handle_ && ime_runtime_flush(handle_) == 0; }
-}  // namespace shurufa
+}  // namespace zhimo

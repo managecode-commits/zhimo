@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "dev.shurufa.lang.en",
+  "id": "dev.zhimo.lang.en",
   "version": "0.1.0",
   "languages": ["en"],
   "engine": "latin",

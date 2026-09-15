@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -9,9 +10,9 @@ librime_revision="de4700e9f6b75b109910613df907965e3cbe0567"
 prebuilt_revision="3587ba3355711f0aca50136e787719f6562676b8"
 librime_url="https://github.com/rime/librime.git"
 prebuilt_url="https://github.com/fcitx5-android/prebuilt.git"
-android_api="${SHURUFA_ANDROID_RIME_API:-26}"
-jobs="${SHURUFA_ANDROID_RIME_JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)}"
-cache_root="${SHURUFA_ANDROID_RIME_CACHE:-${XDG_CACHE_HOME:-${HOME:?HOME is required}/.cache}/shurufa-librime}"
+android_api="${ZHIMO_ANDROID_RIME_API:-26}"
+jobs="${ZHIMO_ANDROID_RIME_JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 4)}"
+cache_root="${ZHIMO_ANDROID_RIME_CACHE:-${XDG_CACHE_HOME:-${HOME:?HOME is required}/.cache}/zhimo-librime}"
 output_root="${1:-$repo_dir/target/android-rime}"
 
 case "$output_root" in

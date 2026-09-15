@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright © 2026 立方田 <managecode@gmail.com>
 """End-to-end smoke test for the Linux adapter and shared Runtime."""
 
 from __future__ import annotations
@@ -7,14 +8,14 @@ import os
 import pathlib
 import tempfile
 
-from shurufa_ibus import Runtime
+from zhimo_ibus import Runtime
 
 
 def main() -> int:
     repository = pathlib.Path(__file__).resolve().parents[2]
-    os.environ["SHURUFA_IME_LIBRARY"] = str(repository / "target/debug/libime_ffi.so")
-    with tempfile.TemporaryDirectory(prefix="shurufa-ibus-smoke-") as data_directory:
-        os.environ["SHURUFA_USER_DATA_DIR"] = data_directory
+    os.environ["ZHIMO_IME_LIBRARY"] = str(repository / "target/debug/libime_ffi.so")
+    with tempfile.TemporaryDirectory(prefix="zhimo-ibus-smoke-") as data_directory:
+        os.environ["ZHIMO_USER_DATA_DIR"] = data_directory
         runtime = Runtime()
         runtime.set_context(1, False, "smoke.password")
         actions = runtime.feed("ni")

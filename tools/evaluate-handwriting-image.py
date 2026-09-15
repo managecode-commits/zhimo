@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright © 2026 立方田 <managecode@gmail.com>
 """Local-only ONNX experiment; no uploads, model downloads, or stored cropped ink.
 
 Input JSON array: [{id, path, box:[left,top,right,bottom], label, writer, split}].

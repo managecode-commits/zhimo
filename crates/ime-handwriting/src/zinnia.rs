@@ -214,7 +214,9 @@ impl Model {
                     .collect()
             })
             .collect();
-        self.recognize(&normalized, 1000.0, 1000.0, limit)
+        let mut candidates = self.recognize(&normalized, 1000.0, 1000.0, limit)?;
+        crate::shape_ranking::rank(&normalized, &mut candidates);
+        Ok(candidates)
     }
 }
 

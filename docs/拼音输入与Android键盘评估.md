@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # 拼音输入与 Android 键盘评估
 
 > 复评日期：2026-09-13
@@ -32,7 +33,7 @@
 默认 Rime schema 只打包了约百条项目验证词典。`nihao` 等样例能通过，但大量真实词汇没有
 候选，空格只能提交原始拉丁字母，形成“拼音不了汉字”的直接体验。
 
-当前修复后的 Android Rime APK 默认安装 `shurufa_pinyin` 全拼方案，使用锁定提交及
+当前修复后的 Android Rime APK 默认安装 `zhimo_pinyin` 全拼方案，使用锁定提交及
 SHA-256 的 `rime-pinyin-simp` 离线词典（65,125 条记录），启用整句转换和本地用户词典。
 9键及无 Rime 降级引擎由同一上游数据生成，并叠加187条项目常用词优先级，避免两种键盘
 词汇覆盖严重不一致。

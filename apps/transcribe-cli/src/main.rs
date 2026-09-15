@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::path::{Path, PathBuf};
 use std::time::Duration;
 
@@ -35,7 +36,7 @@ fn run() -> Result<(), String> {
     let mut provider = WhisperCppProvider::new(
         executable,
         model,
-        std::env::temp_dir().join("shurufa-transcribe"),
+        std::env::temp_dir().join("zhimo-transcribe"),
     );
     let handle = provider
         .start(&SpeechSessionConfig {

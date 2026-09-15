@@ -1,0 +1,4 @@
+module ZhimoCore [system] {
+  header "../../../include/zhimo_ime.h"
+  export *
+}

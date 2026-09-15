@@ -1,0 +1,17 @@
+---
+name: zhimo_pinyin
+version: "2026.09.14.1"
+sort: by_weight
+import_tables:
+  - pinyin_simp
+  - zhimo_common
+  - zhimo_geography
+columns:
+  - text
+  - code
+  - weight
+...
+
+履带	lv dai	10000
+知墨	zhi mo	10000
+物联网	wu lian wang	10000

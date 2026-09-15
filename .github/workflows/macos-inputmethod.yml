@@ -1,0 +1,19 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
+name: macOS input method (manual validation build)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.0
+      - run: python3 tools/test-macos-contract.py
+      - run: bash tools/prepare-offline-speech.sh
+      - run: bash tools/build-macos.sh target/packages/zhimo-macos-ci
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zhimo-macos-unsigned-test
+          path: target/packages/zhimo-macos-ci.zip

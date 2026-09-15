@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # Language Engine SDK v1
 
 新语种通过实现 `ime_core::InputEngine` 接入，不得把语种概念加入平台桥。最小实现需要提供

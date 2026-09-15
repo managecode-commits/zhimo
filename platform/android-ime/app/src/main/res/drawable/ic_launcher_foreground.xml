@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -6,5 +7,9 @@
     android:viewportHeight="108">
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M30,27H78V39H43V48H67C75,48 81,54 81,62V69C81,77 75,83 67,83H30V71H68V60H44C36,60 30,54 30,46Z" />
+        android:pathData="M31,33H77V42L47,66H64L73,75H31V66L62,42H31Z" />
+    <path android:fillColor="#9FE7ED"
+        android:pathData="M67,59L79,71L74,76L62,64Z" />
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M74,76L81,78L79,71Z" />
 </vector>

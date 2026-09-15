@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Generic Rime adapter. The public engine contract contains no librime types.
 
 use std::collections::HashMap;

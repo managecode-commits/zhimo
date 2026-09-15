@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # ADR-0003：语音识别 Provider 化
 
 - 状态：已接受

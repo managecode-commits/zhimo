@@ -1,11 +1,12 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 #pragma once
 
 #ifdef _WIN32
 #include <guiddef.h>
 
 // Stable product identifiers. Never change these after a public installation.
-inline constexpr GUID CLSID_ShurufaTextService =
+inline constexpr GUID CLSID_ZhimoTextService =
     {0x57d47ac2, 0x67f4, 0x4ca3, {0xa8, 0x24, 0x2c, 0x48, 0xe6, 0x8d, 0xb7, 0x81}};
-inline constexpr GUID GUID_ShurufaProfile =
+inline constexpr GUID GUID_ZhimoProfile =
     {0xb70ad20d, 0xf85b, 0x456b, {0xb5, 0xab, 0x15, 0xef, 0x4e, 0x36, 0x9b, 0xd1}};
 #endif

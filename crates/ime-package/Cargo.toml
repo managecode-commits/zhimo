@@ -1,3 +1,4 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
 [package]
 name = "ime-package"
 version.workspace = true

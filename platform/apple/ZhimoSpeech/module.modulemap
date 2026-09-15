@@ -1,0 +1,4 @@
+module ZhimoSpeech [system] {
+  header "../../../include/zhimo_speech.h"
+  export *
+}

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;

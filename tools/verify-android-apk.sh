@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 if [[ $# -lt 1 || $# -gt 2 ]]; then
@@ -29,18 +30,19 @@ test -x "$apksigner_bin"
 test -x "$readelf_bin"
 signer_output="$("$apksigner_bin" verify --verbose --print-certs "$apk")"
 printf '%s\n' "$signer_output"
-if [[ -n "${SHURUFA_ANDROID_CERT_SHA256:-}" ]]; then
+if [[ -n "${ZHIMO_ANDROID_CERT_SHA256:-}" ]]; then
   actual_cert="$(sed -n 's/.*certificate SHA-256 digest: //p' <<<"$signer_output" | head -n 1 | tr '[:upper:]' '[:lower:]')"
-  expected_cert="$(tr -d ':' <<<"$SHURUFA_ANDROID_CERT_SHA256" | tr '[:upper:]' '[:lower:]')"
+  expected_cert="$(tr -d ':' <<<"$ZHIMO_ANDROID_CERT_SHA256" | tr '[:upper:]' '[:lower:]')"
   [[ "$actual_cert" == "$expected_cert" ]] || {
-    echo "APK signer certificate SHA-256 does not match SHURUFA_ANDROID_CERT_SHA256" >&2
+    echo "APK signer certificate SHA-256 does not match ZHIMO_ANDROID_CERT_SHA256" >&2
     exit 1
   }
 fi
 
 for abi in arm64-v8a armeabi-v7a x86_64; do
+  unzip -Z1 "$apk" | grep -Fx "lib/$abi/libzhimo_speech.so" >/dev/null
   unzip -Z1 "$apk" | grep -Fx "lib/$abi/libime_ffi.so" >/dev/null
-  unzip -Z1 "$apk" | grep -Fx "lib/$abi/libshurufa_android.so" >/dev/null
+  unzip -Z1 "$apk" | grep -Fx "lib/$abi/libzhimo_android.so" >/dev/null
   case "$abi" in
     arm64-v8a) expected_machine="AArch64" ;;
     armeabi-v7a) expected_machine="ARM" ;;
@@ -54,7 +56,7 @@ for abi in arm64-v8a armeabi-v7a x86_64; do
       exit 1
     fi
   done < <(unzip -Z1 "$apk" | grep -E "^lib/$abi/.+\\.so$")
-  bridge_dynamic="$(unzip -p "$apk" "lib/$abi/libshurufa_android.so" | "$readelf_bin" -d -)"
+  bridge_dynamic="$(unzip -p "$apk" "lib/$abi/libzhimo_android.so" | "$readelf_bin" -d -)"
   grep -F 'Shared library: [libime_ffi.so]' <<<"$bridge_dynamic" >/dev/null
   if [[ "$require_rime" == "--require-rime" ]]; then
     unzip -Z1 "$apk" | grep -Fx "lib/$abi/librime.so" >/dev/null
@@ -63,4 +65,12 @@ for abi in arm64-v8a armeabi-v7a x86_64; do
   fi
 done
 
+speech_hash="$(unzip -p "$apk" assets/speech/ggml-base-q5_1.bin | sha256sum | cut -d ' ' -f 1)"
+vad_hash="$(unzip -p "$apk" assets/speech/ggml-silero-v5.1.2.bin | sha256sum | cut -d ' ' -f 1)"
+[[ "$vad_hash" == 29940d98d42b91fbd05ce489f3ecf7c72f0a42f027e4875919a28fb4c04ea2cf ]]
+unzip -Z1 "$apk" | grep -Fx "assets/speech/SILERO-LICENSE" >/dev/null
+[[ "$speech_hash" == 422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898 ]]
+for notice in WHISPER-MODEL-LICENSE WHISPER-CPP-LICENSE manifest.json README.md; do
+  unzip -Z1 "$apk" | grep -Fx "assets/speech/$notice" >/dev/null
+done
 sha256sum "$apk"

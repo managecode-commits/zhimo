@@ -1,6 +1,8 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Portable ink contract, offline model inference and stale-result protection.
 //! No network or editor access.
 
+mod shape_ranking;
 pub mod zinnia;
 
 #[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize, serde::Serialize)]

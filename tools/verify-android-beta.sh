@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$repo_dir/tools/android-env.sh"
 
 cd "$repo_dir"
+bash ./tools/prepare-offline-speech.sh
 ./tools/build-android-core.sh
 
 cd platform/android-ime

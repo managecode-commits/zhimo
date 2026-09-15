@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 import AVFoundation
 import Speech
 import UIKit
@@ -8,6 +9,8 @@ final class TranscriptionViewController: UIViewController {
     private let audioEngine = AVAudioEngine()
     private var task: SFSpeechRecognitionTask?
     private var request: SFSpeechAudioBufferRecognitionRequest?
+    private var hasTap = false
+    private var finishing = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +34,7 @@ final class TranscriptionViewController: UIViewController {
     @objc private func toggleRecording() {
         if audioEngine.isRunning {
             stopRecording()
-        } else {
+        } else if !finishing {
             requestPermissionsAndStart()
         }
     }
@@ -40,45 +43,73 @@ final class TranscriptionViewController: UIViewController {
         SFSpeechRecognizer.requestAuthorization { [weak self] speechStatus in
             AVAudioSession.sharedInstance().requestRecordPermission { microphoneAllowed in
                 DispatchQueue.main.async {
+                    guard let self, self.viewIfLoaded?.window != nil else { return }
                     guard speechStatus == .authorized, microphoneAllowed else { return }
-                    try? self?.startRecording()
+                    guard !self.audioEngine.isRunning, !self.finishing else { return }
+                    do { try self.startRecording() }
+                    catch {
+                        self.stopRecording(cancel: true)
+                        self.textView.text = "无法启动离线听写，请检查麦克风权限与设备支持情况。"
+                    }
                 }
             }
         }
     }
 
     private func startRecording() throws {
-        let recognizer = SFSpeechRecognizer(locale: Locale.current)
+        guard #available(iOS 13, *),
+              let recognizer = SFSpeechRecognizer(locale: Locale.current),
+              recognizer.isAvailable, recognizer.supportsOnDeviceRecognition else {
+            textView.text = "当前设备或语言不支持系统离线听写，不会回退到联网识别。"
+            return
+        }
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        if #available(iOS 13, *), recognizer?.supportsOnDeviceRecognition == true {
-            request.requiresOnDeviceRecognition = true
-        }
+        request.requiresOnDeviceRecognition = true
+        try AVAudioSession.sharedInstance().setCategory(.record, mode: .measurement)
+        try AVAudioSession.sharedInstance().setActive(true)
         let node = audioEngine.inputNode
         let format = node.outputFormat(forBus: 0)
         node.installTap(onBus: 0, bufferSize: 1_024, format: format) { buffer, _ in
             request.append(buffer)
         }
-        try AVAudioSession.sharedInstance().setCategory(.record, mode: .measurement)
-        try AVAudioSession.sharedInstance().setActive(true)
+        hasTap = true
         audioEngine.prepare()
         try audioEngine.start()
         self.request = request
-        task = recognizer?.recognitionTask(with: request) { [weak self] result, error in
-            if let result { self?.textView.text = result.bestTranscription.formattedString }
-            if error != nil || result?.isFinal == true { self?.stopRecording() }
+        task = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            DispatchQueue.main.async {
+                guard let self, self.request === request else { return }
+                if let result { self.textView.text = result.bestTranscription.formattedString }
+                if error != nil || result?.isFinal == true { self.stopRecording(cancel: true) }
+            }
         }
         recordButton.setTitle("停止", for: .normal)
     }
 
-    private func stopRecording() {
+    private func stopRecording(cancel: Bool = false) {
         audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
+        if hasTap { audioEngine.inputNode.removeTap(onBus: 0); hasTap = false }
         request?.endAudio()
-        task?.cancel()
-        request = nil
-        task = nil
+        if cancel {
+            request = nil
+            task?.cancel()
+            task = nil
+            finishing = false
+        } else if let pending = request {
+            finishing = true
+            // Preserve the final result, but bound a recognizer that never finishes.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 10) { [weak self] in
+                guard let self, self.request === pending else { return }
+                self.stopRecording(cancel: true)
+            }
+        }
         try? AVAudioSession.sharedInstance().setActive(false)
-        recordButton.setTitle("开始听写", for: .normal)
+        recordButton.setTitle(finishing ? "正在完成…" : "开始听写", for: .normal)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopRecording(cancel: true)
     }
 }

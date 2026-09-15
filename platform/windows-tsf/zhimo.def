@@ -1,0 +1,6 @@
+LIBRARY ZhimoTsf
+EXPORTS
+    DllGetClassObject
+    DllCanUnloadNow
+    DllRegisterServer
+    DllUnregisterServer

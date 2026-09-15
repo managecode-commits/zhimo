@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Vietnamese Telex reference engine proving the shared composition model is
 //! not specific to Chinese conversion.
 

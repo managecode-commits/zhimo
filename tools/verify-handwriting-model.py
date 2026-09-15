@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright © 2026 立方田 <managecode@gmail.com>
 """Deterministic model/ABI regression, NOT a held-out handwriting accuracy benchmark."""
 import ctypes
 import hashlib

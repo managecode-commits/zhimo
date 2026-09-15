@@ -1,0 +1,61 @@
+{
+  "generated_on": "2026-09-14",
+  "upstream_snapshot_commit_date": "2026-03-15",
+  "source": "https://github.com/Chen-Yuanmeng/China-Administrative-Divisions/tree/a189d17addb29a568335df46c79f5a6a3c02d4f3",
+  "direct_county_supplement": "https://github.com/modood/Administrative-divisions-of-China/tree/c49d495b40ac73eb1a66f6eeae5f8fd10696f035",
+  "snapshot_not_live_official_register": true,
+  "raw_sha256": {
+    "provinces.json": "9e23f106ac558921d26a86659b18786974d6516e557cb593fc7357f0dbe7dc00",
+    "cities.json": "19f427df6f217e7153972bcdf9ffb37e3ee323209c5079b669137bc18da3d0d7",
+    "areas.json": "a266f7568f43eba252b09122d488914c7776bc6b9781bd3a992699c7be9ddd26",
+    "HK-MO-TW.json": "6126b445e023beb303b52f98cd4bf4761ee2a3eee65e89977562c69f0cc26242",
+    "supplement-areas.json": "fbe1575eecba4ffd4d50c3d2d6887bd873ceca6a203fb2d66698b5007826b6b6",
+    "LICENSE-upstream.md": "dec3d06a7e19c0725c669f434079490da871f790671f60f9956b21eacd0e4638",
+    "LICENSE-supplement.txt": "ee820ff0db4ce628569e0975ac27dc926052a9f85d102b101edb104311ef4d90",
+    "LICENSE-pypinyin.txt": "1e6c90014b4912815c296ee64bb6f6280af47e6d4c5d80e86232dfc5defe764c",
+    "LICENSE-pinyin-data.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "LICENSE-opencc.txt": "18f3fedf9eac72e6054260489c764c1e54f63cf2b16055523f561ffeec7bc908"
+  },
+  "generators": {
+    "pypinyin": "0.55.0",
+    "opencc-python-reimplemented": "0.1.7"
+  },
+  "record_counts": {
+    "county": 2813,
+    "direct_county": 32,
+    "prefecture": 333,
+    "province": 34,
+    "supplement_city_or_region": 14,
+    "supplement_county": 13,
+    "supplement_district": 196
+  },
+  "unique_full_names": 3389,
+  "entries_with_aliases": 6632,
+  "geography_tsv_sha256": "faa28f4884f78dc0689d99154b67053cd6633c9ac9990a9a11dcfb3ed2b89f70",
+  "polyphonic_overrides": {
+    "单县": "shan xian",
+    "繁峙": "fan shi",
+    "荥经": "ying jing",
+    "浚县": "xun xian",
+    "涡阳": "guo yang",
+    "中牟": "zhong mou",
+    "珲春": "hun chun",
+    "宕昌": "tan chang",
+    "六安": "lu an",
+    "乐清": "yue qing",
+    "乐亭": "lao ting",
+    "长子": "zhang zi",
+    "尉犁": "yu li",
+    "尉氏": "wei shi",
+    "蔚县": "yu xian",
+    "铅山": "yan shan",
+    "泌阳": "bi yang",
+    "荥阳": "xing yang",
+    "枞阳": "zong yang",
+    "歙县": "she xian",
+    "牟平": "mu ping",
+    "重庆": "chong qing",
+    "东莞": "dong guan",
+    "蚌埠": "beng bu"
+  }
+}

@@ -1,0 +1,55 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
+name: Desktop packages (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-release-check:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse installer and diagnostic scripts without executing them
+        shell: powershell
+        run: |
+          Get-ChildItem platform/windows-tsf/*.ps1 | ForEach-Object {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count) { throw ($errors | Out-String) }
+          }
+      - run: cargo build --locked --release -p ime-ffi
+      - name: Build native MSVC Release
+        run: >-
+          cmake -S platform/windows-tsf -B target/windows-release -A x64
+          -DZHIMO_IME_LIBRARY=${{ github.workspace }}/target/release/ime_ffi.dll.lib
+          -DZHIMO_IME_RUNTIME_DLL=${{ github.workspace }}/target/release/ime_ffi.dll
+      - run: cmake --build target/windows-release --config Release
+      - run: ./target/windows-release/Release/zhimo-tsf-probe.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-msvc-release-diagnostic-only
+          path: |
+            target/windows-release/Release/*.dll
+            target/windows-release/Release/zhimo-tsf-probe.exe
+  linux:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        distro: [debian12, debian13, ubuntu2204, ubuntu2404]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Rust toolchain and fetch locked dependencies
+        run: |
+          rustup show
+          cargo fetch --locked
+      - name: Build inside target distribution
+        run: bash tools/build-linux-deb.sh '${{ matrix.distro }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zhimo-${{ matrix.distro }}-amd64
+          path: |
+            target/zhimo-${{ matrix.distro }}.*/packages/*.deb
+            target/zhimo-${{ matrix.distro }}.*/packages/BUILD-INFO.json
+          if-no-files-found: error

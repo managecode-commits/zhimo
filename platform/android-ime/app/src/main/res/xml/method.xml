@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 <input-method xmlns:android="http://schemas.android.com/apk/res/android"
-    android:settingsActivity="dev.shurufa.ime.MainActivity"
+    android:settingsActivity="dev.zhimo.ime.MainActivity"
     android:supportsSwitchingToNextInputMethod="true">
     <subtype
         android:imeSubtypeLocale="zh_CN"

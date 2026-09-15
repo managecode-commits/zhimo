@@ -1,3 +1,4 @@
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
 # ADR-0001：Rust 通用运行时与稳定 C ABI
 
 - 状态：已接受

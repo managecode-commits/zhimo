@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Composite engine that routes one platform session across multiple language engines.
 
 use std::collections::{BTreeSet, HashMap};

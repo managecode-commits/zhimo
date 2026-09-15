@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -8,6 +9,8 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 cargo test --workspace
 cargo build -p ime-ffi
+
+python3 tools/test_stage_linux_ibus.py
 
 cc -std=c11 -Wall -Wextra -Werror \
   -I include \

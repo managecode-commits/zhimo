@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright © 2026 立方田 &lt;managecode@gmail.com&gt; -->
+<component>
+  <name>org.freedesktop.IBus.Zhimo</name>
+  <description>Zhimo multilingual input method</description>
+  <exec>@ZHIMO_IBUS_EXEC@</exec>
+  <version>0.1.0</version>
+  <license>Apache-2.0</license>
+  <author>Zhimo Contributors</author>
+  <homepage>https://github.com/managecode-commits/zhimo</homepage>
+  <textdomain>zhimo</textdomain>
+  <engines>
+    <engine>
+      <name>zhimo</name>
+      <longname>Zhimo Pinyin (知墨输入法)</longname>
+      <description>Privacy-first multilingual input</description>
+      <language>zh_CN</language>
+      <license>Apache-2.0</license>
+      <author>Zhimo Contributors</author>
+      <layout>us</layout>
+      <icon>zhimo</icon>
+      <rank>80</rank>
+    </engine>
+  </engines>
+</component>

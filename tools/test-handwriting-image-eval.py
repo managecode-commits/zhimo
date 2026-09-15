@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright © 2026 立方田 <managecode@gmail.com>
 """Run in the isolated image-evaluation environment; does not load user images."""
 import itertools
 from pathlib import Path

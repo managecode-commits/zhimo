@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Reference Latin engine used to validate the language-neutral runtime contract.
 
 use std::collections::HashMap;

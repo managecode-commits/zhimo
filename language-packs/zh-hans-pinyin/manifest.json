@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "dev.shurufa.lang.zh-hans-pinyin",
+  "id": "dev.zhimo.lang.zh-hans-pinyin",
   "version": "0.1.0",
   "languages": ["zh-CN"],
   "engine": "pinyin.reference",

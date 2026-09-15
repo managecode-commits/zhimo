@@ -17,6 +17,19 @@ and fed to a 1 x 3 x 48 x 320 recognition tensor. The decoder sums CTC paths yie
 one token, preserving the single-character product boundary. It does not claim
 calibrated confidence, stroke learning, continuous text or image/trajectory score fusion.
 
+Android now filters this single-character output by a selectable alphabet before
+top-k truncation: Han, ASCII digits, ASCII Latin letters (case preserved), or their
+union. The line provider composes up to four spatially segmented characters; this
+does not turn the model into an arbitrary-length cursive English recognizer.
+See [alphabet modes and validation](../../docs/数字字母与混合手写.md).
+
+The Android panel now combines image and bundled trajectory candidate ranks for
+Chinese/mixed input using `FusedHandwritingProvider`. This is reciprocal-rank
+fusion, not probability calibration or retraining. Dedicated digits/letters use
+only the image engine; explicit image opt-out keeps the trajectory-only route.
+Both models remain local, and either available engine can supply Han candidates
+when the other fails. Line segmentation still uses geometric hypotheses.
+
 The local desktop experiment recognized three user-supplied screenshot crops as 制、清、存.
 These labels remain provisional and from one writer; this is not held-out accuracy.
 Phone memory/latency, independent-writer quality, nonstandard stroke styles and

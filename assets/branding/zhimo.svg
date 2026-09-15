@@ -1,0 +1,8 @@
+<!-- Copyright © 2026 立方田 <managecode@gmail.com> -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 108 108">
+  <rect width="108" height="108" rx="23" fill="#2457D6"/>
+  <!-- Z: a crisp ink ribbon, with a nib-shaped lower terminal. -->
+  <path fill="#FFFFFF" d="M25 27H83V38L45 69H66L78 81H25V70L64 39H25Z"/>
+  <path fill="#9FE7ED" d="M70 60L86 76L79 83L63 67Z"/>
+  <path fill="#FFFFFF" d="M79 83L89 86L86 76Z"/>
+</svg>

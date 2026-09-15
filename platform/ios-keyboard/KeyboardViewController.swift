@@ -1,10 +1,11 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 import UIKit
 
 final class KeyboardViewController: UIInputViewController {
-    private lazy var session: ShurufaSession = {
+    private lazy var session: ZhimoSession = {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         try? FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
-        return ShurufaSession(dataDirectory: support)
+        return ZhimoSession(dataDirectory: support)
     }()
     private let candidateRow = UIStackView()
     private let preedit = UILabel()

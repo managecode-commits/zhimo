@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 #include <rime_api.h>
 
 #include <stddef.h>
@@ -27,7 +28,7 @@ static size_t copy_text(const char *source, char *output, size_t capacity) {
   return length;
 }
 
-int shurufa_rime_initialize(const char *shared_dir, const char *user_dir) {
+int zhimo_rime_initialize(const char *shared_dir, const char *user_dir) {
   lock_lifecycle();
   if (client_count > 0) {
     ++client_count;
@@ -42,9 +43,9 @@ int shurufa_rime_initialize(const char *shared_dir, const char *user_dir) {
   RIME_STRUCT(RimeTraits, traits);
   traits.shared_data_dir = shared_dir;
   traits.user_data_dir = user_dir;
-  traits.app_name = "shurufa";
-  traits.distribution_name = "Shurufa";
-  traits.distribution_code_name = "shurufa";
+  traits.app_name = "zhimo";
+  traits.distribution_name = "Zhimo";
+  traits.distribution_code_name = "zhimo";
   traits.distribution_version = "0.1.0";
   api->setup(&traits);
   api->initialize(&traits);
@@ -55,7 +56,7 @@ int shurufa_rime_initialize(const char *shared_dir, const char *user_dir) {
   return 1;
 }
 
-void shurufa_rime_finalize(void) {
+void zhimo_rime_finalize(void) {
   lock_lifecycle();
   if (client_count > 0 && --client_count == 0) {
     api->finalize();
@@ -64,13 +65,13 @@ void shurufa_rime_finalize(void) {
   unlock_lifecycle();
 }
 
-uint64_t shurufa_rime_create_session(void) { return api ? api->create_session() : 0; }
-void shurufa_rime_destroy_session(uint64_t session) { if (api) api->destroy_session(session); }
-int shurufa_rime_process_key(uint64_t session, int keycode, int modifiers) { return api ? api->process_key(session, keycode, modifiers) : 0; }
-void shurufa_rime_clear(uint64_t session) { if (api) api->clear_composition(session); }
-int shurufa_rime_select_candidate(uint64_t session, size_t index) { return api ? api->select_candidate_on_current_page(session, index) : 0; }
+uint64_t zhimo_rime_create_session(void) { return api ? api->create_session() : 0; }
+void zhimo_rime_destroy_session(uint64_t session) { if (api) api->destroy_session(session); }
+int zhimo_rime_process_key(uint64_t session, int keycode, int modifiers) { return api ? api->process_key(session, keycode, modifiers) : 0; }
+void zhimo_rime_clear(uint64_t session) { if (api) api->clear_composition(session); }
+int zhimo_rime_select_candidate(uint64_t session, size_t index) { return api ? api->select_candidate_on_current_page(session, index) : 0; }
 
-size_t shurufa_rime_copy_preedit(uint64_t session, char *output, size_t capacity) {
+size_t zhimo_rime_copy_preedit(uint64_t session, char *output, size_t capacity) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);
   if (!api->get_context(session, &context)) return 0;
@@ -79,7 +80,7 @@ size_t shurufa_rime_copy_preedit(uint64_t session, char *output, size_t capacity
   return length;
 }
 
-size_t shurufa_rime_candidate_count(uint64_t session) {
+size_t zhimo_rime_candidate_count(uint64_t session) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);
   if (!api->get_context(session, &context)) return 0;
@@ -88,7 +89,7 @@ size_t shurufa_rime_candidate_count(uint64_t session) {
   return count;
 }
 
-size_t shurufa_rime_page_index(uint64_t session) {
+size_t zhimo_rime_page_index(uint64_t session) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);
   if (!api->get_context(session, &context)) return 0;
@@ -97,7 +98,7 @@ size_t shurufa_rime_page_index(uint64_t session) {
   return page;
 }
 
-int shurufa_rime_has_next_page(uint64_t session) {
+int zhimo_rime_has_next_page(uint64_t session) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);
   if (!api->get_context(session, &context)) return 0;
@@ -106,7 +107,7 @@ int shurufa_rime_has_next_page(uint64_t session) {
   return has_next;
 }
 
-size_t shurufa_rime_copy_candidate(uint64_t session, size_t index, int comment, char *output, size_t capacity) {
+size_t zhimo_rime_copy_candidate(uint64_t session, size_t index, int comment, char *output, size_t capacity) {
   if (!api) return 0;
   RIME_STRUCT(RimeContext, context);
   if (!api->get_context(session, &context)) return 0;
@@ -120,7 +121,7 @@ size_t shurufa_rime_copy_candidate(uint64_t session, size_t index, int comment, 
   return length;
 }
 
-size_t shurufa_rime_take_commit(uint64_t session, char *output, size_t capacity) {
+size_t zhimo_rime_take_commit(uint64_t session, char *output, size_t capacity) {
   if (!api) return 0;
   RIME_STRUCT(RimeCommit, commit);
   if (!api->get_commit(session, &commit)) return 0;

@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Unicode boundary helpers for runtime graphemes and UTF-16 platform APIs.
 
 use unicode_segmentation::UnicodeSegmentation;

@@ -1,3 +1,4 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
 name: ci
 
 on:
@@ -18,8 +19,9 @@ jobs:
           components: rustfmt, clippy
       - run: sudo apt-get update && sudo apt-get install -y gir1.2-ibus-1.0 python3-gi
       - run: ./tools/verify.sh
-      - run: python3 -m py_compile platform/linux-ibus/shurufa_ibus.py
+      - run: python3 -m py_compile platform/linux-ibus/zhimo_ibus.py
       - run: python3 platform/linux-ibus/runtime_smoke.py
+      - run: python3 -B platform/linux-ibus/test_keyboard.py
       - run: bash -n platform/linux-ibus/*.sh tools/*.sh
 
   portable-core:
@@ -40,6 +42,16 @@ jobs:
       - run: cargo build -p ime-ffi
       - run: cmake -S platform/windows-tsf -B target/windows-tsf -A x64
       - run: cmake --build target/windows-tsf --config Debug
+      - run: ./target/windows-tsf/Debug/zhimo-tsf-probe.exe
+
+  shared-speech:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tools/prepare-offline-speech.sh
+      - run: cmake -S platform/shared-speech -B target/shared-speech -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build target/shared-speech --parallel 2
+      - run: ctest --test-dir target/shared-speech --output-on-failure
 
   dependency-audit:
     runs-on: ubuntu-latest
@@ -58,5 +70,5 @@ jobs:
       - run: cargo build -p ime-ffi
       - run: >-
           cmake -S platform/linux-fcitx5 -B target/fcitx5 -G Ninja
-          -DSHURUFA_IME_LIBRARY=${{ github.workspace }}/target/debug/libime_ffi.so
+          -DZHIMO_IME_LIBRARY=${{ github.workspace }}/target/debug/libime_ffi.so
       - run: cmake --build target/fcitx5

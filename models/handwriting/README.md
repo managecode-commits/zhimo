@@ -31,6 +31,6 @@ tegaki-build -t handwriting-zh_CN.xml zinnia handwriting-zh_CN.meta
 The prebuilt upstream model is pinned, not claimed to be bit-for-bit reproducible with arbitrary tool versions.
 Preserve a complete matching source distribution when shipping any modified model.
 
-Runtime integration: `crates/ime-handwriting/src/zinnia.rs`, C ABI 1.3 in `include/shurufa_ime.h`.
+Runtime integration: `crates/ime-handwriting/src/zinnia.rs`, C ABI 1.3 in `include/zhimo_ime.h`.
 Verification: `cargo test -p ime-handwriting -p ime-ffi`, then `tools/verify-handwriting-model.py` against a built library.
 The XML sample checks are training-source regression, **not** a held-out recognition accuracy benchmark.

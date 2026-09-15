@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright © 2026 立方田 <managecode@gmail.com>
 set -euo pipefail
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
@@ -25,4 +26,4 @@ lipo -create \
 xcodebuild -create-xcframework \
   -library "$repo_dir/target/aarch64-apple-ios/release/libime_ffi.a" -headers "$repo_dir/include" \
   -library "$build_dir/libime_ffi-simulator.a" -headers "$repo_dir/include" \
-  -output "$build_dir/ShurufaCore.xcframework"
+  -output "$build_dir/ZhimoCore.xcframework"

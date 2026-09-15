@@ -1,3 +1,4 @@
+// Copyright © 2026 立方田 <managecode@gmail.com>
 //! Validated, signed language/model package manifests.
 
 use std::fmt;
@@ -173,7 +174,7 @@ mod tests {
 
     #[test]
     fn signed_package_detects_a_modified_resource() {
-        let root = std::env::temp_dir().join(format!("shurufa-package-{}", std::process::id()));
+        let root = std::env::temp_dir().join(format!("zhimo-package-{}", std::process::id()));
         std::fs::create_dir_all(&root).expect("package directory");
         let manifest = br#"{"schemaVersion":1,"id":"dev.test","version":"1","languages":["en"],"engine":"latin","offline":true,"license":"MIT","resources":["words.txt"]}"#;
         std::fs::write(root.join("manifest.json"), manifest).expect("manifest");
