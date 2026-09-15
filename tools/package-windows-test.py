@@ -11,6 +11,12 @@ import subprocess
 import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+
+
+def archive_path(destination):
+    """Append, do not replace a dotted version suffix."""
+    return destination.parent / (destination.name + ".zip")
+
 SYSTEM = {name.lower() for name in [
     "ADVAPI32.dll", "KERNEL32.dll", "msvcrt.dll", "ole32.dll", "OLEAUT32.dll",
     "SHELL32.dll", "USER32.dll", "bcryptprimitives.dll", "ntdll.dll",
@@ -32,7 +38,7 @@ def main():
     if any((args.x86_build, args.x86_runtime, args.x86_mingw_root)) and not all((args.x86_build, args.x86_runtime, args.x86_mingw_root)):
         parser.error("All three --x86-* arguments are required together")
     destination = args.output.resolve()
-    archive = destination.with_suffix(".zip")
+    archive = archive_path(destination)
     if destination.exists() or archive.exists():
         raise FileExistsError("Refusing to replace an existing test package")
     mingw = args.mingw_root.resolve(strict=True)
@@ -118,7 +124,10 @@ def main():
         "architecture": "x86_64+x86" if args.x86_build else "x86_64", "profile": "release", "signed": False,
         "windows_host_tested": False, "pinyin_engine": "pinyin.reference",
         "desktop_handwriting_speech": bool(args.speech_runtime),
-        "source_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        # Prebuilt inputs alone cannot attest which sources produced them.
+        "source_head": "unverified-prebuilt-inputs",
+        "packaging_source_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "binary_source_verified": False,
         "source_dirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),
         "compiler": subprocess.check_output([str(compiler), "--version"], text=True).splitlines()[0],
         "imports": imports,

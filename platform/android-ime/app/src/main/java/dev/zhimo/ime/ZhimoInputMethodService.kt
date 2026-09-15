@@ -435,7 +435,7 @@ class ZhimoInputMethodService : InputMethodService() {
                 return false
             }
             renderActions()
-            NativeIme.flush(handle)
+            scheduleLearningSave()
             if (hasComposition) {
                 showImeMessage("已确认前面的字，请继续选择剩余拼音或清空后切换")
                 return false
@@ -1097,7 +1097,7 @@ class ZhimoInputMethodService : InputMethodService() {
         }
         val wasComposing = hasComposition
         command(2)
-        if (wasComposing) NativeIme.flush(handle)
+        if (wasComposing) scheduleLearningSave()
         if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
             currentInputConnection.commitText(" ", 1)
         }
@@ -1133,7 +1133,7 @@ class ZhimoInputMethodService : InputMethodService() {
         }
         val wasComposing = hasComposition
         command(1)
-        if (wasComposing) NativeIme.flush(handle)
+        if (wasComposing) scheduleLearningSave()
         if (PlatformPolicy.shouldFallbackToEditor(wasComposing) &&
             !sendDefaultEditorAction(false)
         ) {
@@ -1147,49 +1147,51 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private fun renderActions() {
         val wasExpanded = candidatePanelExpanded
-        val actions = JSONArray(NativeIme.actions(handle))
+        val actions = runCatching { InputActionDecoder.decode(NativeIme.actions(handle)) }.getOrElse {
+            NativeIme.command(handle, 3)
+            hasComposition = false
+            localPreedit = ""
+            lastCandidates = JSONArray()
+            pinyinReadings = emptyList()
+            selectedPinyinReading = null
+            candidatePanelExpanded = false
+            candidates.removeAllViews()
+            currentInputConnection?.finishComposingText()
+            updateCandidateHeader()
+            refreshSegmentationKey()
+            updateSpaceKeyUi()
+            return
+        }
         candidates.removeAllViews()
         var receivedCandidates = false
-        for (index in 0 until actions.length()) {
-            val item = actions.get(index)
-            if (item is String) {
-                if (item == "CloseComposition") {
+        for (action in actions) {
+            when (action) {
+                InputAction.Close -> {
                     hasComposition = false
                     localPreedit = ""
                     currentInputConnection.finishComposingText()
                 }
-                continue
-            }
-            val action = item as org.json.JSONObject
-            when {
-                action.has("CommitText") -> {
+                is InputAction.Commit -> {
                     hasComposition = false
                     localPreedit = ""
-                    currentInputConnection.commitText(action.getString("CommitText"), 1)
+                    currentInputConnection.commitText(action.text, 1)
                 }
-                action.has("UpdateComposition") -> {
-                    val segments = action.getJSONObject("UpdateComposition").getJSONArray("segments")
-                    val text = buildString {
-                        for (segment in 0 until segments.length()) append(segments.getJSONObject(segment).getString("text"))
-                    }
-                    hasComposition = text.isNotEmpty()
-                    localPreedit = if (pinyin) text else ""
-                    if (!pinyin) currentInputConnection.setComposingText(text, 1)
+                is InputAction.Composition -> {
+                    hasComposition = action.text.isNotEmpty()
+                    localPreedit = if (pinyin) action.text else ""
+                    if (!pinyin) currentInputConnection.setComposingText(action.text, 1)
                 }
-                action.has("ShowCandidates") -> {
+                is InputAction.Candidates -> {
                     receivedCandidates = true
-                    showCandidates(action.getJSONArray("ShowCandidates"))
+                    showCandidates(action.values)
                 }
-                action.has("CandidatePage") -> {
-                    val page = action.getJSONObject("CandidatePage")
-                    nativeCandidatePage = page.getInt("index")
-                    nativeHasNextPage = page.getBoolean("has_next")
+                is InputAction.Page -> {
+                    nativeCandidatePage = action.index
+                    nativeHasNextPage = action.hasNext
                 }
-                action.has("PinyinReadings") -> {
-                    val reading = action.getJSONObject("PinyinReadings")
-                    val options = reading.getJSONArray("readings")
-                    pinyinReadings = List(options.length()) { options.getString(it) }
-                    selectedPinyinReading = if (reading.isNull("selected")) null else reading.getString("selected")
+                is InputAction.Readings -> {
+                    pinyinReadings = action.values
+                    selectedPinyinReading = action.selected
                 }
             }
         }
@@ -1244,9 +1246,20 @@ class ZhimoInputMethodService : InputMethodService() {
         )
     }
 
+    private var learningSaveWarningShown = false
+
+    private fun scheduleLearningSave() {
+        val previousFailure = NativeIme.learningStatus(handle) < 0
+        val submitted = NativeIme.scheduleFlush(handle)
+        if ((previousFailure || submitted < 0) && !learningSaveWarningShown) {
+            learningSaveWarningShown = true
+            android.widget.Toast.makeText(this, "个人词频暂未保存，请检查存储空间；输入仍可继续", android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+
     private fun selectCandidate(id: String) {
         NativeIme.select(handle, id)
-        NativeIme.flush(handle)
+        scheduleLearningSave()
         candidatePanelExpanded = false
         renderKeyboard()
         renderActions()

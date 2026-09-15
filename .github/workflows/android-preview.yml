@@ -1,0 +1,36 @@
+# Copyright © 2026 立方田 <managecode@gmail.com>
+name: Android preview verification
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['crates/**', 'platform/android-ime/**', 'tools/*android*', 'release/**', '.github/workflows/android-preview.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: 2
+      ZHIMO_ANDROID_RIME_JOBS: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: dtolnay/rust-toolchain@1.98.0
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android
+      - uses: android-actions/setup-android@v3
+      - run: sdkmanager 'platforms;android-37.0' 'build-tools;37.0.0' 'ndk;28.2.13676358' 'cmake;3.22.1'
+      - run: cargo install cargo-ndk --locked --version 4.1.2
+      - run: bash tools/verify-android-rime-beta.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zhimo-android-debug-verified
+          path: |
+            platform/android-ime/app/build/outputs/apk/debug/app-debug-rime.apk
+            platform/android-ime/app/build/outputs/apk/debug/app-debug-rime.apk.sha256
+            platform/android-ime/app/build/reports/lint-results-debug.*
+          if-no-files-found: error

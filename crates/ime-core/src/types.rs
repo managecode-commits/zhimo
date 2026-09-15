@@ -146,9 +146,16 @@ pub struct Candidate {
 pub enum Action {
     UpdateComposition(Composition),
     ShowCandidates(Vec<Candidate>),
-    CandidatePage { index: usize, has_next: bool },
+    CandidatePage {
+        index: usize,
+        has_next: bool,
+    },
     /// Optional phonetic disambiguation UI; selecting a reading must not commit text.
-    PinyinReadings { readings: Vec<String>, selected: Option<String> },
+    #[serde(rename = "PinyinReadings")]
+    ReadingOptions {
+        readings: Vec<String>,
+        selected: Option<String>,
+    },
     CommitText(String),
     CloseComposition,
     Ignored,

@@ -3,6 +3,12 @@
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot
 $source = Join-Path $root 'platform/windows-tsf'
+$bootstrap = Get-Content -LiteralPath (Join-Path $source 'install.cmd') | Where-Object { $_ -like '* -Command *' }
+if (!$bootstrap -or $bootstrap -notmatch '-Command "(.*)"$') { throw 'Installer bootstrap missing' }
+$tokens = $null
+$errors = $null
+[void][System.Management.Automation.Language.Parser]::ParseInput($Matches[1], [ref]$tokens, [ref]$errors)
+if ($errors.Count) { throw "Installer bootstrap parse errors: $errors" }
 foreach ($name in @('install-dual.ps1', 'uninstall-dual.ps1', 'dual-common.ps1', 'diagnose-emeditor.ps1', 'check-installed.ps1')) {
     $tokens = $null
     $errors = $null

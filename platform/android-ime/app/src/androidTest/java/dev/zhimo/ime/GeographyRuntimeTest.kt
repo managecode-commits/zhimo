@@ -12,7 +12,8 @@ class GeographyRuntimeTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val rime = RimeAssets.prepare(context)
         assertTrue(File(rime.shared, "zhimo_geography.dict.yaml").isFile)
-        assertEquals("5", File(rime.shared, "version.txt").readText().trim())
+        val bundledVersion = context.assets.open("rime/version.txt").bufferedReader().use { it.readText().trim() }
+        assertEquals(bundledVersion, File(rime.shared, "version.txt").readText().trim())
         val data = File(context.cacheDir, "geography-runtime-test").apply { mkdirs() }
         val handle = NativeIme.create(data.absolutePath, rime.shared.absolutePath, rime.user.absolutePath)
         assertTrue(handle != 0L)

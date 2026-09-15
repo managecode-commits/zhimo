@@ -124,6 +124,16 @@ Java_dev_zhimo_ime_NativeIme_flush(JNIEnv *, jobject, jlong value) {
 }
 
 extern "C" JNIEXPORT jint JNICALL
+Java_dev_zhimo_ime_NativeIme_scheduleFlush(JNIEnv *, jobject, jlong value) {
+  return ime_runtime_schedule_flush(handle(value));
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_dev_zhimo_ime_NativeIme_learningStatus(JNIEnv *, jobject, jlong value) {
+  return ime_runtime_learning_status(handle(value));
+}
+
+extern "C" JNIEXPORT jint JNICALL
 Java_dev_zhimo_ime_NativeIme_speechResult(JNIEnv *env, jobject, jlong value, jstring text,
                                             jstring language, jfloat confidence,
                                             jboolean final_result) {

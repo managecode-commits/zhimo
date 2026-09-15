@@ -1,5 +1,6 @@
 // Copyright © 2026 立方田 <managecode@gmail.com>
 import java.security.MessageDigest
+import groovy.json.JsonSlurper
 
 plugins {
     id("com.android.application")
@@ -76,6 +77,12 @@ val releaseSigningValues = listOf(
     releaseKeyPassword,
 )
 val releaseSigningReady = releaseSigningValues.all { !it.isNullOrBlank() }
+val releaseVersion = JsonSlurper().parse(rootDir.resolve("../../release/version.json")) as Map<*, *>
+val appVersionCode = (releaseVersion["android_version_code"] as Number).toInt()
+val appVersionName = releaseVersion["version"] as String
+check(appVersionCode > 1 && appVersionName.matches(Regex("[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-zA-Z0-9.]+)?"))) {
+    "Invalid release/version.json"
+}
 check(releaseSigningValues.none { !it.isNullOrBlank() } || releaseSigningReady) {
     "Android release signing variables must be provided together"
 }
@@ -89,8 +96,8 @@ android {
         applicationId = "dev.zhimo.ime"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
         externalNativeBuild.cmake.arguments += "-DZHIMO_ROOT=${rootDir.resolve("../..").absolutePath}"

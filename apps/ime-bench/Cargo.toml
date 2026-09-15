@@ -8,6 +8,7 @@ rust-version.workspace = true
 
 [dependencies]
 ime-core = { path = "../../crates/ime-core" }
+ime-data = { path = "../../crates/ime-data" }
 ime-engine-pinyin = { path = "../../crates/ime-engine-pinyin" }
 serde_json.workspace = true
 

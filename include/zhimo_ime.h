@@ -19,7 +19,8 @@ enum {
   ZHIMO_CAP_WHISPER_CPP = 1ULL << 3,
   ZHIMO_CAP_NATIVE_LIBRIME = 1ULL << 4,
   ZHIMO_CAP_STRUCTURED_ACTIONS = 1ULL << 5,
-  ZHIMO_CAP_HANDWRITING = 1ULL << 6
+  ZHIMO_CAP_HANDWRITING = 1ULL << 6,
+  ZHIMO_CAP_ASYNC_LEARNING = 1ULL << 7
 };
 
 unsigned int ime_runtime_abi_version(void);
@@ -43,6 +44,12 @@ ImeHandle *ime_runtime_new_with_rime(const char *engine_id, const char *data_dir
                                      const char *rime_shared_dir, const char *rime_user_dir);
 void ime_runtime_free(ImeHandle *handle);
 int ime_runtime_flush(const ImeHandle *handle);
+/* Additive async persistence API. Runtime calls must be serialized; workers own
+ * snapshots, never the handle. flush/free wait for pending writes and may block.
+ * schedule: 0 accepted, -1 invalid, -3 unavailable. status: 0 saved, 1 pending,
+ * -2 write failed, -3 read failed/unavailable. Retry with schedule or flush. */
+int ime_runtime_schedule_flush(const ImeHandle *handle);
+int ime_runtime_learning_status(const ImeHandle *handle);
 int ime_runtime_feed_utf8(ImeHandle *handle, const char *text);
 const char *ime_runtime_commit(ImeHandle *handle);
 int ime_runtime_switch_engine(ImeHandle *handle, const char *engine_id);

@@ -2,6 +2,7 @@
 //! Minimal C ABI proving ownership and UTF-8 transfer across platform bridges.
 
 mod handwriting;
+mod learning_writer;
 
 use std::ffi::{c_char, CStr, CString};
 use std::path::{Path, PathBuf};
@@ -32,6 +33,8 @@ pub struct ImeHandle {
     latin: Arc<LatinEngine>,
     pinyin: Arc<PinyinEngine>,
     learning_database: Option<PathBuf>,
+    learning_writer: Option<learning_writer::LearningWriter>,
+    learning_load_failed: bool,
 }
 
 pub struct ImeSpeechHandle {
@@ -54,8 +57,13 @@ pub const extern "C" fn ime_runtime_abi_version() -> u32 {
 
 #[no_mangle]
 pub const extern "C" fn ime_runtime_capabilities() -> u64 {
-    let capabilities =
-        (1_u64 << 0) | (1_u64 << 1) | (1_u64 << 2) | (1_u64 << 3) | (1_u64 << 5) | (1_u64 << 6);
+    let capabilities = (1_u64 << 0)
+        | (1_u64 << 1)
+        | (1_u64 << 2)
+        | (1_u64 << 3)
+        | (1_u64 << 5)
+        | (1_u64 << 6)
+        | (1_u64 << 7);
     #[cfg(feature = "native-librime")]
     {
         capabilities | (1_u64 << 4)
@@ -82,16 +90,23 @@ fn create_handle_with_engine(
 ) -> *mut ImeHandle {
     let mut runtime = Runtime::new();
     let learning_database = data_dir.map(|directory| directory.join("learning-v1.sqlite3"));
+    let mut learning_load_failed = false;
     let (stored_records, device_id) =
         if let (Some(directory), Some(database)) = (data_dir, learning_database.as_ref()) {
             let store = SqliteStore::new(database);
             let legacy = JsonFileStore::new(directory.join("learning-v1.json"));
-            let mut records = store.load().unwrap_or_default();
+            let mut records = store.load().unwrap_or_else(|_| {
+                learning_load_failed = true;
+                Vec::new()
+            });
             if records.is_empty()
                 && directory.join("learning-v1.json").is_file()
                 && migrate_json_to_sqlite(&legacy, &store).is_ok()
             {
-                records = store.load().unwrap_or_default();
+                records = store.load().unwrap_or_else(|_| {
+                    learning_load_failed = true;
+                    Vec::new()
+                });
             }
             let device_id = store
                 .device_id()
@@ -130,6 +145,13 @@ fn create_handle_with_engine(
         runtime.register_engine(engine);
     }
     runtime.register_engine(Arc::new(router));
+    let learning_writer = if learning_load_failed {
+        None
+    } else {
+        learning_database
+            .as_ref()
+            .and_then(|path| learning_writer::LearningWriter::new(path.clone()).ok())
+    };
     match runtime.create_session(engine_id) {
         Ok(session) => Box::into_raw(Box::new(ImeHandle {
             runtime,
@@ -142,6 +164,8 @@ fn create_handle_with_engine(
             latin,
             pinyin,
             learning_database,
+            learning_writer,
+            learning_load_failed,
         })),
         Err(_) => ptr::null_mut(),
     }
@@ -251,10 +275,29 @@ impl ImeHandle {
             .process(&self.session, event, &self.context)
             .map_err(|_| ())?;
         self.record_actions(&actions)?;
+        // All platform adapters share the same nonblocking persistence policy.
+        if actions
+            .0
+            .iter()
+            .any(|action| matches!(action, Action::CommitText(_)))
+        {
+            if let Some(writer) = &self.learning_writer {
+                writer.submit(merge_records(
+                    self.latin.learning_records(),
+                    self.pinyin.learning_records(),
+                ));
+            }
+        }
         Ok(actions)
     }
 
     fn save_learning(&self) -> Result<(), ()> {
+        if self.learning_load_failed {
+            return Err(());
+        }
+        if let Some(writer) = &self.learning_writer {
+            writer.wait();
+        }
         let Some(path) = &self.learning_database else {
             return Ok(());
         };
@@ -263,7 +306,11 @@ impl ImeHandle {
             self.pinyin.learning_records(),
         );
         let store = SqliteStore::new(path);
-        store.merge_save(&current).map_err(|_| ())
+        let result = store.merge_save(&current).map_err(|_| ());
+        if let Some(writer) = &self.learning_writer {
+            writer.acknowledge_sync_save(result.is_err());
+        }
+        result
     }
 }
 
@@ -288,6 +335,51 @@ pub unsafe extern "C" fn ime_runtime_flush(handle: *const ImeHandle) -> i32 {
         return -1;
     };
     handle.save_learning().map_or(-2, |()| 0)
+}
+
+/// Schedules a coalesced learning snapshot; no disk I/O on the calling thread.
+/// 0 accepted/no persistent store, -1 invalid handle, -3 unavailable/read failed.
+/// # Safety
+/// Calls on the runtime handle must be serialized by its owner.
+#[no_mangle]
+pub unsafe extern "C" fn ime_runtime_schedule_flush(handle: *const ImeHandle) -> i32 {
+    let Some(handle) = handle.as_ref() else {
+        return -1;
+    };
+    if handle.learning_load_failed {
+        return -3;
+    }
+    if handle.learning_database.is_none() {
+        return 0;
+    }
+    let Some(writer) = &handle.learning_writer else {
+        return -3;
+    };
+    writer.submit(merge_records(
+        handle.latin.learning_records(),
+        handle.pinyin.learning_records(),
+    ));
+    0
+}
+
+/// 0 saved/ephemeral, 1 pending, -2 save failed, -3 persistence unavailable.
+/// # Safety
+/// Calls on the runtime handle must be serialized by its owner.
+#[no_mangle]
+pub unsafe extern "C" fn ime_runtime_learning_status(handle: *const ImeHandle) -> i32 {
+    let Some(handle) = handle.as_ref() else {
+        return -1;
+    };
+    if handle.learning_load_failed {
+        return -3;
+    }
+    if handle.learning_database.is_none() {
+        return 0;
+    }
+    handle
+        .learning_writer
+        .as_ref()
+        .map_or(-3, learning_writer::LearningWriter::status)
 }
 
 /// Feeds one UTF-8 string and returns 0 on success.
@@ -521,7 +613,7 @@ pub unsafe extern "C" fn ime_runtime_action_kind(
         Action::CloseComposition => 4,
         Action::Ignored => 5,
         Action::CandidatePage { .. } => 6,
-        Action::PinyinReadings { .. } => 7,
+        Action::ReadingOptions { .. } => 7,
     }
 }
 
@@ -990,12 +1082,46 @@ mod tests {
                 assert_eq!(ime_runtime_send_command(handle, command), 0);
                 let commits: Vec<_> = (0..ime_runtime_action_count(handle))
                     .filter(|index| ime_runtime_action_kind(handle, *index) == 3)
-                    .map(|index| CStr::from_ptr(ime_runtime_action_text(handle, index)).to_str().unwrap().to_owned())
+                    .map(|index| {
+                        CStr::from_ptr(ime_runtime_action_text(handle, index))
+                            .to_str()
+                            .unwrap()
+                            .to_owned()
+                    })
                     .collect();
                 assert_eq!(commits, vec![expected]);
             }
             ime_runtime_free(handle);
         }
+    }
+
+    #[test]
+    fn corrupt_learning_database_is_reported_and_not_replaced() {
+        let directory =
+            std::env::temp_dir().join(format!("zhimo-corrupt-learning-{}", std::process::id()));
+        std::fs::create_dir_all(&directory).unwrap();
+        let path = directory.join("learning-v1.sqlite3");
+        std::fs::write(&path, b"broken database kept for recovery").unwrap();
+        let directory_string = CString::new(directory.to_str().unwrap()).unwrap();
+        let engine = CString::new("pinyin.reference").unwrap();
+        unsafe {
+            let handle = ime_runtime_new_with_data_dir(engine.as_ptr(), directory_string.as_ptr());
+            assert!(!handle.is_null());
+            assert_eq!(ime_runtime_learning_status(handle), -3);
+            assert_eq!(ime_runtime_schedule_flush(handle), -3);
+            assert_eq!(
+                ime_runtime_feed_utf8(handle, CString::new("nihao").unwrap().as_ptr()),
+                0
+            );
+            assert!(!ime_runtime_commit(handle).is_null());
+            assert_eq!(ime_runtime_flush(handle), -2);
+            ime_runtime_free(handle);
+        }
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            b"broken database kept for recovery"
+        );
+        std::fs::remove_dir_all(directory).unwrap();
     }
 
     #[test]

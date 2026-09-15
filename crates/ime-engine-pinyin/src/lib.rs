@@ -38,7 +38,13 @@ fn learn_selection(learning: &mut LearningModel, signature: &str, reading: &str,
     let mut keys = HashSet::from([learning_signature(signature)]);
     let pinyin = normalized_pinyin(reading);
     if !pinyin.is_empty() {
-        keys.insert(reading.split([' ', '\'']).filter(|s| !s.is_empty()).collect::<Vec<_>>().join("'"));
+        keys.insert(
+            reading
+                .split([' ', '\''])
+                .filter(|s| !s.is_empty())
+                .collect::<Vec<_>>()
+                .join("'"),
+        );
         keys.insert(t9_signature(&pinyin));
         keys.insert(pinyin);
     }
@@ -77,10 +83,13 @@ impl PinyinEngine {
             .records()
     }
 
+    #[cfg(test)]
     fn lookup(&self, input: &str) -> Vec<Candidate> {
         self.lookup_reading(input, None)
     }
 
+    // Keep the ordered ranking stages together; regression tests cover their precedence.
+    #[allow(clippy::too_many_lines)]
     fn lookup_reading(&self, input: &str, selected: Option<&str>) -> Vec<Candidate> {
         let Some(lookup) = LookupInput::new(input) else {
             return Vec::new();
@@ -96,12 +105,18 @@ impl PinyinEngine {
             .iter()
             .copied()
             .chain(abbreviation::lookup(input))
-            .filter(|entry| (lookup.matches(entry) || abbreviation::matches(&entry.display_pinyin, input))
-                && reading_matches(entry, input, selected))
+            .filter(|entry| {
+                (lookup.matches(entry) || abbreviation::matches(&entry.display_pinyin, input))
+                    && reading_matches(entry, input, selected)
+            })
         {
             let learned_score = learning.score(&signature, &entry.text);
             let bounded_score = i32::try_from(learned_score).unwrap_or(i32::MAX);
-            let exact = if lookup.exact(entry) { 2 } else if abbreviation::matches(&entry.display_pinyin, input) { 1 } else { 0 };
+            let exact = if lookup.exact(entry) {
+                2
+            } else {
+                u8::from(abbreviation::matches(&entry.display_pinyin, input))
+            };
             let candidate = Candidate {
                 id: CandidateId(format!("pinyin:{}", entry.text)),
                 display_text: entry.text.clone(),
@@ -115,14 +130,37 @@ impl PinyinEngine {
             let existing = unique_candidates
                 .entry(entry.text.clone())
                 .or_insert_with(|| (exact, learned_score, candidate.clone()));
-            if exact > existing.0 || (exact == existing.0 && candidate.score > existing.2.score)
-            {
+            if exact > existing.0 || (exact == existing.0 && candidate.score > existing.2.score) {
                 *existing = (exact, learned_score, candidate);
             }
         }
         // Learned phrases are real lexicon entries, not only bonuses on static words.
-        let records = learning.records();
-        for record in &records {
+        // Resolve each word's best reading once, rather than rescanning all N
+        // learning records for each of N records on every key press.
+        let mut learned_readings = HashMap::<&str, &str>::new();
+        for record in learning
+            .iter_records()
+            .filter(|record| record.effective_weight() > 0)
+        {
+            let reading = record.key.input_signature.as_str();
+            if reading
+                .chars()
+                .all(|ch| ch.is_ascii_lowercase() || ch == '\'')
+            {
+                learned_readings
+                    .entry(record.key.value.as_str())
+                    .and_modify(|current| {
+                        let rank = |value: &str| (value.matches('\'').count(), value.len());
+                        if rank(reading) > rank(current)
+                            || (rank(reading) == rank(current) && reading > *current)
+                        {
+                            *current = reading;
+                        }
+                    })
+                    .or_insert(reading);
+            }
+        }
+        for record in learning.iter_records() {
             if record.effective_weight() <= 0
                 || !record
                     .key
@@ -132,29 +170,23 @@ impl PinyinEngine {
             {
                 continue;
             }
-            let reading = records
-                .iter()
-                .filter(|other| {
-                    other.key.value == record.key.value
-                        && other.effective_weight() > 0
-                        && other
-                            .key
-                            .input_signature
-                            .chars()
-                            .all(|ch| ch.is_ascii_lowercase() || ch == '\'')
-                })
-                .max_by_key(|other| (other.key.input_signature.matches('\'').count(), other.key.input_signature.len()))
-                .map_or_else(
-                    || signature.clone(),
-                    |other| other.key.input_signature.clone(),
-                );
+            let reading = learned_readings
+                .get(record.key.value.as_str())
+                .copied()
+                .unwrap_or(&signature);
+            if record.key.input_signature != signature && !abbreviation::matches(reading, input) {
+                continue;
+            }
             let learned_entry = LexiconEntry {
-                pinyin: normalized_pinyin(&reading), t9: t9_signature(&reading),
-                display_pinyin: reading.clone(), text: record.key.value.clone(), weight: 0,
+                pinyin: normalized_pinyin(reading),
+                t9: t9_signature(reading),
+                display_pinyin: reading.to_owned(),
+                text: record.key.value.clone(),
+                weight: 0,
             };
-            if record.key.input_signature != signature
-                && !abbreviation::matches(&learned_entry.display_pinyin, input) { continue; }
-            if !reading_matches(&learned_entry, input, selected) { continue; }
+            if !reading_matches(&learned_entry, input, selected) {
+                continue;
+            }
             let exact = if lookup.exact(&learned_entry) { 2 } else { 1 };
             let candidate = Candidate {
                 id: CandidateId(format!("pinyin:{}", record.key.value)),
@@ -162,8 +194,8 @@ impl PinyinEngine {
                 commit_text: record.key.value.clone(),
                 language: Some("zh-CN".to_owned()),
                 source: "pinyin.reference".to_owned(),
-                score: record.effective_weight() as f64,
-                annotation: Some(reading),
+                score: f64::from(i32::try_from(record.effective_weight()).unwrap_or(i32::MAX)),
+                annotation: Some(reading.to_owned()),
                 learning_allowed: true,
             };
             unique_candidates
@@ -185,8 +217,12 @@ impl PinyinEngine {
         });
         // T9 has many exact single-character readings. Keep the best exact
         // candidates first, but reserve reachable slots for phrase abbreviations.
-        let abbreviations = candidates.iter().filter(|candidate| candidate.0 == 1)
-            .take(5).map(|candidate| candidate.2.id.clone()).collect::<Vec<_>>();
+        let abbreviations = candidates
+            .iter()
+            .filter(|candidate| candidate.0 == 1)
+            .take(5)
+            .map(|candidate| candidate.2.id.clone())
+            .collect::<Vec<_>>();
         for id in abbreviations.into_iter().rev() {
             if let Some(position) = candidates.iter().position(|candidate| candidate.2.id == id) {
                 if position > 15 {
@@ -215,8 +251,11 @@ impl PinyinEngine {
                 .entries()
                 .iter()
                 .copied()
-                .filter(|entry| prefix_lookup.exact(entry) && entry.text.chars().count() == 1
-                    && selected.is_none_or(|reading| entry.pinyin == reading))
+                .filter(|entry| {
+                    prefix_lookup.exact(entry)
+                        && entry.text.chars().count() == 1
+                        && selected.is_none_or(|reading| entry.pinyin == reading)
+                })
                 .collect();
             entries.sort_by(|a, b| {
                 learning
@@ -315,7 +354,12 @@ impl PinyinEngine {
     }
 
     fn composing_actions(&self, session: &SessionId, input: &str) -> ActionBatch {
-        let selected = self.readings.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(session).cloned();
+        let selected = self
+            .readings
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get(session)
+            .cloned();
         let candidates = self.lookup_reading(input, selected.as_deref());
         // Keep the editable buffer truthful. Ambiguous T9 interpretations belong
         // in candidate annotations, not in a guessed/pre-completed preedit.
@@ -331,7 +375,10 @@ impl PinyinEngine {
         ActionBatch(vec![
             Action::UpdateComposition(composition),
             Action::ShowCandidates(candidates),
-            Action::PinyinReadings { readings: t9_readings(input), selected },
+            Action::ReadingOptions {
+                readings: t9_readings(input),
+                selected,
+            },
         ])
     }
 }
@@ -353,6 +400,8 @@ impl InputEngine for PinyinEngine {
         Ok(())
     }
 
+    // One exhaustive event transition table; splitting arms would obscure state changes.
+    #[allow(clippy::too_many_lines)]
     fn process(
         &self,
         session: &SessionId,
@@ -402,8 +451,14 @@ impl InputEngine for PinyinEngine {
                     ]));
                 }
                 Key::Space => {
-                    let selected = self.readings.lock().map_err(lock_error)?.get(session).cloned();
-                    if let Some(candidate) = self.lookup_reading(input, selected.as_deref()).first() {
+                    let selected = self
+                        .readings
+                        .lock()
+                        .map_err(lock_error)?
+                        .get(session)
+                        .cloned();
+                    if let Some(candidate) = self.lookup_reading(input, selected.as_deref()).first()
+                    {
                         return self.commit_candidate(session, input, candidate, context);
                     }
                     let commit = std::mem::take(input);
@@ -428,13 +483,23 @@ impl InputEngine for PinyinEngine {
                     if reading.is_empty() {
                         self.readings.lock().map_err(lock_error)?.remove(session);
                     } else if t9_readings(input).iter().any(|value| value == reading) {
-                        self.readings.lock().map_err(lock_error)?.insert(session.clone(), reading.to_owned());
+                        self.readings
+                            .lock()
+                            .map_err(lock_error)?
+                            .insert(session.clone(), reading.to_owned());
                     } else {
-                        return Err(EngineError { message: "reading is not in the current pinyin menu".to_owned() });
+                        return Err(EngineError {
+                            message: "reading is not in the current pinyin menu".to_owned(),
+                        });
                     }
                     return Ok(self.composing_actions(session, input));
                 }
-                let selected = self.readings.lock().map_err(lock_error)?.get(session).cloned();
+                let selected = self
+                    .readings
+                    .lock()
+                    .map_err(lock_error)?
+                    .get(session)
+                    .cloned();
                 let candidate = self
                     .lookup_reading(input, selected.as_deref())
                     .into_iter()
@@ -477,7 +542,11 @@ impl InputEngine for PinyinEngine {
         }
         {
             let mut readings = self.readings.lock().map_err(lock_error)?;
-            if input.is_empty() || readings.get(session).is_some_and(|reading| !t9_readings(input).contains(reading)) {
+            if input.is_empty()
+                || readings
+                    .get(session)
+                    .is_some_and(|reading| !t9_readings(input).contains(reading))
+            {
                 readings.remove(session);
             }
         }
@@ -501,7 +570,9 @@ impl InputEngine for PinyinEngine {
     }
 
     fn close_session(&self, session: &SessionId) {
-        if let Ok(mut readings) = self.readings.lock() { readings.remove(session); }
+        if let Ok(mut readings) = self.readings.lock() {
+            readings.remove(session);
+        }
         if let Ok(mut sessions) = self.sessions.lock() {
             sessions.remove(session);
         }
@@ -534,13 +605,23 @@ fn normalized_pinyin(value: &str) -> String {
 }
 
 fn reading_matches(entry: &LexiconEntry, input: &str, selected: Option<&str>) -> bool {
-    if selected.is_none() && !input.contains('\'') { return true; }
-    let syllables = entry.display_pinyin.split([' ', '\'']).filter(|s| !s.is_empty()).collect::<Vec<_>>();
+    if selected.is_none() && !input.contains('\'') {
+        return true;
+    }
+    let syllables = entry
+        .display_pinyin
+        .split([' ', '\''])
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>();
     if selected.is_some_and(|reading| syllables.first().copied() != Some(reading)) {
         return false;
     }
-    if abbreviation::matches(&entry.display_pinyin, input) { return true; }
-    if !input.contains('\'') { return true; }
+    if abbreviation::matches(&entry.display_pinyin, input) {
+        return true;
+    }
+    if !input.contains('\'') {
+        return true;
+    }
     let mut boundaries = HashSet::new();
     let mut offset = 0;
     for syllable in syllables {
@@ -550,7 +631,9 @@ fn reading_matches(entry: &LexiconEntry, input: &str, selected: Option<&str>) ->
     let mut offset = 0;
     for ch in input.chars() {
         if ch == '\'' {
-            if !boundaries.contains(&offset) { return false; }
+            if !boundaries.contains(&offset) {
+                return false;
+            }
         } else if ch.is_ascii_alphabetic() || ('2'..='9').contains(&ch) {
             offset += 1;
         }
@@ -559,22 +642,43 @@ fn reading_matches(entry: &LexiconEntry, input: &str, selected: Option<&str>) ->
 }
 
 fn t9_readings(input: &str) -> Vec<String> {
-    let Some(_) = normalized_t9_input(input) else { return Vec::new(); };
     static SYLLABLES: OnceLock<Vec<(String, String)>> = OnceLock::new();
+    let Some(_) = normalized_t9_input(input) else {
+        return Vec::new();
+    };
     let syllables = SYLLABLES.get_or_init(|| {
-        let unique = lexicon().iter().filter(|entry| entry.text.chars().count() == 1)
-            .map(|entry| entry.pinyin.clone()).collect::<HashSet<_>>();
-        unique.into_iter().map(|reading| (t9_signature(&reading), reading)).collect()
+        let unique = lexicon()
+            .iter()
+            .filter(|entry| entry.text.chars().count() == 1)
+            .map(|entry| entry.pinyin.clone())
+            .collect::<HashSet<_>>();
+        unique
+            .into_iter()
+            .map(|reading| (t9_signature(&reading), reading))
+            .collect()
     });
     let first = input.split('\'').next().unwrap_or("");
     let explicit = input.contains('\'');
-    let mut choices = syllables.iter().filter(|(digits, _)| {
-        if explicit { digits == first } else { digits.starts_with(first) || first.starts_with(digits) }
-    }).collect::<Vec<_>>();
-    choices.sort_by(|a, b| (b.0 == first).cmp(&(a.0 == first))
-        .then_with(|| b.0.len().min(first.len()).cmp(&a.0.len().min(first.len())))
-        .then_with(|| a.1.cmp(&b.1)));
-    choices.into_iter().map(|(_, reading)| reading.clone()).collect()
+    let mut choices = syllables
+        .iter()
+        .filter(|(digits, _)| {
+            if explicit {
+                digits == first
+            } else {
+                digits.starts_with(first) || first.starts_with(digits)
+            }
+        })
+        .collect::<Vec<_>>();
+    choices.sort_by(|a, b| {
+        (b.0 == first)
+            .cmp(&(a.0 == first))
+            .then_with(|| b.0.len().min(first.len()).cmp(&a.0.len().min(first.len())))
+            .then_with(|| a.1.cmp(&b.1))
+    });
+    choices
+        .into_iter()
+        .map(|(_, reading)| reading.clone())
+        .collect()
 }
 
 #[derive(Debug)]
@@ -654,6 +758,7 @@ fn lexicon() -> &'static [LexiconEntry] {
             (include_str!("../data/pinyin_simp_lexicon.tsv"), 0),
             (include_str!("../data/common_phrase_lexicon.tsv"), 0),
             (include_str!("../data/geography_lexicon.tsv"), 0),
+            (include_str!("../data/curated_phrase_lexicon.tsv"), 0),
             (include_str!("../data/reference_lexicon.tsv"), 10_000_000),
             // Product name is compiled into every reference-engine build,
             // independent of downloaded dictionaries and user learning.
@@ -748,13 +853,29 @@ mod tests {
     #[test]
     fn abbreviations_and_mixed_spelling_work_in_both_layouts() {
         let engine = PinyinEngine::new();
-        for (input, word) in [("nh", "你好"), ("wm", "我们"), ("zg", "中国"),
-            ("wlw", "物联网"), ("nih", "你好"), ("nhao", "你好"), ("wulw", "物联网"),
-            ("n'h", "你好"), ("ni'h", "你好"), ("zhg", "中国"), ("zm", "知墨")] {
+        for (input, word) in [
+            ("nh", "你好"),
+            ("wm", "我们"),
+            ("zg", "中国"),
+            ("wlw", "物联网"),
+            ("nih", "你好"),
+            ("nhao", "你好"),
+            ("wulw", "物联网"),
+            ("n'h", "你好"),
+            ("ni'h", "你好"),
+            ("zhg", "中国"),
+            ("zm", "知墨"),
+        ] {
             for code in [input.to_owned(), t9_signature(input)] {
                 let values = engine.lookup(&code);
-                assert!(values.iter().any(|c| c.commit_text == word), "{code}: {word}");
-                assert_eq!(values.iter().map(|c| &c.id).collect::<HashSet<_>>().len(), values.len());
+                assert!(
+                    values.iter().any(|c| c.commit_text == word),
+                    "{code}: {word}"
+                );
+                assert_eq!(
+                    values.iter().map(|c| &c.id).collect::<HashSet<_>>().len(),
+                    values.len()
+                );
             }
         }
         assert!(!abbreviation::matches("ni hao", "n'ihao"));
@@ -770,13 +891,27 @@ mod tests {
         let session = SessionId("abbreviation".into());
         let context = InputContext::default();
         engine.create_session(&session).unwrap();
-        engine.process(&session, &InputEvent::Text("nh".into()), &context).unwrap();
-        let actions = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin:你好".into())), &context).unwrap();
+        engine
+            .process(&session, &InputEvent::Text("nh".into()), &context)
+            .unwrap();
+        let actions = engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin:你好".into())),
+                &context,
+            )
+            .unwrap();
         assert_eq!(actions.committed_text(), Some("你好"));
         assert_eq!(engine.lookup("nh")[0].commit_text, "你好");
-        assert!(engine.learning_records().iter().any(|r| r.key.input_signature == "nh" && r.key.value == "你好"));
+        assert!(engine
+            .learning_records()
+            .iter()
+            .any(|r| r.key.input_signature == "nh" && r.key.value == "你好"));
         assert_eq!(engine.lookup("ren")[0].commit_text, "人");
-        assert!(engine.lookup("nihao").iter().any(|c| c.commit_text == "你好"));
+        assert!(engine
+            .lookup("nihao")
+            .iter()
+            .any(|c| c.commit_text == "你好"));
     }
 
     #[test]
@@ -785,11 +920,79 @@ mod tests {
         let engine = PinyinEngine::new();
         let cases = ["nh", "wm", "wulw", "64", "96", "9859"];
         let start = std::time::Instant::now();
-        for code in cases { engine.lookup(code); }
-        eprintln!("abbreviation cold indexes and six lookups: {:?}", start.elapsed());
+        for code in cases {
+            engine.lookup(code);
+        }
+        eprintln!(
+            "abbreviation cold indexes and six lookups: {:?}",
+            start.elapsed()
+        );
         let start = std::time::Instant::now();
-        for _ in 0..20 { for code in cases { engine.lookup(code); } }
+        for _ in 0..20 {
+            for code in cases {
+                engine.lookup(code);
+            }
+        }
         eprintln!("abbreviation 120 warm lookups: {:?}", start.elapsed());
+    }
+
+    #[test]
+    fn curated_phrases_are_synced_and_searchable() {
+        let engine = PinyinEngine::new();
+        let rime = include_str!(
+            "../../../platform/android-ime/app/src/main/assets/rime/zhimo_curated.dict.yaml"
+        );
+        let mut expected_rows = Vec::new();
+        let mut seen = std::collections::HashSet::new();
+        for line in include_str!("../data/curated_phrase_lexicon.tsv")
+            .lines()
+            .filter(|line| !line.is_empty() && !line.starts_with('#'))
+        {
+            let fields: Vec<_> = line.split('\t').collect();
+            assert_eq!(fields.len(), 3);
+            assert!(
+                seen.insert((fields[0], fields[1])),
+                "duplicate curated phrase"
+            );
+            assert_eq!(
+                fields[0].split_whitespace().count(),
+                fields[1].chars().count()
+            );
+            assert!(fields[2].parse::<i32>().unwrap() > 0);
+            expected_rows.push(format!("{}\t{}\t{}", fields[1], fields[0], fields[2]));
+            let reading = fields[0].replace(' ', "");
+            for input in [
+                reading.clone(),
+                fields[0].replace(' ', "'"),
+                t9_signature(&reading),
+            ] {
+                assert!(
+                    engine
+                        .lookup(&input)
+                        .iter()
+                        .any(|c| c.commit_text == fields[1]),
+                    "{input}: missing {}",
+                    fields[1]
+                );
+            }
+        }
+        assert_eq!(
+            rime.split_once("...\n")
+                .unwrap()
+                .1
+                .lines()
+                .collect::<Vec<_>>(),
+            expected_rows
+        );
+        let schema = include_str!(
+            "../../../platform/android-ime/app/src/main/assets/rime/zhimo_pinyin.dict.yaml"
+        );
+        assert!(schema.contains("  - zhimo_curated\n"));
+        assert!(engine.lookup("jj").iter().any(|c| c.commit_text == "极简"));
+        assert!(engine
+            .lookup("jijian")
+            .iter()
+            .any(|c| c.commit_text != "极简"));
     }
 
     #[test]
@@ -797,8 +1000,15 @@ mod tests {
         let engine = PinyinEngine::new();
         for input in ["zhimo", "zhi'mo", "94466", "944'66"] {
             let candidates = engine.lookup(input);
-            let matches: Vec<_> = candidates.iter().filter(|c| c.commit_text == "知墨").collect();
-            assert_eq!(matches.len(), 1, "{input}: missing or duplicate product name");
+            let matches: Vec<_> = candidates
+                .iter()
+                .filter(|c| c.commit_text == "知墨")
+                .collect();
+            assert_eq!(
+                matches.len(),
+                1,
+                "{input}: missing or duplicate product name"
+            );
             assert_eq!(matches[0].annotation.as_deref(), Some("zhi mo"));
         }
     }
@@ -807,31 +1017,57 @@ mod tests {
     fn geographic_names_support_full_pinyin_and_nine_key() {
         let engine = PinyinEngine::new();
         for (reading, word) in [
-            ("hebeisheng", "河北省"), ("neimengguzizhiqu", "内蒙古自治区"),
-            ("shijiazhuangshi", "石家庄市"), ("wulumuqishi", "乌鲁木齐市"),
-            ("liangjiangxinqu", "两江新区"), ("shennongjialinqu", "神农架林区"),
-            ("kekedalashi", "可克达拉市"), ("baiyangshi", "白杨市"),
+            ("hebeisheng", "河北省"),
+            ("neimengguzizhiqu", "内蒙古自治区"),
+            ("shijiazhuangshi", "石家庄市"),
+            ("wulumuqishi", "乌鲁木齐市"),
+            ("liangjiangxinqu", "两江新区"),
+            ("shennongjialinqu", "神农架林区"),
+            ("kekedalashi", "可克达拉市"),
+            ("baiyangshi", "白杨市"),
             ("xianggangtebiexingzhengqu", "香港特别行政区"),
-            ("aomentebiexingzhengqu", "澳门特别行政区"), ("taibeishi", "台北市"),
-            ("jinmenxian", "金门县"), ("shanxian", "单县"),
-            ("fanshixian", "繁峙县"), ("yingjingxian", "荥经县"),
-            ("xunxian", "浚县"), ("guoyangxian", "涡阳县"),
-            ("zhongmouxian", "中牟县"), ("hunchunshi", "珲春市"), ("tanchangxian", "宕昌县"),
+            ("aomentebiexingzhengqu", "澳门特别行政区"),
+            ("taibeishi", "台北市"),
+            ("jinmenxian", "金门县"),
+            ("shanxian", "单县"),
+            ("fanshixian", "繁峙县"),
+            ("yingjingxian", "荥经县"),
+            ("xunxian", "浚县"),
+            ("guoyangxian", "涡阳县"),
+            ("zhongmouxian", "中牟县"),
+            ("hunchunshi", "珲春市"),
+            ("tanchangxian", "宕昌县"),
         ] {
             for input in [reading.to_owned(), t9_signature(reading)] {
-                assert!(engine.lookup(&input).iter().any(|c| c.commit_text == word), "{input}: {word}");
+                assert!(
+                    engine.lookup(&input).iter().any(|c| c.commit_text == word),
+                    "{input}: {word}"
+                );
             }
         }
     }
 
     #[test]
     fn geographic_overlay_is_loaded_without_losing_syllable_boundaries() {
-        for line in include_str!("../data/geography_lexicon.tsv").lines().filter(|line| !line.starts_with('#')) {
+        for line in include_str!("../data/geography_lexicon.tsv")
+            .lines()
+            .filter(|line| !line.starts_with('#'))
+        {
             let fields = line.split('\t').collect::<Vec<_>>();
             assert_eq!(fields.len(), 3);
-            assert_eq!(fields[0].split_whitespace().count(), fields[1].chars().count());
+            assert_eq!(
+                fields[0].split_whitespace().count(),
+                fields[1].chars().count()
+            );
             let lookup = LookupInput::new(fields[0]).unwrap();
-            assert!(lookup.entries().iter().any(|entry| entry.text == fields[1] && lookup.exact(entry)), "{}", fields[1]);
+            assert!(
+                lookup
+                    .entries()
+                    .iter()
+                    .any(|entry| entry.text == fields[1] && lookup.exact(entry)),
+                "{}",
+                fields[1]
+            );
         }
     }
 
@@ -848,9 +1084,13 @@ mod tests {
     #[test]
     fn t9_sidebar_contains_ambiguous_readings_without_candidate_limit() {
         let choices = t9_readings("5426");
-        for reading in ["jian", "jiao", "lian", "liao"] { assert!(choices.contains(&reading.to_owned())); }
+        for reading in ["jian", "jiao", "lian", "liao"] {
+            assert!(choices.contains(&reading.to_owned()));
+        }
         assert!(t9_readings("ji'an").is_empty());
-        assert!(t9_readings("54'26").iter().all(|reading| t9_signature(reading) == "54"));
+        assert!(t9_readings("54'26")
+            .iter()
+            .all(|reading| t9_signature(reading) == "54"));
     }
 
     #[test]
@@ -859,18 +1099,71 @@ mod tests {
         let session = SessionId("reading".into());
         engine.create_session(&session).unwrap();
         let context = InputContext::default();
-        engine.process(&session, &InputEvent::Text("5426".into()), &context).unwrap();
-        let selected = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
+        engine
+            .process(&session, &InputEvent::Text("5426".into()), &context)
+            .unwrap();
+        let selected = engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())),
+                &context,
+            )
+            .unwrap();
         assert!(selected.committed_text().is_none());
-        assert!(selected.0.iter().any(|a| matches!(a, Action::PinyinReadings { selected: Some(s), .. } if s == "lian")));
-        let menu = selected.0.iter().find_map(|a| match a { Action::ShowCandidates(c) => Some(c), _ => None }).unwrap();
-        for word in ["连", "脸", "练"] { assert!(menu.iter().any(|c| c.commit_text == word)); }
-        assert!(menu.iter().all(|c| c.annotation.as_deref().unwrap_or("").split([' ', '\'']).next() == Some("lian")));
-        assert!(engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:hao".into())), &context).is_err());
-        let automatic = engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:".into())), &context).unwrap();
-        assert!(automatic.0.iter().any(|a| matches!(a, Action::PinyinReadings { selected: None, .. })));
-        engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
-        let committed = engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)), &context).unwrap();
+        assert!(selected
+            .0
+            .iter()
+            .any(|a| matches!(a, Action::ReadingOptions { selected: Some(s), .. } if s == "lian")));
+        let menu = selected
+            .0
+            .iter()
+            .find_map(|a| match a {
+                Action::ShowCandidates(c) => Some(c),
+                _ => None,
+            })
+            .unwrap();
+        for word in ["连", "脸", "练"] {
+            assert!(menu.iter().any(|c| c.commit_text == word));
+        }
+        assert!(menu.iter().all(|c| c
+            .annotation
+            .as_deref()
+            .unwrap_or("")
+            .split([' ', '\''])
+            .next()
+            == Some("lian")));
+        assert!(engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin-reading:hao".into())),
+                &context
+            )
+            .is_err());
+        let automatic = engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin-reading:".into())),
+                &context,
+            )
+            .unwrap();
+        assert!(automatic
+            .0
+            .iter()
+            .any(|a| matches!(a, Action::ReadingOptions { selected: None, .. })));
+        engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())),
+                &context,
+            )
+            .unwrap();
+        let committed = engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)),
+                &context,
+            )
+            .unwrap();
         assert!(committed.committed_text().is_some());
         assert!(!engine.readings.lock().unwrap().contains_key(&session));
     }
@@ -882,13 +1175,35 @@ mod tests {
         engine.create_session(&session).unwrap();
         let context = InputContext::default();
         for ch in "'ji''an".chars() {
-            engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Character(ch))), &context).unwrap();
+            engine
+                .process(
+                    &session,
+                    &InputEvent::Key(ime_core::KeyEvent::press(Key::Character(ch))),
+                    &context,
+                )
+                .unwrap();
         }
         assert_eq!(engine.sessions.lock().unwrap()[&session], "ji'an");
-        engine.process(&session, &InputEvent::Reset, &context).unwrap();
-        engine.process(&session, &InputEvent::Text("5426".into()), &context).unwrap();
-        engine.process(&session, &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())), &context).unwrap();
-        engine.process(&session, &InputEvent::Key(ime_core::KeyEvent::press(Key::Backspace)), &context).unwrap();
+        engine
+            .process(&session, &InputEvent::Reset, &context)
+            .unwrap();
+        engine
+            .process(&session, &InputEvent::Text("5426".into()), &context)
+            .unwrap();
+        engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(CandidateId("pinyin-reading:lian".into())),
+                &context,
+            )
+            .unwrap();
+        engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::Backspace)),
+                &context,
+            )
+            .unwrap();
         assert!(!engine.readings.lock().unwrap().contains_key(&session));
         assert_eq!(engine.sessions.lock().unwrap()[&session], "542");
     }
@@ -991,12 +1306,27 @@ mod tests {
                 let session = SessionId("return-space".to_owned());
                 let context = InputContext::default();
                 engine.create_session(&session).unwrap();
-                engine.process(&session, &InputEvent::Text(text.to_owned()), &context).unwrap();
-                let actions = engine.process(&session,
-                    &InputEvent::Key(ime_core::KeyEvent::press(key.clone())), &context).unwrap();
-                assert_eq!(actions.committed_text(), Some(if key == Key::Enter { text } else { expected }));
-                let idle = engine.process(&session,
-                    &InputEvent::Key(ime_core::KeyEvent::press(Key::Enter)), &context).unwrap();
+                engine
+                    .process(&session, &InputEvent::Text(text.to_owned()), &context)
+                    .unwrap();
+                let actions = engine
+                    .process(
+                        &session,
+                        &InputEvent::Key(ime_core::KeyEvent::press(key.clone())),
+                        &context,
+                    )
+                    .unwrap();
+                assert_eq!(
+                    actions.committed_text(),
+                    Some(if key == Key::Enter { text } else { expected })
+                );
+                let idle = engine
+                    .process(
+                        &session,
+                        &InputEvent::Key(ime_core::KeyEvent::press(Key::Enter)),
+                        &context,
+                    )
+                    .unwrap();
                 assert_eq!(idle.committed_text(), None);
                 assert!(matches!(idle.0.as_slice(), [Action::Ignored]));
             }
@@ -1022,7 +1352,10 @@ mod tests {
                 &InputContext::default(),
             )
             .expect("commit");
-        assert_eq!(actions.committed_text(), Some("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"));
+        assert_eq!(
+            actions.committed_text(),
+            Some("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+        );
     }
 
     #[test]
@@ -1152,7 +1485,7 @@ mod tests {
                 actions = engine
                     .process(&session, &InputEvent::SelectCandidate(selected), &context)
                     .unwrap();
-                assert_eq!(actions.committed_text().as_deref(), Some(*expected));
+                assert_eq!(actions.committed_text(), Some(*expected));
                 assert_eq!(
                     actions
                         .0

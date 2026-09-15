@@ -19,6 +19,7 @@ jobs:
           components: rustfmt, clippy
       - run: sudo apt-get update && sudo apt-get install -y gir1.2-ibus-1.0 python3-gi
       - run: ./tools/verify.sh
+      - run: python3 tools/test-release-contract.py
       - run: python3 -m py_compile platform/linux-ibus/zhimo_ibus.py
       - run: python3 platform/linux-ibus/runtime_smoke.py
       - run: python3 -B platform/linux-ibus/test_keyboard.py
@@ -39,6 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.98.0
+      - name: Verify installer parsing and mocked registration
+        shell: powershell
+        run: ./tools/test-windows-dual-scripts.ps1
       - run: cargo build -p ime-ffi
       - run: cmake -S platform/windows-tsf -B target/windows-tsf -A x64
       - run: cmake --build target/windows-tsf --config Debug

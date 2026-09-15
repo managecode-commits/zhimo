@@ -182,6 +182,11 @@ impl LearningModel {
         records
     }
 
+    /// Borrow records for ranking without cloning and sorting a complete snapshot.
+    pub fn iter_records(&self) -> impl Iterator<Item = &LearningRecord> {
+        self.records.values()
+    }
+
     fn key(&self, input_signature: &str, value: &str) -> RecordKey {
         RecordKey {
             namespace: self.namespace.clone(),
@@ -428,8 +433,34 @@ impl SqliteStore {
         let mut connection = self.connection()?;
         let transaction =
             connection.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
-        let merged = merge_records(query_records(&transaction)?, incoming.iter().cloned());
-        replace_records(&transaction, &merged)?;
+        // Update only newer rows. Preserve the same logical-clock/content order
+        // as merge_records without reading or deleting the complete database.
+        let mut statement = transaction.prepare(
+            "INSERT INTO learning_records (namespace, language, input_signature, value,
+             positive_count, negative_count, clock_counter, device_id, deleted)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+             ON CONFLICT(namespace, language, input_signature, value) DO UPDATE SET
+             positive_count=excluded.positive_count, negative_count=excluded.negative_count,
+             clock_counter=excluded.clock_counter, device_id=excluded.device_id, deleted=excluded.deleted
+             WHERE (excluded.clock_counter, excluded.device_id, excluded.deleted,
+                    excluded.positive_count, excluded.negative_count) >
+                   (learning_records.clock_counter, learning_records.device_id, learning_records.deleted,
+                    learning_records.positive_count, learning_records.negative_count)",
+        )?;
+        for record in incoming {
+            statement.execute(rusqlite::params![
+                record.key.namespace,
+                record.key.language,
+                record.key.input_signature,
+                record.key.value,
+                sqlite_counter(record.positive_count)?,
+                sqlite_counter(record.negative_count)?,
+                sqlite_counter(record.clock.counter)?,
+                record.clock.device_id,
+                record.deleted
+            ])?;
+        }
+        drop(statement);
         transaction.commit()?;
         Ok(())
     }
@@ -626,6 +657,25 @@ mod tests {
         assert_eq!(model.score("he", "hello"), 0);
         model.selected("he", "hello");
         assert_eq!(model.score("he", "hello"), 2);
+    }
+
+    #[test]
+    fn incremental_merge_preserves_unrelated_rows_and_never_deletes_table() {
+        let path =
+            std::env::temp_dir().join(format!("zhimo-upsert-{}.sqlite3", std::process::id()));
+        let store = SqliteStore::new(&path);
+        let original = record("phone", 1, false);
+        store.save(std::slice::from_ref(&original)).unwrap();
+        store.connection().unwrap().execute_batch(
+            "CREATE TRIGGER forbid_delete BEFORE DELETE ON learning_records BEGIN SELECT RAISE(ABORT, 'unexpected delete'); END;"
+        ).unwrap();
+        let newer = record("phone", 2, true);
+        store.merge_save(std::slice::from_ref(&newer)).unwrap();
+        store.merge_save(std::slice::from_ref(&original)).unwrap();
+        assert_eq!(store.load().unwrap(), vec![newer]);
+        fs::remove_file(&path).unwrap();
+        let _ = fs::remove_file(path.with_extension("sqlite3-shm"));
+        let _ = fs::remove_file(path.with_extension("sqlite3-wal"));
     }
 
     #[test]

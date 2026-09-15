@@ -472,6 +472,7 @@ name = "ime-bench"
 version = "0.1.0"
 dependencies = [
  "ime-core",
+ "ime-data",
  "ime-engine-pinyin",
  "serde_json",
 ]

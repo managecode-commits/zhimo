@@ -27,5 +27,7 @@ object NativeIme {
     external fun select(handle: Long, candidate: String): Int
     external fun actions(handle: Long): String
     external fun flush(handle: Long): Int
+    external fun scheduleFlush(handle: Long): Int
+    external fun learningStatus(handle: Long): Int
     external fun speechResult(handle: Long, text: String, language: String, confidence: Float, finalResult: Boolean): Int
 }

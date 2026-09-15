@@ -38,6 +38,17 @@ with tempfile.TemporaryDirectory(prefix='zhimo-rime-smoke-') as directory:
     runtime = module.Runtime()
     try:
         assert runtime.pinyin_engine == 'rime'
+        for reading, word in [('jijian', '极简'), ('jj', '极简'),
+                              ('jijianzhuyi', '极简主义'), ('jianyuesheji', '简约设计'),
+                              ('jiaohusheji', '交互设计'), ('qinglianghua', '轻量化')]:
+            runtime.command(3)
+            actions = runtime.feed(reading)
+            candidates = [candidate for action in actions for candidate in action.get('ShowCandidates', [])]
+            match = next((candidate for candidate in candidates if candidate['commit_text'] == word), None)
+            assert match, (reading, actions)
+            assert runtime.library.ime_runtime_select_candidate(runtime.handle, match['id'].encode()) == 0
+            assert any(action.get('CommitText') == word for action in runtime.actions())
+            print(f'{reading}: {word} curated candidate and commit OK')
         for command, expected in [(1, 'jixu'), (2, '继续')]:
             runtime.command(3)
             runtime.feed('jixu')

@@ -2,6 +2,8 @@
 //! Conservative Android-derived 天/夫 tie-break. Never invents model candidates.
 use crate::{zinnia::Candidate, Point};
 
+// Geometric coordinates use x/y and bounds; keep conservative guards together.
+#[allow(clippy::many_single_char_names, clippy::too_many_lines)]
 pub(crate) fn rank(strokes: &[Vec<Point>], choices: &mut Vec<Candidate>) {
     if strokes.len() != 4
         || strokes.iter().any(|s| s.len() < 2)
@@ -38,7 +40,12 @@ pub(crate) fn rank(strokes: &[Vec<Point>], choices: &mut Vec<Candidate>) {
         })
         .collect();
     bars.sort_by(|a, b| {
-        let mean = |s: &[Point]| s.iter().map(|p| p.y).sum::<f32>() / s.len() as f32;
+        let mean = |s: &[Point]| {
+            let (sum, count) = s.iter().fold((0.0_f32, 0.0_f32), |(sum, count), p| {
+                (sum + p.y, count + 1.0)
+            });
+            sum / count
+        };
         mean(a.1).total_cmp(&mean(b.1))
     });
     if bars.len() != 2 {

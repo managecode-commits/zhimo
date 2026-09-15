@@ -16,6 +16,8 @@ import android.widget.TextView
 class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val versionInfo = packageManager.getPackageInfo(packageName, 0)
+        title = "知墨 Zhimo ${versionInfo.versionName}"
         val preferences = getSharedPreferences("zhimo", MODE_PRIVATE)
         setContentView(ScrollView(this).apply {
             addView(LinearLayout(this@MainActivity).apply {

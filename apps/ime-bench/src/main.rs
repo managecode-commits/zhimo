@@ -3,6 +3,7 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use ime_core::{InputContext, InputEvent, Key, KeyEvent, Runtime};
+use ime_data::LearningModel;
 use ime_engine_pinyin::PinyinEngine;
 
 fn percentile(sorted: &[u128], numerator: usize, denominator: usize) -> u128 {
@@ -23,12 +24,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         return Err("iterations must be greater than zero".into());
     }
 
+    let code = std::env::args()
+        .nth(2)
+        .unwrap_or_else(|| "nihao".to_owned());
+    if code.is_empty()
+        || code.len() > 128
+        || !code
+            .chars()
+            .all(|ch| ch.is_ascii_lowercase() || ('2'..='9').contains(&ch) || ch == '\'')
+    {
+        return Err("code must be 1..128 pinyin/T9 characters".into());
+    }
+    let learning_count = std::env::args()
+        .nth(3)
+        .map_or(Ok(0_u32), |value| value.parse())?;
+    if learning_count > 100_000 || iterations > 1_000_000 {
+        return Err("benchmark size exceeds safety limit".into());
+    }
+    let mut learning = LearningModel::new("learned-lexicon", "zh-CN", "synthetic-benchmark");
+    for index in 0..learning_count {
+        let first = char::from_u32(0x4e00 + index / 20_000).ok_or("invalid synthetic word")?;
+        let second = char::from_u32(0x4e00 + index % 20_000).ok_or("invalid synthetic word")?;
+        learning.selected("ce'shi", &format!("测试{first}{second}"));
+    }
     let mut runtime = Runtime::new();
-    runtime.register_engine(Arc::new(PinyinEngine::new()));
+    runtime.register_engine(Arc::new(PinyinEngine::with_learning(learning)));
     let session = runtime.create_session("pinyin.reference")?;
     let context = InputContext::default();
 
-    for character in "nihao".chars() {
+    let cold_started = Instant::now();
+    for character in code.chars() {
         runtime.process(
             &session,
             &InputEvent::Key(KeyEvent::press(Key::Character(character))),
@@ -41,10 +66,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &context,
     )?;
 
-    let mut samples = Vec::with_capacity(iterations * 6);
+    let cold_ns = cold_started.elapsed().as_nanos();
+    let mut samples = Vec::with_capacity(iterations * (code.len() + 1));
     let started = Instant::now();
     for _ in 0..iterations {
-        for character in "nihao".chars() {
+        for character in code.chars() {
             let event_started = Instant::now();
             runtime.process(
                 &session,
@@ -71,6 +97,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "{}",
         serde_json::json!({
             "iterations": iterations,
+            "code": code,
+            "synthetic_learning_records": learning_count,
+            "cold_sequence_ns": cold_ns,
+            "scope": "core reference engine only; excludes UI, IPC, disk and real user data",
             "events": samples.len(),
             "elapsed_ms": elapsed.as_millis(),
             "events_per_second": events_per_second,

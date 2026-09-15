@@ -11,6 +11,10 @@ Copyright © 2026 立方田 <managecode@gmail.com>
 3. 使用平时输入文字的同一个 Windows 账户打开管理员 **64 位 PowerShell**，进入解压目录。
 4. 已安装 Zhimo 时执行下面的命令；首次安装不加 `-Upgrade` 参数。
 
+从 GitHub 下载的 ZIP 可能带有互联网阻止标记。新版入口先提示校验来源和 SHA-256，
+仅在你明确输入 `UNBLOCK` 后解除当前包目录中 `.ps1` 文件的阻止标记，不修改系统执行策略。
+组织强制要求签名时会停止，请联系管理员，不绕过组织策略。
+
 ```powershell
 .\install.cmd -Upgrade
 ```
