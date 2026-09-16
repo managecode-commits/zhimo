@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1-dev",
-  "android_version_code": 2,
-  "channel": "development"
+  "version": "0.1.1-preview.20260916.1",
+  "android_version_code": 3,
+  "channel": "preview"
 }

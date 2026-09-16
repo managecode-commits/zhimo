@@ -6,11 +6,12 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$repo_dir/tools/android-env.sh"
 
 cd "$repo_dir"
+python3 tools/test-key-sound.py
 bash ./tools/prepare-offline-speech.sh
 ./tools/build-android-core.sh
 
 cd platform/android-ime
-./gradlew --no-daemon --stacktrace :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest
+./gradlew --no-daemon --stacktrace :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest
 apk="app/build/outputs/apk/debug/app-debug.apk"
 test -s "$apk"
 verify_args=("$apk")

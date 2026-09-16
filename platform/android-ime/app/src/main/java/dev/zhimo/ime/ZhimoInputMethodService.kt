@@ -25,7 +25,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
@@ -96,8 +95,12 @@ class ZhimoInputMethodService : InputMethodService() {
     private var oneHandMode = OneHandMode.CENTER
     private var keyboardSize = KeyboardSize.STANDARD
     private var highContrast = false
-    private var hapticEnabled = true
+    private val feedback by lazy { KeyboardFeedbackController(this) }
     private var voiceState = VoiceState.IDLE
+        set(value) {
+            field = value
+            feedback.muted = value == VoiceState.LISTENING || value == VoiceState.PROCESSING
+        }
     private var speechPreparing = false
     private var speechMeter = ""
     private var systemSpeechLanguage = "zh-CN"
@@ -125,6 +128,7 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     override fun onDestroy() {
+        feedback.close()
         offlineDictation.close()
         handwritingPanel?.dispose()
         acceptingSpeechResults = false
@@ -174,12 +178,12 @@ class ZhimoInputMethodService : InputMethodService() {
             oneHandMode = OneHandMode.fromStored(preferences.getString("one_hand_mode", null))
             keyboardSize = KeyboardSize.fromStored(preferences.getString("keyboard_size", null))
             highContrast = preferences.getBoolean("high_contrast", false)
-            hapticEnabled = preferences.getBoolean("haptic_enabled", true)
             symbolPage = 0
             candidatePanelExpanded = false
             keyboardStateInitialized = true
         }
         activeEditorIdentity = editorIdentity
+        feedback.prepare()
         pendingSpeech = null
         pendingSpeechEditor = null
         val personalizedLearningAllowed =
@@ -243,6 +247,7 @@ class ZhimoInputMethodService : InputMethodService() {
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         super.onStartInputView(info, restarting)
+        feedback.prepare()
         // Rebuild surfaces as well as labels so returning from settings applies
         // text size and contrast even when the editor itself did not change.
         if (::keyboardRows.isInitialized) setInputView(onCreateInputView())
@@ -478,7 +483,7 @@ class ZhimoInputMethodService : InputMethodService() {
                     handwritingPanel = HandwritingPanel(this, if (highContrast) Color.WHITE else keyText(), keyboardBackground(), keyboardTextSize.scale, candidates, commit = { text ->
                         if (keyboardPage != KeyboardPage.HANDWRITING || passwordScope) false
                         else currentInputConnection?.commitText(text, 1) == true
-                    }, onLiteral = { value -> commitLiteral(value) }, onDelete = { deletePreviousEditorGrapheme() })
+                    }, onLiteral = { value -> commitLiteral(value) }, onDelete = { deletePreviousEditorGrapheme() }, feedback = feedback)
                     keyboardRows.addView(handwritingPanel)
                 }
             }
@@ -543,7 +548,7 @@ class ZhimoInputMethodService : InputMethodService() {
                     if (hasComposition) { command(3); currentInputConnection.finishComposingText() }
                 }, key(enterKeyLabel(), labelSizeSp = 19f) { pressEnter() })
             buttons.forEach { button ->
-                button.layoutParams = LinearLayout.LayoutParams(-1, 0, 1f).apply { setMargins(dp(2), dp(3), dp(2), dp(3)) }
+                button.layoutParams = LinearLayout.LayoutParams(-1, 0, 1f)
                 addView(button)
             }
         })
@@ -571,7 +576,7 @@ class ZhimoInputMethodService : InputMethodService() {
         } else {
             (if (isLandscape()) listOf("，", "。", "？") else listOf("，", "。", "？", "！")).forEach { value ->
                 sidebar.addView(key(value, labelSizeSp = 24f, preview = true, role = KeyboardKeyRole.CHARACTER) { commitLiteral(value) }.apply {
-                    layoutParams = LinearLayout.LayoutParams(-1, 0, 1f).apply { setMargins(dp(2), dp(3), dp(2), dp(3)) }
+                    layoutParams = LinearLayout.LayoutParams(-1, 0, 1f)
                 })
             }
         }
@@ -854,7 +859,7 @@ class ZhimoInputMethodService : InputMethodService() {
                 if (hasComposition || handwritingPanel?.canLeave() == false) {
                     showImeMessage("请先完成当前拼音或手写，再开始语音")
                 } else {
-                    if (hapticEnabled) performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                    this@ZhimoInputMethodService.feedback.emit(this, KeyFeedback.LONG_PRESS)
                     toggleDictation()
                 }
                 true
@@ -933,6 +938,7 @@ class ZhimoInputMethodService : InputMethodService() {
         role: KeyboardKeyRole = KeyboardKeyRole.FUNCTION,
         action: (() -> Unit)? = null,
     ) = KeyboardKeyView(this).apply {
+        feedback = { this@ZhimoInputMethodService.feedback.emit(this) }
         text = label
         contentDescription = description
         isAllCaps = false
@@ -980,14 +986,15 @@ class ZhimoInputMethodService : InputMethodService() {
             }
             addState(intArrayOf(), surface(color))
         }
+        // Keep the visual gap, but allocate every interior point to one key.
+        background = android.graphics.drawable.InsetDrawable(background, dp(2), dp(3), dp(2), dp(3))
         stateListAnimator = null
         setOnClickListener {
-            if (hapticEnabled) performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
             action?.invoke() ?: feed(label)
         }
         if (longPressValue != null) {
             setOnLongClickListener {
-                if (hapticEnabled) performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                this@ZhimoInputMethodService.feedback.emit(this, KeyFeedback.LONG_PRESS)
                 commitLiteral(longPressValue)
                 true
             }
@@ -1002,7 +1009,7 @@ class ZhimoInputMethodService : InputMethodService() {
             }
         }
         layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, weight).apply {
-            setMargins(dp(2), dp(3), dp(2), dp(3))
+            setMargins(0, 0, 0, 0)
         }
     }
 
@@ -1013,15 +1020,19 @@ class ZhimoInputMethodService : InputMethodService() {
         label: String = "删除",
     ): Button {
         var repeated = false
+        var cancelled = false
+        var repeatView: View? = null
         val repeat = object : Runnable {
             override fun run() {
+                if (cancelled) return
                 repeated = true
                 pressBackspace()
-                uiHandler.postDelayed(this, 65L)
+                repeatView?.let { feedback.emit(it, KeyFeedback.REPEAT) }
+                if (deleteRepeat === this && !cancelled) uiHandler.postDelayed(this, 65L)
             }
         }
         return key(label, weight, labelSizeSp, "删除，长按连续删除") {
-            if (!repeated) pressBackspace()
+            if (!repeated && !cancelled) pressBackspace()
             repeated = false
         }.apply {
             setOnTouchListener { view, event ->
@@ -1030,12 +1041,24 @@ class ZhimoInputMethodService : InputMethodService() {
                         stopDeleteRepeat()
                         deleteRepeat = repeat
                         repeated = false
+                        cancelled = false
+                        repeatView = view
                         showKeyPreview(view, label)
                         uiHandler.postDelayed(repeat, 380L)
                     }
                     MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                         uiHandler.removeCallbacks(repeat)
+                        if (event.actionMasked == MotionEvent.ACTION_CANCEL) cancelled = true
                         dismissKeyPreview()
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        if (event.x < 0 || event.y < 0 || event.x >= view.width || event.y >= view.height) {
+                            cancelled = true
+                            view.isPressed = false
+                            uiHandler.removeCallbacks(repeat)
+                            view.cancelLongPress()
+                            dismissKeyPreview()
+                        }
                     }
                 }
                 false
@@ -1224,6 +1247,8 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun candidateView(value: org.json.JSONObject, highlighted: Boolean) = TextView(this).apply {
+        isSoundEffectsEnabled = false
+        isHapticFeedbackEnabled = false
         val display = value.getString("display_text")
         val annotation = if (value.isNull("annotation")) "" else value.optString("annotation", "")
         text = candidateLabel(display, annotation, highlighted)
@@ -1237,7 +1262,7 @@ class ZhimoInputMethodService : InputMethodService() {
             if (highContrast) setTextColor(Color.BLACK)
         }
         setOnClickListener {
-            if (hapticEnabled) performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+            feedback.emit(this)
             selectCandidate(value.getString("id"))
         }
         layoutParams = LinearLayout.LayoutParams(

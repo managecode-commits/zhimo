@@ -13,6 +13,52 @@ import android.widget.Button
 // This IME uses a framework theme and explicit colors, not an AppCompat activity/theme.
 @android.annotation.SuppressLint("AppCompatCustomView")
 class KeyboardKeyView(context: Context) : Button(context) {
+    var feedback: ((ViewEvent) -> Unit)? = null
+    enum class ViewEvent { PRESS, ACTIVATE }
+    private var touchFeedback = false
+    private var cancelledGesture = false
+    init {
+        isSoundEffectsEnabled = false
+        isHapticFeedbackEnabled = false
+    }
+
+    override fun dispatchTouchEvent(event: android.view.MotionEvent): Boolean {
+        if (event.actionMasked == android.view.MotionEvent.ACTION_DOWN && isEnabled) {
+            cancelledGesture = false
+            touchFeedback = true
+            feedback?.invoke(ViewEvent.PRESS)
+        }
+        if (event.actionMasked == android.view.MotionEvent.ACTION_MOVE && !cancelledGesture &&
+            (event.x < 0 || event.y < 0 || event.x >= width || event.y >= height)) {
+            cancelledGesture = true
+            touchFeedback = false
+            val cancel = android.view.MotionEvent.obtain(event)
+            cancel.action = android.view.MotionEvent.ACTION_CANCEL
+            try { super.dispatchTouchEvent(cancel) } finally { cancel.recycle() }
+            return true
+        }
+        if (event.actionMasked == android.view.MotionEvent.ACTION_CANCEL) {
+            cancelledGesture = true
+            touchFeedback = false
+        } else if (cancelledGesture) return true
+        val handled = super.dispatchTouchEvent(event)
+        if (event.actionMasked == android.view.MotionEvent.ACTION_UP) post { touchFeedback = false }
+        return handled
+    }
+
+    override fun performClick(): Boolean {
+        if (!touchFeedback) feedback?.invoke(ViewEvent.ACTIVATE)
+        touchFeedback = false
+        return super.performClick()
+    }
+
+    override fun onDetachedFromWindow() {
+        cancelLongPress()
+        touchFeedback = false
+        cancelledGesture = true
+        super.onDetachedFromWindow()
+    }
+
     var secondaryLabel: String? = null
     var hintSizeSp = KeyboardTypography.HINT
     var hintColor: Int? = null

@@ -1,6 +1,6 @@
 ---
 name: zhimo_pinyin
-version: "2026.09.15.1"
+version: "2026.09.15.3"
 sort: by_weight
 import_tables:
   - pinyin_simp

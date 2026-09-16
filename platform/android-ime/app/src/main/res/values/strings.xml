@@ -15,7 +15,7 @@
     <string name="keyboard_position">键盘位置：%1$s</string>
     <string name="keyboard_size">键盘高度：%1$s</string>
     <string name="high_contrast">高对比度键盘</string>
-    <string name="haptic_feedback">按键触觉反馈</string>
+    <string name="haptic_feedback">按键触觉反馈（强度遵循系统设置）</string>
     <string name="enable_ime">启用输入法</string>
     <string name="select_ime">选择输入法</string>
     <string name="mode_pinyin_full_keyboard">拼音 · 26键</string>

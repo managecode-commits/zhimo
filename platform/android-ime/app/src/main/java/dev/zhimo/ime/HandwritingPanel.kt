@@ -34,6 +34,7 @@ class HandwritingPanel(
     private val onLiteral: (String) -> Unit = {},
     private val onDelete: () -> Unit = {},
     initialLineMode: Boolean = context.getSharedPreferences("zhimo", 0).getBoolean("handwriting_image_experimental", true),
+    private val feedback: KeyboardFeedbackController? = null,
 ) : LinearLayout(context) {
     private val session = HandwritingSession()
     private val handler = Handler(Looper.getMainLooper())
@@ -172,7 +173,8 @@ class HandwritingPanel(
         val normal = if (resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) 120 else 240
         return dp(if (largePad) (resources.configuration.screenHeightDp - 220).coerceIn(normal, 480) else normal)
     }
-    private fun styledButton(label: String, size: Float) = Button(context).apply {
+    private fun styledButton(label: String, size: Float) = KeyboardKeyView(context).apply {
+        feedback = { this@HandwritingPanel.feedback?.emit(this) }
         text = label; textSize = size; setTextColor(this@HandwritingPanel.foreground); isAllCaps = false; maxLines = 1
         typeface = android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.NORMAL)
         minWidth = 0; minimumWidth = 0; minHeight = 0; minimumHeight = 0
@@ -265,7 +267,11 @@ class HandwritingPanel(
             val chosen = session.candidate(revision, index) ?: return@setOnClickListener
             if (commit(chosen)) clear() else status.text = "未能输入，请重新选择候选"
         }
-        setOnLongClickListener { startCorrection(revision, value) }
+        setOnLongClickListener {
+            startCorrection(revision, value).also { handled ->
+                if (handled) this@HandwritingPanel.feedback?.emit(this, KeyFeedback.LONG_PRESS)
+            }
+        }
     }
     private fun correctionChoices(revision: Long): List<List<String>> {
         val line = provider as? LineHandwritingProvider ?: return emptyList()

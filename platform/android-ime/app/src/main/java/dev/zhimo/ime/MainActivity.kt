@@ -11,14 +11,32 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.Switch
+import android.widget.SeekBar
 import android.widget.TextView
 
 class MainActivity : Activity() {
+    private val feedback by lazy { KeyboardFeedbackController(this) }
+    private var feedbackStatus: TextView? = null
+    private fun refreshFeedbackStatus() {
+        feedbackStatus?.text = feedback.hapticHint() + "\n" +
+            (feedback.soundHint() ?: "内置轻敲音已准备好，可点击试用。")
+    }
+    override fun onResume() {
+        super.onResume()
+        feedback.prepare()
+        refreshFeedbackStatus()
+    }
+    override fun onDestroy() {
+        feedback.close()
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val versionInfo = packageManager.getPackageInfo(packageName, 0)
         title = "知墨 Zhimo ${versionInfo.versionName}"
         val preferences = getSharedPreferences("zhimo", MODE_PRIVATE)
+        feedback.prepare()
         setContentView(ScrollView(this).apply {
             addView(LinearLayout(this@MainActivity).apply {
             orientation = LinearLayout.VERTICAL
@@ -160,11 +178,86 @@ class MainActivity : Activity() {
                     text = getString(R.string.keyboard_text_size, label())
                 }
             })
+            val strengthLabel = TextView(this@MainActivity)
+            fun strengthText(value: Int): String = "振动反馈：" + when {
+                value == 0 -> "无"
+                value <= 33 -> "弱 · $value%"
+                value <= 66 -> "中 · $value%"
+                value < 100 -> "强 · $value%"
+                else -> "最强 · 100%"
+            }
+            if (feedback.adjustableHaptics) {
+                addView(strengthLabel)
+                addView(SeekBar(this@MainActivity).apply {
+                max = 100
+                progress = KeyboardFeedbackPolicy.strength(preferences.getBoolean("haptic_enabled", true),
+                    preferences.getInt("haptic_strength", 35))
+                strengthLabel.text = strengthText(progress)
+                contentDescription = "振动反馈强度，0为关闭，100为最强"
+                isSoundEffectsEnabled = false
+                isHapticFeedbackEnabled = false
+                minimumHeight = (48 * resources.displayMetrics.density).toInt()
+                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(bar: SeekBar, value: Int, fromUser: Boolean) {
+                        strengthLabel.text = strengthText(value)
+                        if (!fromUser) return
+                        preferences.edit().putInt("haptic_strength", value).putBoolean("haptic_enabled", value > 0).apply()
+                        feedback.emit(bar, KeyFeedback.ADJUST)
+                        refreshFeedbackStatus()
+                    }
+                    override fun onStartTrackingTouch(bar: SeekBar) {}
+                    override fun onStopTrackingTouch(bar: SeekBar) { feedback.emit(bar, KeyFeedback.ADJUST); refreshFeedbackStatus() }
+                })
+            })
+            } else {
+                addView(Switch(this@MainActivity).apply {
+                    text = "系统触觉反馈（本机不支持调强弱）"
+                    isEnabled = feedback.hapticBackend != HapticBackend.NONE
+                    isChecked = preferences.getBoolean("haptic_enabled", true) && preferences.getInt("haptic_strength", 35) > 0
+                    setOnCheckedChangeListener { _, enabled ->
+                        preferences.edit().putBoolean("haptic_enabled", enabled).putInt("haptic_strength", if (enabled) 35 else 0).apply()
+                        feedback.emit(this, KeyFeedback.ADJUST)
+                        refreshFeedbackStatus()
+                    }
+                })
+            }
+            feedbackStatus = TextView(this@MainActivity)
+            addView(feedbackStatus)
+            refreshFeedbackStatus()
             addView(Switch(this@MainActivity).apply {
-                setText(R.string.haptic_feedback)
-                isChecked = preferences.getBoolean("haptic_enabled", true)
+                text = "按键音效（静音、勿扰与录音时不播放）"
+                isChecked = preferences.getBoolean("key_sound_enabled", true)
                 setOnCheckedChangeListener { _, enabled ->
-                    preferences.edit().putBoolean("haptic_enabled", enabled).apply()
+                    preferences.edit().putBoolean("key_sound_enabled", enabled).apply()
+                    feedback.prepare()
+                    refreshFeedbackStatus()
+                }
+            })
+            addView(Button(this@MainActivity).apply {
+                fun refresh() { text = "按键音色：" + if (preferences.getString("key_sound_style", "soft") == "soft") "轻敲（内置）" else "系统（依赖触摸音开关）" }
+                refresh()
+                isSoundEffectsEnabled = false
+                setOnClickListener {
+                    val next = if (preferences.getString("key_sound_style", "soft") == "soft") "system" else "soft"
+                    preferences.edit().putString("key_sound_style", next).apply()
+                    feedback.prepare()
+                    refresh()
+                    feedback.emit(this)
+                    refreshFeedbackStatus()
+                }
+            })
+            addView(Button(this@MainActivity).apply {
+                text = "试用按键反馈"
+                isSoundEffectsEnabled = false
+                isHapticFeedbackEnabled = false
+                setOnClickListener { feedback.emit(this); refreshFeedbackStatus() }
+                setOnLongClickListener { feedback.emit(this, KeyFeedback.LONG_PRESS); refreshFeedbackStatus(); true }
+            })
+            addView(Button(this@MainActivity).apply {
+                text = "打开系统声音与振动设置"
+                setOnClickListener {
+                    runCatching { startActivity(Intent(Settings.ACTION_SOUND_SETTINGS)) }
+                        .onFailure { android.widget.Toast.makeText(this@MainActivity, "请手动打开系统声音与振动设置", android.widget.Toast.LENGTH_SHORT).show() }
                 }
             })
             addView(Button(this@MainActivity).apply {
