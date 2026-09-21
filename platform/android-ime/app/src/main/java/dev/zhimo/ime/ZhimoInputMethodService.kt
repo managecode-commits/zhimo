@@ -47,6 +47,10 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private var handle = 0L
     private val uiHandler = Handler(Looper.getMainLooper())
+    private val engineWorker = java.util.concurrent.Executors.newSingleThreadExecutor()
+    // Separate handler: lifecycle removal of visual callbacks must not lose worker completion.
+    private val engineMain = Handler(Looper.getMainLooper())
+    private val inputQueue = OrderedInputQueue({ engineWorker.execute(it) }, { engineMain.post(it) })
     private lateinit var modeIndicator: TextView
     private lateinit var candidates: LinearLayout
     private lateinit var topRow: FrameLayout
@@ -58,6 +62,8 @@ class ZhimoInputMethodService : InputMethodService() {
     private var spaceKey: Button? = null
     private var handwritingPanel: HandwritingPanel? = null
     private var keyPreview: PopupWindow? = null
+    private var t9ContentSignature: String? = null
+    private var candidateRevision = 0L
     private var speechRecognizer: SpeechRecognizer? = null
     private var recognizerIsOnDevice: Boolean? = null
     private var acceptingSpeechResults = false
@@ -103,6 +109,7 @@ class ZhimoInputMethodService : InputMethodService() {
         }
     private var speechPreparing = false
     private var speechMeter = ""
+    private var speechPartial = ""
     private var systemSpeechLanguage = "zh-CN"
     private var pendingSpeech: String? = null
     private var pendingSpeechEditor: EditorIdentity? = null
@@ -128,6 +135,7 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     override fun onDestroy() {
+        inputQueue.invalidate()
         feedback.close()
         offlineDictation.close()
         handwritingPanel?.dispose()
@@ -139,10 +147,13 @@ class ZhimoInputMethodService : InputMethodService() {
         keyPreview?.dismiss()
         keyPreview = null
         uiHandler.removeCallbacksAndMessages(null)
-        if (handle != 0L) {
-            NativeIme.flush(handle)
-            NativeIme.destroy(handle)
-            handle = 0
+        inputQueue.dispatch {
+            if (handle != 0L) {
+                NativeIme.flush(handle)
+                NativeIme.destroy(handle)
+                handle = 0
+            }
+            engineWorker.shutdown()
         }
         super.onDestroy()
     }
@@ -169,6 +180,7 @@ class ZhimoInputMethodService : InputMethodService() {
                 stateInitialized = keyboardStateInitialized,
                 sameEditor = editorIdentity == activeEditorIdentity,
             )
+        if (!restarting || editorIdentity != activeEditorIdentity) inputQueue.invalidate()
         if (initializeKeyboardState) {
             pinyin = preferences.getBoolean("default_pinyin", true)
             nineKeyPinyin = preferences.getBoolean("pinyin_nine_key", false)
@@ -189,12 +201,9 @@ class ZhimoInputMethodService : InputMethodService() {
         val personalizedLearningAllowed =
             ((attribute?.imeOptions ?: 0) and EditorInfo.IME_FLAG_NO_PERSONALIZED_LEARNING) == 0
         learningAllowed = preferences.getBoolean("learning_enabled", true) && personalizedLearningAllowed
-        NativeIme.setPrivacy(
-            handle,
-            learningAllowed,
-            preferences.getBoolean("online_system_speech", false),
-        )
-        NativeIme.setApplicationId(handle, attribute?.packageName ?: "")
+        val allowLearning = learningAllowed
+        val allowNetwork = preferences.getBoolean("online_system_speech", false)
+        val application = attribute?.packageName ?: ""
         val variation = (attribute?.inputType ?: 0) and InputType.TYPE_MASK_VARIATION
         passwordScope = PlatformPolicy.isPassword(attribute?.inputType ?: InputType.TYPE_CLASS_TEXT)
         emojiRecentSnapshot = null
@@ -209,16 +218,22 @@ class ZhimoInputMethodService : InputMethodService() {
             variation == InputType.TYPE_TEXT_VARIATION_URI -> 3
             else -> 0
         }
-        NativeIme.setScope(handle, scope)
-        NativeIme.switchEngine(handle, selectedEngine())
+        val engine = selectedEngine()
+        inputQueue.dispatch {
+            NativeIme.setPrivacy(handle, allowLearning, allowNetwork)
+            NativeIme.setApplicationId(handle, application)
+            NativeIme.setScope(handle, scope)
+            NativeIme.switchEngine(handle, engine)
+            if (initializeKeyboardState) NativeIme.command(handle, 3)
+        }
         if (initializeKeyboardState) {
-            NativeIme.command(handle, 3)
             hasComposition = false
             localPreedit = ""
         }
     }
 
     override fun onFinishInput() {
+        inputQueue.invalidate()
         pendingSpeech = null
         pendingSpeechEditor = null
         offlineDictation.cancel()
@@ -227,7 +242,7 @@ class ZhimoInputMethodService : InputMethodService() {
         acceptingSpeechResults = false
         speechRecognizer?.cancel()
         voiceState = VoiceState.IDLE
-        if (handle != 0L) NativeIme.command(handle, 3)
+        inputQueue.dispatch { if (handle != 0L) NativeIme.command(handle, 3) }
         hasComposition = false
         localPreedit = ""
         super.onFinishInput()
@@ -456,6 +471,7 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun renderKeyboard() {
+        t9ContentSignature = null
         stopDeleteRepeat()
         handwritingPanel?.dispose()
         handwritingPanel = null
@@ -557,13 +573,16 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private fun refreshT9Sidebar() {
         val sidebar = t9Sidebar ?: return
+        val signature = "$hasComposition|$selectedPinyinReading|${pinyinReadings.joinToString(",")}|${isLandscape()}"
+        if (t9ContentSignature == signature) return
+        t9ContentSignature = signature
         sidebar.removeAllViews()
         if (hasComposition && pinyinReadings.isNotEmpty()) {
             val options = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
             (listOf("" to "自动") + pinyinReadings.map { it to it }).forEach { (reading, label) ->
                 options.addView(key(label, labelSizeSp = 18f, description = if (reading.isEmpty()) "自动选择拼音" else "选择拼音：$reading",
                     role = KeyboardKeyRole.TAB) {
-                    if (NativeIme.select(handle, "pinyin-reading:$reading") == 0) renderActions()
+                    if (signature == t9ContentSignature) engineEdit({ NativeIme.select(handle, "pinyin-reading:$reading") })
                 }.apply {
                     isSelected = if (reading.isEmpty()) selectedPinyinReading == null else selectedPinyinReading == reading
                     layoutParams = LinearLayout.LayoutParams(-1, dp((48 * keyboardTextSize.scale).toInt()))
@@ -588,7 +607,8 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private fun refreshSegmentationKey() {
         segmentationKey?.apply {
-            text = if (pinyin && hasComposition) "分词" else if (!pinyin && uppercase) "⇧ 大写" else "⇧"
+            val label = if (pinyin && hasComposition) "分词" else if (!pinyin && uppercase) "⇧ 大写" else "⇧"
+            if (text.toString() != label) text = label
             contentDescription = if (pinyin && hasComposition) "拼音手动分词" else if (pinyin) "切换到英文大写" else "切换字母大小写"
         }
     }
@@ -856,12 +876,12 @@ class ZhimoInputMethodService : InputMethodService() {
             spaceKey = this
             tooltipText = "长按开始语音输入；录音中轻点停止，识别中轻点取消"
             setOnLongClickListener {
-                if (hasComposition || handwritingPanel?.canLeave() == false) {
+                inputQueue.dispatch { if (hasComposition || handwritingPanel?.canLeave() == false) {
                     showImeMessage("请先完成当前拼音或手写，再开始语音")
                 } else {
                     this@ZhimoInputMethodService.feedback.emit(this, KeyFeedback.LONG_PRESS)
                     toggleDictation()
-                }
+                } }
                 true
             }
             updateSpaceKeyUi()
@@ -869,7 +889,8 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private fun updateSpaceKeyUi() {
         spaceKey?.apply {
-            text = spaceKeyLabel()
+            val label = spaceKeyLabel()
+            if (text.toString() != label) text = label
             contentDescription = if (voiceState == VoiceState.LISTENING || voiceState == VoiceState.PROCESSING) voiceKeyDescription() else spaceKeyLabel()
             (this as? KeyboardKeyView)?.apply {
                 secondaryLabel = when (voiceState) {
@@ -968,7 +989,7 @@ class ZhimoInputMethodService : InputMethodService() {
         backgroundTintList = null
         fun surface(color: Int) = GradientDrawable().apply {
             setColor(color)
-            cornerRadius = dp(9).toFloat()
+            cornerRadius = dp(5).toFloat()
             // A quiet edge separates solid keys without heavy shadows or changing hit areas.
             if (!highContrast && color != Color.TRANSPARENT) {
                 setStroke(dp(1).coerceAtLeast(1), if (darkMode()) 0xFF555B65.toInt() else 0xFFD0D4DC.toInt())
@@ -986,16 +1007,16 @@ class ZhimoInputMethodService : InputMethodService() {
             }
             addState(intArrayOf(), surface(color))
         }
-        // Keep the visual gap, but allocate every interior point to one key.
-        background = android.graphics.drawable.InsetDrawable(background, dp(2), dp(3), dp(2), dp(3))
+        // Expand the visible key face while retaining a small gap and the full-cell hit area.
+        background = android.graphics.drawable.InsetDrawable(background, dp(1), dp(2), dp(1), dp(2))
         stateListAnimator = null
         setOnClickListener {
-            action?.invoke() ?: feed(label)
+            inputQueue.dispatch { action?.invoke() ?: feed(label) }
         }
         if (longPressValue != null) {
             setOnLongClickListener {
                 this@ZhimoInputMethodService.feedback.emit(this, KeyFeedback.LONG_PRESS)
-                commitLiteral(longPressValue)
+                inputQueue.dispatch { commitLiteral(longPressValue) }
                 true
             }
         }
@@ -1026,7 +1047,7 @@ class ZhimoInputMethodService : InputMethodService() {
             override fun run() {
                 if (cancelled) return
                 repeated = true
-                pressBackspace()
+                inputQueue.dispatch { pressBackspace() }
                 repeatView?.let { feedback.emit(it, KeyFeedback.REPEAT) }
                 if (deleteRepeat === this && !cancelled) uiHandler.postDelayed(this, 65L)
             }
@@ -1069,8 +1090,7 @@ class ZhimoInputMethodService : InputMethodService() {
     private fun showKeyPreview(anchor: View, label: String) {
         if (passwordScope) return
         if (label.length > 3 || label.contains('\n')) return
-        dismissKeyPreview()
-        keyPreview = PopupWindow(
+        val popup = keyPreview ?: PopupWindow(
             TextView(this).apply {
                 text = label
                 gravity = Gravity.CENTER
@@ -1085,17 +1105,27 @@ class ZhimoInputMethodService : InputMethodService() {
         ).apply {
             isClippingEnabled = false
             elevation = dp(8).toFloat()
-            showAsDropDown(anchor, (anchor.width - width) / 2, -anchor.height - height - dp(4))
+        }.also { keyPreview = it }
+        (popup.contentView as TextView).apply {
+            text = label
+            setTextColor(keyText())
+            setBackgroundColor(keyBackground())
+        }
+        val targetWidth = maxOf(anchor.width, dp(52))
+        if (popup.isShowing) popup.update(anchor, (anchor.width - targetWidth) / 2,
+            -anchor.height - dp(58) - dp(4), targetWidth, dp(58))
+        else {
+            popup.width = targetWidth
+            popup.showAsDropDown(anchor, (anchor.width - targetWidth) / 2, -anchor.height - dp(58) - dp(4))
         }
     }
 
     private fun dismissKeyPreview() {
         keyPreview?.dismiss()
-        keyPreview = null
     }
 
     private fun feed(text: String) {
-        if (NativeIme.feed(handle, text) == 0) renderActions()
+        engineEdit({ NativeIme.feed(handle, text) })
     }
 
     private fun commitLiteral(text: String, refreshKeyboard: Boolean = true): Boolean {
@@ -1119,10 +1149,15 @@ class ZhimoInputMethodService : InputMethodService() {
             return
         }
         val wasComposing = hasComposition
-        command(2)
-        if (wasComposing) scheduleLearningSave()
-        if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
-            currentInputConnection.commitText(" ", 1)
+        if (pinyin && nineKeyPinyin && wasComposing) {
+            pressEnter()
+            return
+        }
+        command(2) {
+            if (wasComposing) scheduleLearningSave()
+            if (PlatformPolicy.shouldInsertLiteralSpace(pinyin, wasComposing)) {
+                currentInputConnection.commitText(" ", 1)
+            }
         }
     }
 
@@ -1133,9 +1168,8 @@ class ZhimoInputMethodService : InputMethodService() {
             return
         }
         val wasComposing = hasComposition
-        command(0)
-        if (PlatformPolicy.shouldFallbackToEditor(wasComposing)) {
-            deletePreviousEditorGrapheme()
+        command(0) {
+            if (PlatformPolicy.shouldFallbackToEditor(wasComposing)) deletePreviousEditorGrapheme()
         }
     }
 
@@ -1155,21 +1189,41 @@ class ZhimoInputMethodService : InputMethodService() {
             return
         }
         val wasComposing = hasComposition
-        command(1)
-        if (wasComposing) scheduleLearningSave()
-        if (PlatformPolicy.shouldFallbackToEditor(wasComposing) &&
-            !sendDefaultEditorAction(false)
-        ) {
-            currentInputConnection.commitText("\n", 1)
+        // Nine-key digits are an internal spelling code, not text to submit.
+        if (pinyin && nineKeyPinyin && wasComposing) {
+            val candidate = lastCandidates.optJSONObject(0)
+            if (candidate != null) selectCandidate(candidate.getString("id"))
+            else android.widget.Toast.makeText(this, "请调整拼音或选择左侧读音", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
+        command(1) {
+            if (wasComposing) scheduleLearningSave()
+            if (PlatformPolicy.shouldFallbackToEditor(wasComposing) && !sendDefaultEditorAction(false)) {
+                currentInputConnection.commitText("\n", 1)
+            }
         }
     }
 
-    private fun command(value: Int) {
-        if (NativeIme.command(handle, value) == 0) renderActions()
+    private fun command(value: Int, after: () -> Unit = {}) {
+        engineEdit({ NativeIme.command(handle, value) }, after)
+    }
+
+    private fun engineEdit(edit: () -> Int, after: () -> Unit = {}) {
+        inputQueue.compute({
+            android.os.Trace.beginSection("Zhimo.engine.edit")
+            try {
+                check(edit() == 0) { "输入引擎处理失败" }
+                InputActionDecoder.decode(NativeIme.actions(handle))
+            } finally { android.os.Trace.endSection() }
+        }) { result ->
+            result.onSuccess { applyActions(it); after() }.onFailure {
+                showImeMessage("输入处理失败，请重试")
+            }
+        }
     }
 
     private fun renderActions() {
-        val wasExpanded = candidatePanelExpanded
+        if (inputQueue.working) { inputQueue.dispatch { renderActions() }; return }
         val actions = runCatching { InputActionDecoder.decode(NativeIme.actions(handle)) }.getOrElse {
             NativeIme.command(handle, 3)
             hasComposition = false
@@ -1185,11 +1239,23 @@ class ZhimoInputMethodService : InputMethodService() {
             updateSpaceKeyUi()
             return
         }
-        candidates.removeAllViews()
+        applyActions(actions)
+    }
+
+    private fun applyActions(actions: List<InputAction>) {
+        if (!::candidates.isInitialized) return
+        android.os.Trace.beginSection("Zhimo.candidates.apply")
+        try { applyDecodedActions(actions) } finally { android.os.Trace.endSection() }
+    }
+
+    private fun applyDecodedActions(actions: List<InputAction>) {
+        val wasExpanded = candidatePanelExpanded
         var receivedCandidates = false
         for (action in actions) {
             when (action) {
                 InputAction.Close -> {
+                    nativeCandidatePage = 0
+                    nativeHasNextPage = false
                     hasComposition = false
                     localPreedit = ""
                     currentInputConnection.finishComposingText()
@@ -1219,6 +1285,8 @@ class ZhimoInputMethodService : InputMethodService() {
             }
         }
         if (!receivedCandidates && !hasComposition) {
+            candidateRevision++
+            candidates.removeAllViews()
             lastCandidates = JSONArray()
             candidatePanelExpanded = false
         }
@@ -1231,6 +1299,7 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun showCandidates(values: JSONArray) {
+        candidateRevision++
         lastCandidates = values
         showCandidatePage(values, 0)
     }
@@ -1241,14 +1310,36 @@ class ZhimoInputMethodService : InputMethodService() {
         val start = safePage * pageSize
         val end = minOf(values.length(), start + pageSize)
         for (index in start until end) {
-            candidates.addView(candidateView(values.getJSONObject(index), index == start))
+            val position = index - start
+            val value = values.getJSONObject(index)
+            val existing = candidates.getChildAt(position) as? TextView
+            if (existing == null) candidates.addView(candidateView(value, index == start))
+            else bindCandidate(existing, value, index == start)
         }
+        while (candidates.childCount > end - start) candidates.removeViewAt(candidates.childCount - 1)
         candidatePanelPage = safePage
     }
 
     private fun candidateView(value: org.json.JSONObject, highlighted: Boolean) = TextView(this).apply {
         isSoundEffectsEnabled = false
         isHapticFeedbackEnabled = false
+        bindCandidate(this, value, highlighted)
+        setOnClickListener {
+            // The visible row can belong to the previous keystroke while decoding runs.
+            if (!inputQueue.pending) {
+                feedback.emit(this)
+                val id = (tag as org.json.JSONObject).getString("id")
+                inputQueue.dispatch { selectCandidate(id) }
+            }
+        }
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+        )
+    }
+
+    private fun bindCandidate(view: TextView, value: org.json.JSONObject, highlighted: Boolean) = with(view) {
+        tag = value
         val display = value.getString("display_text")
         val annotation = if (value.isNull("annotation")) "" else value.optString("annotation", "")
         text = candidateLabel(display, annotation, highlighted)
@@ -1260,15 +1351,7 @@ class ZhimoInputMethodService : InputMethodService() {
         if (highlighted) {
             setBackgroundColor(keyPressed())
             if (highContrast) setTextColor(Color.BLACK)
-        }
-        setOnClickListener {
-            feedback.emit(this)
-            selectCandidate(value.getString("id"))
-        }
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.MATCH_PARENT,
-        )
+        } else setBackgroundColor(Color.TRANSPARENT)
     }
 
     private var learningSaveWarningShown = false
@@ -1283,15 +1366,14 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun selectCandidate(id: String) {
-        NativeIme.select(handle, id)
-        scheduleLearningSave()
-        candidatePanelExpanded = false
-        renderKeyboard()
-        renderActions()
+        engineEdit({ NativeIme.select(handle, id) }) {
+            scheduleLearningSave()
+            if (candidatePanelExpanded) { candidatePanelExpanded = false; renderKeyboard() }
+        }
     }
 
     private fun toggleCandidatePanel() {
-        if (lastCandidates.length() <= CANDIDATE_STRIP_SIZE) return
+        if (lastCandidates.length() <= CANDIDATE_STRIP_SIZE && !nativeHasNextPage && nativeCandidatePage == 0) return
         candidatePanelExpanded = !candidatePanelExpanded
         candidatePanelPage = 0
         candidateExpandKey.text = if (candidatePanelExpanded) "⌃" else "⌄"
@@ -1300,7 +1382,7 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun renderExpandedCandidates() {
-        val nativePaging = selectedEngine() == "rime"
+        val nativePaging = selectedEngine() in setOf("rime", "pinyin.reference")
         val availableDp = (keyboardRows.width.takeIf { it > 0 }
             ?: resources.configuration.screenWidthDp.let { dp(it) }) / resources.displayMetrics.density
         val columns = KeyboardTypography.expandedColumns(availableDp, keyboardTextSize)
@@ -1319,6 +1401,7 @@ class ZhimoInputMethodService : InputMethodService() {
             repeat(columns) { column ->
                 val index = start + rowIndex * columns + column
                 if (index < end) {
+                    val revision = candidateRevision
                     val candidate = lastCandidates.getJSONObject(index)
                     val display = candidate.getString("display_text")
                     val annotation = if (candidate.isNull("annotation")) "" else candidate.optString("annotation", "")
@@ -1326,7 +1409,7 @@ class ZhimoInputMethodService : InputMethodService() {
                         display,
                         labelSizeSp = KeyboardTypography.CANDIDATE,
                         description = getString(R.string.candidate_description, display),
-                    ) { selectCandidate(candidate.getString("id")) }.apply {
+                    ) { if (revision == candidateRevision) selectCandidate(candidate.getString("id")) }.apply {
                         maxLines = 2
                         text = candidateLabel(display, annotation, false, onKey = true)
                     })
@@ -1340,21 +1423,21 @@ class ZhimoInputMethodService : InputMethodService() {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
             addView(key("‹", 1f, 22f, "上一页候选") {
-                if (nativePaging && nativeCandidatePage > 0) {
-                    command(6)
-                } else if (!nativePaging && candidatePanelPage > 0) {
+                if (candidatePanelPage > 0) {
                     candidatePanelPage--
                     renderKeyboard()
+                } else if (nativePaging && nativeCandidatePage > 0) {
+                    command(6)
                 }
             })
             addView(key("返回键盘", 2f, 14f) { toggleCandidatePanel() })
-            addView(key(if (nativePaging) "第${nativeCandidatePage + 1}页" else "${candidatePanelPage + 1}/${maxPage + 1}", 1f, 13f, "候选页码") {})
+            addView(key(if (nativePaging) "${nativeCandidatePage + 1} · ${candidatePanelPage + 1}/${maxPage + 1}" else "${candidatePanelPage + 1}/${maxPage + 1}", 1f, 13f, "候选页码") {})
             addView(key("›", 1f, 22f, "下一页候选") {
-                if (nativePaging && nativeHasNextPage) {
-                    command(7)
-                } else if (!nativePaging && candidatePanelPage < maxPage) {
+                if (candidatePanelPage < maxPage) {
                     candidatePanelPage++
                     renderKeyboard()
+                } else if (nativePaging && nativeHasNextPage) {
+                    command(7)
                 }
             })
             layoutParams = keyboardRowParams()
@@ -1364,26 +1447,22 @@ class ZhimoInputMethodService : InputMethodService() {
     private fun updateCandidateHeader() {
         if (!::modeIndicator.isInitialized) return
         val voiceStatus = when (voiceState) {
-            VoiceState.LISTENING -> getString(R.string.voice_listening) + speechMeter
+            VoiceState.LISTENING -> if (speechPartial.isNotEmpty()) "临时：" + speechPartial.takeLast(100)
+                else getString(R.string.voice_listening) + speechMeter
             VoiceState.PROCESSING -> if (speechPreparing) "准备语音模型…" else getString(R.string.voice_processing)
             VoiceState.ERROR -> getString(R.string.voice_unavailable)
             VoiceState.IDLE -> null
         }
-        // Reserve no space while idle. T9 raw key codes stay inside the IME;
-        // use the leading candidate's reading whenever the engine supplies it.
+        // Reserve no space while idle. Never guess a T9 reading from candidate ranking.
         val reading = if (pinyin && hasComposition && localPreedit.isNotEmpty()) {
-            val first = lastCandidates.optJSONObject(0)
-            val annotation = if (first == null || first.isNull("annotation")) "" else first.optString("annotation")
-            val consumed = first?.optString("id")?.takeIf { it.startsWith("pinyin-part:") }
-                ?.split(':')?.getOrNull(1)?.toIntOrNull()
-            if (nineKeyPinyin && annotation.isNotBlank()) {
-                if (consumed != null) "$annotation · ${localPreedit.drop(consumed).trimStart('\'')}" else annotation
+            if (nineKeyPinyin) {
+                NineKeyPresentation.reading(localPreedit, pinyinReadings, selectedPinyinReading)
             } else localPreedit
         } else ""
         modeIndicator.text = voiceStatus ?: reading
         modeIndicator.visibility = if (modeIndicator.text.isEmpty()) View.GONE else View.VISIBLE
         modeIndicator.contentDescription = if (voiceStatus != null) voiceStatus else "待选拼音：$reading"
-        candidateExpandKey.visibility = if (lastCandidates.length() > CANDIDATE_STRIP_SIZE) View.VISIBLE else View.GONE
+        candidateExpandKey.visibility = if (lastCandidates.length() > CANDIDATE_STRIP_SIZE || nativeHasNextPage || nativeCandidatePage > 0) View.VISIBLE else View.GONE
         candidateExpandKey.text = if (candidatePanelExpanded) "⌃" else "⌄"
     }
 
@@ -1546,6 +1625,7 @@ class ZhimoInputMethodService : InputMethodService() {
         acceptingSpeechResults = true
         speechPreparing = true
         speechMeter = ""
+        speechPartial = ""
         voiceState = VoiceState.PROCESSING
         updateVoiceUi()
         try {
@@ -1562,14 +1642,20 @@ class ZhimoInputMethodService : InputMethodService() {
                             pendingSpeechEditor = editor
                             renderKeyboard()
                         } else {
-                            NativeIme.speechResult(handle, normalized, language, Float.NaN, true)
-                            renderActions()
+                            inputQueue.dispatch { engineEdit({
+                                NativeIme.speechResult(handle, normalized, language, Float.NaN, true)
+                            }) }
                         }
                     } else showImeMessage(error ?: "未识别到语音，请靠近麦克风重试")
                 }
                 acceptingSpeechResults = false
                 voiceState = VoiceState.IDLE
                 updateVoiceUi()
+            }, useStreaming = BuildConfig.STREAMING_SPEECH && preferences.getBoolean("speech_streaming", false), partial = { text ->
+                if (acceptingSpeechResults && !passwordScope && editor == activeEditorIdentity && handle != 0L) {
+                    speechPartial = text
+                    updateCandidateHeader()
+                }
             }, prompt = if (learningAllowed) SpeechText.prompt(preferences.getString("speech_hotwords", "").orEmpty()) else "",
                 useVad = preferences.getBoolean("speech_vad", true), progress = { seconds, level ->
                     speechMeter = " ${seconds}s / 60s · " + if (level < .003f) "音量偏低" else "收到声音"
@@ -1744,8 +1830,8 @@ class ZhimoInputMethodService : InputMethodService() {
         val values = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION) ?: return
         val text = values.firstOrNull() ?: return
         val confidence = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES)?.firstOrNull() ?: Float.NaN
-        NativeIme.speechResult(handle, text, systemSpeechLanguage, confidence, finalResult)
-        renderActions()
+        val language = systemSpeechLanguage
+        inputQueue.dispatch { engineEdit({ NativeIme.speechResult(handle, text, language, confidence, finalResult) }) }
         if (finalResult) {
             acceptingSpeechResults = false
             voiceState = VoiceState.IDLE

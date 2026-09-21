@@ -14,12 +14,42 @@ use ime_core::{
 use ime_data::{LearningModel, LearningRecord};
 
 mod abbreviation;
+mod sentence;
+
+const CANDIDATE_PAGE_SIZE: usize = 100;
+
+#[derive(Default)]
+struct CandidateMenu {
+    values: Vec<Candidate>,
+    page: usize,
+}
+
+impl CandidateMenu {
+    fn actions(&self) -> Vec<Action> {
+        let start = self.page * CANDIDATE_PAGE_SIZE;
+        vec![
+            Action::ShowCandidates(
+                self.values
+                    .iter()
+                    .skip(start)
+                    .take(CANDIDATE_PAGE_SIZE)
+                    .cloned()
+                    .collect(),
+            ),
+            Action::CandidatePage {
+                index: self.page,
+                has_next: start + CANDIDATE_PAGE_SIZE < self.values.len(),
+            },
+        ]
+    }
+}
 
 pub struct PinyinEngine {
     sessions: Mutex<HashMap<SessionId, String>>,
     phrases: Mutex<HashMap<SessionId, PhraseProgress>>,
     learning: Mutex<LearningModel>,
     readings: Mutex<HashMap<SessionId, String>>,
+    menus: Mutex<HashMap<SessionId, CandidateMenu>>,
 }
 
 #[derive(Default)]
@@ -72,6 +102,7 @@ impl PinyinEngine {
             phrases: Mutex::new(HashMap::new()),
             learning: Mutex::new(learning),
             readings: Mutex::new(HashMap::new()),
+            menus: Mutex::new(HashMap::new()),
         }
     }
 
@@ -231,11 +262,20 @@ impl PinyinEngine {
                 }
             }
         }
-        candidates.truncate(50);
+        let has_exact = candidates.iter().any(|candidate| candidate.0 == 2);
         let mut result: Vec<_> = candidates
             .into_iter()
             .map(|(_, _, candidate)| candidate)
             .collect();
+        // Bounded multi-word decoding supplements, never replaces, dictionary matches.
+        let mut sentences = sentence::decode(input, selected, &learning);
+        sentences.retain(|candidate| {
+            !result
+                .iter()
+                .any(|word| word.commit_text == candidate.commit_text)
+        });
+        let insertion = if has_exact { result.len().min(5) } else { 0 };
+        result.splice(insertion..insertion, sentences);
         // A missing phrase must not strand the whole buffer. Offer characters
         // for the leading syllable, carrying the exact raw prefix consumed.
         let normalized = match &lookup {
@@ -278,7 +318,7 @@ impl PinyinEngine {
             if consumed == 0 || input[..consumed].trim_start_matches('\'').contains('\'') {
                 continue;
             }
-            for entry in entries.into_iter().take(40) {
+            for entry in entries {
                 partial.push(Candidate {
                     id: CandidateId(format!("pinyin-part:{consumed}:{}", entry.text)),
                     display_text: entry.text.clone(),
@@ -292,9 +332,15 @@ impl PinyinEngine {
             }
         }
         if !partial.is_empty() {
-            result.truncate(20);
-            result.extend(partial.into_iter().take(80));
+            // Expose useful partial choices early without discarding lower-ranked words.
+            let tail = result.split_off(result.len().min(20));
+            let partial_tail = partial.split_off(partial.len().min(80));
+            result.extend(partial);
+            result.extend(tail);
+            result.extend(partial_tail);
         }
+        let mut ids = HashSet::new();
+        result.retain(|candidate| ids.insert(candidate.id.clone()));
         result
     }
 
@@ -305,6 +351,7 @@ impl PinyinEngine {
         candidate: &Candidate,
         context: &InputContext,
     ) -> Result<ActionBatch, EngineError> {
+        self.menus.lock().map_err(lock_error)?.remove(session);
         let consumed = candidate
             .id
             .0
@@ -372,14 +419,22 @@ impl PinyinEngine {
             }],
             cursor: ime_core::grapheme_count(input),
         };
-        ActionBatch(vec![
-            Action::UpdateComposition(composition),
-            Action::ShowCandidates(candidates),
-            Action::ReadingOptions {
-                readings: t9_readings(input),
-                selected,
-            },
-        ])
+        let menu = CandidateMenu {
+            values: candidates,
+            page: 0,
+        };
+        let page_actions = menu.actions();
+        self.menus
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .insert(session.clone(), menu);
+        let mut actions = vec![Action::UpdateComposition(composition)];
+        actions.extend(page_actions);
+        actions.push(Action::ReadingOptions {
+            readings: t9_readings(input),
+            selected,
+        });
+        ActionBatch(actions)
     }
 }
 
@@ -413,15 +468,30 @@ impl InputEngine for PinyinEngine {
             message: "pinyin session not found".to_owned(),
         })?;
         if matches!(event, InputEvent::Reset | InputEvent::SpeechFinal(_))
-            || matches!(event, InputEvent::Key(key) if key.pressed && matches!(key.key, Key::Backspace | Key::Escape))
+            || matches!(event, InputEvent::Key(key) if key.pressed && matches!(key.key, Key::Backspace | Key::Escape | Key::Enter))
         {
             self.readings.lock().map_err(lock_error)?.remove(session);
+            self.menus.lock().map_err(lock_error)?.remove(session);
         }
         if !context.effective_learning_allowed() {
             self.phrases.lock().map_err(lock_error)?.remove(session);
         }
         match event {
             InputEvent::Key(key) if key.pressed => match key.key {
+                Key::PageUp | Key::PageDown => {
+                    let mut menus = self.menus.lock().map_err(lock_error)?;
+                    if let Some(menu) = menus.get_mut(session).filter(|_| !input.is_empty()) {
+                        if key.key == Key::PageDown
+                            && (menu.page + 1) * CANDIDATE_PAGE_SIZE < menu.values.len()
+                        {
+                            menu.page += 1;
+                        } else if key.key == Key::PageUp {
+                            menu.page = menu.page.saturating_sub(1);
+                        }
+                        return Ok(ActionBatch(menu.actions()));
+                    }
+                    return Ok(ActionBatch(vec![Action::Ignored]));
+                }
                 Key::Character(character)
                     if character.is_ascii_alphabetic()
                         || ('2'..='9').contains(&character)
@@ -457,9 +527,19 @@ impl InputEngine for PinyinEngine {
                         .map_err(lock_error)?
                         .get(session)
                         .cloned();
-                    if let Some(candidate) = self.lookup_reading(input, selected.as_deref()).first()
-                    {
-                        return self.commit_candidate(session, input, candidate, context);
+                    let candidate = self
+                        .menus
+                        .lock()
+                        .map_err(lock_error)?
+                        .get(session)
+                        .and_then(|menu| menu.values.get(menu.page * CANDIDATE_PAGE_SIZE))
+                        .cloned();
+                    if let Some(candidate) = candidate.or_else(|| {
+                        self.lookup_reading(input, selected.as_deref())
+                            .into_iter()
+                            .next()
+                    }) {
+                        return self.commit_candidate(session, input, &candidate, context);
                     }
                     let commit = std::mem::take(input);
                     self.phrases.lock().map_err(lock_error)?.remove(session);
@@ -570,6 +650,9 @@ impl InputEngine for PinyinEngine {
     }
 
     fn close_session(&self, session: &SessionId) {
+        if let Ok(mut menus) = self.menus.lock() {
+            menus.remove(session);
+        }
         if let Ok(mut readings) = self.readings.lock() {
             readings.remove(session);
         }
@@ -849,6 +932,168 @@ fn t9_signature(pinyin: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn composed_sentences_cover_full_input_and_learn_after_selection() {
+        for input in ["nihaozhongguo", "ni'hao'zhong'guo", "6442694664486"] {
+            let engine = PinyinEngine::new();
+            let candidates = engine.lookup(input);
+            let candidate = candidates
+                .iter()
+                .find(|c| c.commit_text == "你好中国")
+                .unwrap_or_else(|| panic!("missing combined phrase for {input}"));
+            assert_eq!(candidate.annotation.as_deref(), Some("ni hao zhong guo"));
+            let session = SessionId(input.into());
+            engine.create_session(&session).unwrap();
+            engine
+                .process(
+                    &session,
+                    &InputEvent::Text(input.into()),
+                    &InputContext::default(),
+                )
+                .unwrap();
+            let result = engine
+                .process(
+                    &session,
+                    &InputEvent::SelectCandidate(candidate.id.clone()),
+                    &InputContext::default(),
+                )
+                .unwrap();
+            assert_eq!(result.committed_text(), Some("你好中国"));
+            assert!(result.0.contains(&Action::CloseComposition));
+            assert!(engine
+                .learning_records()
+                .iter()
+                .any(|r| r.key.value == "你好中国"));
+        }
+        let engine = PinyinEngine::new();
+        assert!(!engine
+            .lookup("nihaozhongguox")
+            .iter()
+            .any(|c| c.source == "pinyin.reference.sentence"));
+        let learning = LearningModel::new("test", "zh-CN", "local");
+        assert!(sentence::decode(&"6".repeat(65), None, &learning).is_empty());
+        assert!(sentence::decode("ni''hao", None, &learning).is_empty());
+    }
+
+    #[test]
+    fn candidate_pages_reach_every_ranked_word_and_reset_after_typing() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("paging".into());
+        let context = InputContext::default();
+        engine.create_session(&session).unwrap();
+        let expected = engine.lookup("64");
+        assert!(expected.len() > CANDIDATE_PAGE_SIZE);
+        let mut actions = engine
+            .process(&session, &InputEvent::Text("64".into()), &context)
+            .unwrap();
+        let mut ids = Vec::new();
+        loop {
+            for action in &actions.0 {
+                if let Action::ShowCandidates(values) = action {
+                    ids.extend(values.iter().map(|c| c.id.clone()));
+                }
+            }
+            if !actions
+                .0
+                .iter()
+                .any(|a| matches!(a, Action::CandidatePage { has_next: true, .. }))
+            {
+                break;
+            }
+            actions = engine
+                .process(
+                    &session,
+                    &InputEvent::Key(ime_core::KeyEvent::press(Key::PageDown)),
+                    &context,
+                )
+                .unwrap();
+        }
+        assert_eq!(
+            ids,
+            expected.iter().map(|c| c.id.clone()).collect::<Vec<_>>()
+        );
+        let selected = engine
+            .process(
+                &session,
+                &InputEvent::SelectCandidate(ids.last().unwrap().clone()),
+                &context,
+            )
+            .unwrap();
+        assert!(selected.committed_text().is_some());
+        engine
+            .process(&session, &InputEvent::Reset, &context)
+            .unwrap();
+        let restarted = engine
+            .process(&session, &InputEvent::Text("64".into()), &context)
+            .unwrap();
+        assert!(restarted.0.contains(&Action::CandidatePage {
+            index: 0,
+            has_next: true
+        }));
+        engine.close_session(&session);
+        assert!(!engine.menus.lock().unwrap().contains_key(&session));
+    }
+
+    #[test]
+    fn space_selects_current_page_and_reset_cannot_reuse_old_menu() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("page-space".into());
+        let context = InputContext::default();
+        engine.create_session(&session).unwrap();
+        engine
+            .process(&session, &InputEvent::Text("64".into()), &context)
+            .unwrap();
+        let page = engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::PageDown)),
+                &context,
+            )
+            .unwrap();
+        let expected = page
+            .0
+            .iter()
+            .find_map(|a| {
+                if let Action::ShowCandidates(c) = a {
+                    c.first().map(|v| v.commit_text.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap();
+        let result = engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)),
+                &context,
+            )
+            .unwrap();
+        assert_eq!(result.committed_text(), Some(expected.as_str()));
+        engine
+            .process(&session, &InputEvent::Reset, &context)
+            .unwrap();
+        assert!(!engine.menus.lock().unwrap().contains_key(&session));
+        let blank = engine
+            .process(
+                &session,
+                &InputEvent::Key(ime_core::KeyEvent::press(Key::Space)),
+                &context,
+            )
+            .unwrap();
+        assert_eq!(blank.committed_text(), Some(""));
+    }
+
+    #[test]
+    fn sentence_decoding_respects_selected_first_reading_and_boundaries() {
+        let learning = LearningModel::new("test", "zh-CN", "local");
+        let candidates = sentence::decode("6442694664486", Some("ni"), &learning);
+        assert!(!candidates.is_empty());
+        assert!(candidates
+            .iter()
+            .all(|c| c.annotation.as_deref().unwrap().starts_with("ni ")));
+        assert!(sentence::decode("n'ihaozhongguo", None, &learning).is_empty());
+    }
 
     #[test]
     fn abbreviations_and_mixed_spelling_work_in_both_layouts() {

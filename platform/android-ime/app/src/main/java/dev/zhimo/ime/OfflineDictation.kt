@@ -24,13 +24,27 @@ internal class OfflineDictation(context: Context) {
     }
     private var current: Job? = null
     private var closed = false
+    private var streaming: StreamingDictation? = null
     private val releaseCache = Runnable { if (!active) worker.execute { OfflineSpeechNative.trimCache() } }
-    val active: Boolean get() = current != null
+    val active: Boolean get() = current != null || streaming?.active == true
 
     fun start(language: String, state: (Boolean) -> Unit, result: (String?, String?) -> Unit,
-        prompt: String = "", useVad: Boolean = true, progress: (Int, Float) -> Unit = { _, _ -> }) {
+        prompt: String = "", useVad: Boolean = true, progress: (Int, Float) -> Unit = { _, _ -> },
+        useStreaming: Boolean = false, partial: (String) -> Unit = {}) {
         check(Looper.myLooper() == Looper.getMainLooper())
-        if (closed || current != null) return
+        if (closed || active) return
+        if (useStreaming) {
+            if (!BuildConfig.STREAMING_SPEECH) {
+                result(null, "此安装包未启用实验性流式语音，请使用标准语音")
+                return
+            }
+            main.removeCallbacks(releaseCache)
+            worker.execute { OfflineSpeechNative.trimCache() }
+            val engine = streaming ?: StreamingDictation(context).also { streaming = it }
+            engine.start(state, result, progress, partial)
+            return
+        }
+        streaming?.trimMemory()
         main.removeCallbacks(releaseCache)
         val job = Job(OfflineSpeechNative.create())
         if (job.id == 0L) { result(null, "无法创建语音任务，请稍后重试"); return }
@@ -95,14 +109,19 @@ internal class OfflineDictation(context: Context) {
         }
     }
 
-    fun finish() { current?.finish?.set(true) }
+    fun finish() { current?.finish?.set(true); streaming?.finish() }
     fun cancel() {
+        streaming?.cancel()
         current?.let { it.cancelled.set(true); OfflineSpeechNative.cancel(it.id) }
         current = null
     }
-    fun trimMemory() { if (!closed) worker.execute { OfflineSpeechNative.trimCache() } }
+    fun trimMemory() {
+        streaming?.trimMemory()
+        if (!closed) worker.execute { OfflineSpeechNative.trimCache() }
+    }
     fun close() {
         closed = true; cancel(); main.removeCallbacks(releaseCache)
+        streaming?.close()
         worker.execute { OfflineSpeechNative.trimCache() }
         worker.shutdown()
     }

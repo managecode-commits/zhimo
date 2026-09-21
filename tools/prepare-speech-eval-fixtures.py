@@ -22,6 +22,11 @@ for name, samples in [("silence", [0] * 32000),
         output.writeframes(audio.tobytes())
     entries.append(dict(id=name, audio=name + ".wav", reference="", language="zh", category="generated-nonspeech"))
 upstream = ROOT / "target/vendor/whisper.cpp-1.9.1"
+# Raw PCM copy of the same public fixture, for the opt-in streaming Android test.
+with wave.open(str(upstream / "bindings/go/samples/jfk.wav"), "rb") as source:
+    if (source.getnchannels(), source.getsampwidth(), source.getframerate(), source.getcomptype()) != (1, 2, 16000, "NONE"):
+        raise ValueError("Unexpected public JFK fixture format")
+    (destination / "jfk.pcm").write_bytes(source.readframes(source.getnframes()))
 entries.append(dict(id="jfk", audio=str(upstream / "bindings/go/samples/jfk.wav"),
                     reference=(upstream / "tests/parakeet-expected-jfk-output.txt").read_text().strip(),
                     language="en", category="public-jfk"))

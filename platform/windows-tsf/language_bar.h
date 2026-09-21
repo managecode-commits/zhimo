@@ -31,8 +31,9 @@ class ModeIndicator final : public ITfLangBarItemButton, public ITfSource {
   explicit ModeIndicator(std::function<void()> click, std::function<void(POINT)> menu = {})
       : click_(std::move(click)), menu_(std::move(menu)) {}
   void Detach() { click_ = {}; menu_ = {}; }
-  void Update(bool pinyin) {
+  void Update(bool pinyin, bool caps_lock = false) {
     pinyin_ = pinyin;
+    caps_lock_ = caps_lock;
     Notify(0x7); // TF_LBI_ICON | TF_LBI_TEXT | TF_LBI_TOOLTIP
   }
   HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** out) override {
@@ -68,11 +69,12 @@ class ModeIndicator final : public ITfLangBarItemButton, public ITfSource {
   }
   HRESULT STDMETHODCALLTYPE Show(BOOL) override { return S_OK; }
   HRESULT STDMETHODCALLTYPE GetTooltipString(BSTR* text) override {
+    if (caps_lock_) return String(text, L"Zhimo：大写锁定 · 英文直输（关闭 Caps Lock 恢复原模式；Shift 临时小写）");
     return String(text, pinyin_ ? L"Zhimo：中文拼音（点击或 Shift+Space 切换）" :
                                 L"Zhimo：英文直输（点击或 Shift+Space 切换）");
   }
   HRESULT STDMETHODCALLTYPE GetText(BSTR* text) override {
-    return String(text, pinyin_ ? L"中" : L"英");
+    return String(text, caps_lock_ ? L"A" : pinyin_ ? L"中" : L"英");
   }
   HRESULT STDMETHODCALLTYPE OnClick(TfLBIClick button, POINT point, const RECT*) override {
     if (button == TF_LBI_CLK_RIGHT && menu_) { auto menu = menu_; menu(point); }
@@ -103,7 +105,7 @@ class ModeIndicator final : public ITfLangBarItemButton, public ITfSource {
     SetBkMode(dc, TRANSPARENT);
     SetTextColor(dc, RGB(0,0,0));
     RECT bounds{0,0,size,size};
-    DrawTextW(dc, pinyin_ ? L"中" : L"英", -1, &bounds, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    DrawTextW(dc, caps_lock_ ? L"A" : pinyin_ ? L"中" : L"英", -1, &bounds, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     SelectObject(dc, old_font);
     if (font) DeleteObject(font);
     SelectObject(dc, old);
@@ -145,6 +147,7 @@ class ModeIndicator final : public ITfLangBarItemButton, public ITfSource {
   }
   LONG refs_ = 1;
   bool pinyin_ = true;
+  bool caps_lock_ = false;
   ITfLangBarItemSink* sink_ = nullptr;
   std::function<void()> click_;
   std::function<void(POINT)> menu_;

@@ -147,6 +147,7 @@ class ZhimoEngine(IBus.Engine):
         self.lookup_table: IBus.LookupTable | None = None
         self.composing = False
         self.pinyin = True
+        self.caps_lock = False
         self.scope = 0
         self.handwriting = None
         self.focused = False
@@ -172,10 +173,10 @@ class ZhimoEngine(IBus.Engine):
         self.publish_mode(register=True)
 
     def publish_mode(self, register: bool = False) -> None:
-        label = "中" if self.pinyin else "英"
-        self.mode_property.set_label(IBus.Text.new_from_string("中文拼音" if self.pinyin else "英文直输"))
+        label = "A" if self.caps_lock else "中" if self.pinyin else "英"
+        self.mode_property.set_label(IBus.Text.new_from_string("大写锁定 · 英文直输" if self.caps_lock else "中文拼音" if self.pinyin else "英文直输"))
         self.mode_property.set_symbol(IBus.Text.new_from_string(label))
-        self.mode_property.set_tooltip(IBus.Text.new_from_string(f"当前：{label}；点击或 Shift+Space 切换中英文"))
+        self.mode_property.set_tooltip(IBus.Text.new_from_string(f"当前：{label}；点击或 Shift+Space 切换中英文；Caps Lock 独立控制大写"))
         self.mode_property.set_sensitive(self.runtime is not None and self.scope != 1)
         if register:
             self.register_properties(self.mode_properties)
@@ -192,6 +193,13 @@ class ZhimoEngine(IBus.Engine):
 
     def apply_actions(self, actions: list[object]) -> None:
         for action in actions:
+            if action == "CloseComposition":
+                self.hide_preedit_text()
+                self.hide_lookup_table()
+                self.composing = False
+                self.candidates = []
+                self.lookup_table = None
+                continue
             if not isinstance(action, dict):
                 continue
             if "UpdateComposition" in action:
@@ -271,6 +279,15 @@ class ZhimoEngine(IBus.Engine):
 
     def do_process_key_event(self, keyval: int, keycode: int, state: int) -> bool:
         del keycode
+        released = bool(state & IBus.ModifierType.RELEASE_MASK)
+        caps = bool(state & IBus.ModifierType.LOCK_MASK)
+        if keyval == IBus.KEY_Caps_Lock and not released:
+            # Do not infer whether this backend reports pre- or post-toggle state.
+            # Refresh from the release/next event's actual modifier mask instead.
+            caps = self.caps_lock
+        if caps != self.caps_lock:
+            self.caps_lock = caps
+            self.publish_mode()
         if state & IBus.ModifierType.RELEASE_MASK:
             return False
         if keyval in (IBus.KEY_h, IBus.KEY_H, IBus.KEY_F10) and state & IBus.ModifierType.CONTROL_MASK and state & IBus.ModifierType.SHIFT_MASK and not state & (IBus.ModifierType.MOD1_MASK | IBus.ModifierType.SUPER_MASK):
@@ -293,6 +310,18 @@ class ZhimoEngine(IBus.Engine):
         # English mode uses the application's native keyboard handling, including
         # case, punctuation, numeric keypad and shortcuts; no word auto-replacement.
         if not self.pinyin:
+            return False
+        codepoint = IBus.keyval_to_unicode(keyval)
+        character = codepoint if isinstance(codepoint, str) else (chr(codepoint) if codepoint else "")
+        direct = self.caps_lock or (bool(state & IBus.ModifierType.SHIFT_MASK) and character.isascii() and character.isalpha())
+        if keyval == IBus.KEY_Caps_Lock or direct:
+            if self.composing:
+                try:
+                    # Commit only the original spelling; let the host insert this key.
+                    self.apply_actions(self.runtime.command(1))
+                except Exception as error:
+                    print(f"Zhimo raw spelling commit failed: {error}", file=sys.stderr)
+                    return keyval != IBus.KEY_Caps_Lock
             return False
         if IBus.KEY_1 <= keyval <= IBus.KEY_9 and self.composing:
             index = keyval - IBus.KEY_1

@@ -43,6 +43,16 @@ class KeyboardInteractionTest {
         return (0 until node.childCount).any { hasPreedit(node.getChild(it), *readings) }
     }
 
+    private fun awaitPreedit(message: String, vararg readings: String) {
+        val deadline = SystemClock.uptimeMillis() + 10000
+        while (SystemClock.uptimeMillis() < deadline) {
+            if (automation.windows.any { hasPreedit(it.root, *readings) }) return
+            SystemClock.sleep(30)
+        }
+        capture("failure")
+        assertTrue(message, automation.windows.any { hasPreedit(it.root, *readings) })
+    }
+
     private fun click(label: String, longPress: Boolean = false) {
         fun revealToolbarEnd(node: AccessibilityNodeInfo?): Boolean {
             if (node == null) return false
@@ -220,7 +230,7 @@ class KeyboardInteractionTest {
             "nihao".forEach { click(it.toString()) }
             assertTopRow(true)
             instrumentation.runOnMainSync { assertEquals("未选拼音不得写入应用", "", active.editor.text.toString()) }
-            assertTrue("26 键必须显示待选拼音", automation.windows.any { hasPreedit(it.root, "ni hao", "nihao", "ni'hao") })
+            awaitPreedit("26 键必须显示待选拼音", "ni hao", "nihao", "ni'hao")
             capture("letters")
             click("，")
             instrumentation.runOnMainSync { assertEquals("你好，", active.editor.text.toString()) }
@@ -250,11 +260,25 @@ class KeyboardInteractionTest {
             click("删除，长按连续删除")
             for (label in listOf("6\nMNO", "4\nGHI", "4\nGHI", "2\nABC", "6\nMNO")) click(label)
             instrumentation.runOnMainSync { assertEquals("9 键编码不得写入应用", "你好，你好5", active.editor.text.toString()) }
-            assertTrue("9 键必须显示解析拼音", automation.windows.any { hasPreedit(it.root, "ni hao") })
+            awaitPreedit("9 键应显示输入对应的读音选项，不跟随首候选猜测", "mi / ng / ni / m · 连拼")
             capture("t9")
             assertTopRow(true)
             click("选词")
             instrumentation.runOnMainSync { assertEquals("你好，你好5你好", active.editor.text.toString()) }
+            // Restore the same text through the nine-key action/return button.
+            // This must choose Chinese, not leak the 64426 spelling code.
+            click("删除，长按连续删除")
+            click("删除，长按连续删除")
+            for (label in listOf("6\nMNO", "4\nGHI", "4\nGHI", "2\nABC", "6\nMNO")) click(label)
+            awaitPreedit("9 键回车前等待解码", "mi / ng / ni / m · 连拼")
+            click("完成")
+            val enterDeadline = SystemClock.uptimeMillis() + 10000
+            var correctEnter = false
+            while (!correctEnter && SystemClock.uptimeMillis() < enterDeadline) {
+                instrumentation.runOnMainSync { correctEnter = active.editor.text.toString() == "你好，你好5你好" }
+                if (!correctEnter) SystemClock.sleep(30)
+            }
+            assertTrue("9 键完成键必须选汉字，不能提交数字编码", correctEnter)
             click("6\nMNO"); click("4\nGHI")
             click("清空当前拼音")
             instrumentation.runOnMainSync { assertEquals("你好，你好5你好", active.editor.text.toString()) }

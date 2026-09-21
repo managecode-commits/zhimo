@@ -23,6 +23,7 @@ jobs:
       - run: python3 -m py_compile platform/linux-ibus/zhimo_ibus.py
       - run: python3 platform/linux-ibus/runtime_smoke.py
       - run: python3 -B platform/linux-ibus/test_keyboard.py
+      - run: python3 -B tools/test-desktop-case.py
       - run: bash -n platform/linux-ibus/*.sh tools/*.sh
 
   portable-core:

@@ -3,6 +3,9 @@
 #include <string_view>
 
 namespace zhimo {
+constexpr bool UseNativeCase(bool caps_lock, bool shift, bool letter) {
+  return caps_lock || (shift && letter);
+}
 // Win32 virtual-key values. Literal keys are forwarded to the host so its
 // keyboard layout (including shifted symbols and dead keys) remains authoritative.
 constexpr bool IsLiteralBoundaryKey(unsigned key) {

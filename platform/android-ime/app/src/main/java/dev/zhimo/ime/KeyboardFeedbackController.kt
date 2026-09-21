@@ -35,12 +35,14 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
     private var lastSoundError: String? = null
     private var pool: SoundPool? = null
     private var sample = 0
-    private var ready = false
-    private var closed = false
+    @Volatile private var ready = false
+    @Volatile private var closed = false
+    private val worker = java.util.concurrent.Executors.newSingleThreadExecutor()
+    private val main = android.os.Handler(android.os.Looper.getMainLooper())
     private val soundLimit = FeedbackRateLimit(35)
     private val repeatLimit = FeedbackRateLimit(130)
     private val adjustmentLimit = FeedbackRateLimit(80)
-    var muted = false
+    @Volatile var muted = false
         set(value) {
             field = value
             if (value) { pool?.autoPause(); runCatching { vibrator?.cancel() } }
@@ -101,6 +103,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
     }.getOrDefault("无法读取系统音效状态，已暂停播放。")
 
     private fun vibrate(effect: VibrationEffect) {
+        if (closed || muted) return
         if (Build.VERSION.SDK_INT >= 33) vibrator?.vibrate(effect,
             android.os.VibrationAttributes.Builder().setUsage(android.os.VibrationAttributes.USAGE_TOUCH).build())
         else vibrator?.vibrate(effect, AudioAttributes.Builder()
@@ -109,6 +112,15 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
 
     fun emit(view: View, event: KeyFeedback = KeyFeedback.TAP) {
         if (closed || muted || !view.isEnabled) return
+        val root = view.rootView
+        val requestedAt = SystemClock.uptimeMillis()
+        worker.execute {
+            // Feedback may be skipped under load; input itself must never be dropped.
+            if (!closed && !muted && SystemClock.uptimeMillis() - requestedAt <= 60) emitPrepared(root, event)
+        }
+    }
+
+    private fun emitPrepared(root: View, event: KeyFeedback) {
         val now = SystemClock.uptimeMillis()
         if (event == KeyFeedback.ADJUST && !adjustmentLimit.accept(now)) return
         if (event == KeyFeedback.REPEAT) {
@@ -136,8 +148,10 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
                                 .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, scale).compose())
                         }
                     }
-                } else view.rootView.performHapticFeedback(if (event == KeyFeedback.LONG_PRESS)
-                    HapticFeedbackConstants.LONG_PRESS else HapticFeedbackConstants.KEYBOARD_TAP)
+                } else main.post {
+                    if (!closed && !muted && root.isAttachedToWindow) root.performHapticFeedback(
+                        if (event == KeyFeedback.LONG_PRESS) HapticFeedbackConstants.LONG_PRESS else HapticFeedbackConstants.KEYBOARD_TAP)
+                }
             }.onFailure { lastHapticError = "振动调用失败：${it.javaClass.simpleName}，请反馈机型与系统版本。" }
         }
         if (event == KeyFeedback.ADJUST) return // Drag preview is tactile only.
@@ -149,6 +163,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
                 (audio?.getStreamVolume(AudioManager.STREAM_SYSTEM) ?: 0) > 0)
         }.getOrDefault(false)
         if (!allowed || !soundLimit.accept(now)) return
+        if (closed || muted) return
         runCatching {
             if (preferences.getString("key_sound_style", "soft") == "system") {
                 if (Settings.System.getInt(context.contentResolver, Settings.System.SOUND_EFFECTS_ENABLED, 0) != 0)
@@ -160,10 +175,14 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
     }
 
     override fun close() {
+        if (closed) return
         closed = true
         ready = false
-        pool?.release()
-        pool = null
-        runCatching { vibrator?.cancel() }
+        worker.execute {
+            pool?.release()
+            pool = null
+            runCatching { vibrator?.cancel() }
+        }
+        worker.shutdown()
     }
 }

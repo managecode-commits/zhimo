@@ -6,6 +6,13 @@ plugins {
     id("com.android.application")
 }
 
+val streamingSpeechEnabled = providers.gradleProperty("zhimo.streamingSpeech").orNull == "true"
+val verifyStreamingSpeech by tasks.registering(Exec::class) {
+    commandLine("python3", rootDir.resolve("../../tools/verify-streaming-speech-build.py").absolutePath,
+        if (streamingSpeechEnabled) "--native" else "--api-only")
+}
+tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(verifyStreamingSpeech) }
+
 val verifyBundledHandwriting by tasks.registering {
     val modelRoot = rootDir.resolve("../../models/handwriting")
     inputs.dir(rootDir.resolve("../../models"))
@@ -93,19 +100,26 @@ android {
     ndkVersion = "28.2.13676358"
 
     defaultConfig {
+        buildConfigField("boolean", "STREAMING_SPEECH", streamingSpeechEnabled.toString())
         applicationId = "dev.zhimo.ime"
         minSdk = 26
         targetSdk = 37
         versionCode = appVersionCode
-        versionName = appVersionName
+        versionName = appVersionName + if (streamingSpeechEnabled) ".streaming-experimental" else ""
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
         externalNativeBuild.cmake.arguments += "-DZHIMO_ROOT=${rootDir.resolve("../..").absolutePath}"
     }
+    buildFeatures.buildConfig = true
 
     // Include the model, corresponding source and licenses for first-install offline use.
     sourceSets.getByName("main").assets.srcDir(rootDir.resolve("../../models"))
+    if (streamingSpeechEnabled) {
+        sourceSets.getByName("main").assets.srcDir(rootDir.resolve("../../target/streaming-speech/android-assets"))
+        sourceSets.getByName("main").jniLibs.srcDir(rootDir.resolve("../../target/streaming-speech/asr-only/jni"))
+    }
     androidResources.noCompress += "bin"
+    androidResources.noCompress += "onnx"
 
     signingConfigs {
         if (releaseSigningReady) {
@@ -135,6 +149,7 @@ android {
 }
 
 dependencies {
+    implementation(files(rootDir.resolve("../../target/streaming-speech/api/classes.jar")))
     testImplementation("junit:junit:4.13.2")
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.22.0")
     androidTestImplementation("androidx.test:runner:1.7.0")

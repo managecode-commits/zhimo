@@ -37,6 +37,7 @@ class StatusBar {
   }
   void Show(bool pinyin, std::function<void(unsigned, POINT)> callback) {
     pinyin_ = pinyin;
+    caps_lock_ = (GetKeyState(VK_CAPITAL) & 1) != 0;
     vertical_ = Vertical();
     callback_ = std::move(callback);
     if (!Enabled()) { Hide(); return; }
@@ -149,7 +150,7 @@ class StatusBar {
         DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
         DEFAULT_PITCH, L"Microsoft YaHei UI");
     HGDIOBJ old = SelectObject(dc, font);
-    const wchar_t* labels[] = {L"Z", pinyin_ ? L"中" : L"英", L"手", L"麦", L"⋯"};
+    const wchar_t* labels[] = {L"Z", caps_lock_ ? L"A" : pinyin_ ? L"中" : L"英", L"手", L"麦", L"⋯"};
     for (int i = 0; i < 5; ++i) {
       RECT cell = CellRect(i, dpi_, vertical_);
       if (i == hover_) {
@@ -173,7 +174,15 @@ class StatusBar {
     switch (message) {
       case WM_MOUSEACTIVATE: return MA_NOACTIVATE;
       case WM_TIMER:
-        if (wp == kFocusTimer) { self->RefreshVisibility(); return 0; }
+        if (wp == kFocusTimer) {
+          self->RefreshVisibility();
+          const bool caps = (GetKeyState(VK_CAPITAL) & 1) != 0;
+          if (caps != self->caps_lock_) {
+            self->caps_lock_ = caps;
+            InvalidateRect(window, nullptr, FALSE);
+          }
+          return 0;
+        }
         break;
       case WM_ERASEBKGND: return 1;
       case WM_PAINT: self->Paint(); return 0;
@@ -231,6 +240,7 @@ class StatusBar {
   bool wanted_ = false;
   int dpi_ = 96, hover_ = -1, pressed_ = -1;
   bool pinyin_ = true, vertical_ = false;
+  bool caps_lock_ = false;
   POINT drag_{};
   RECT origin_{};
   std::function<void(unsigned, POINT)> callback_;

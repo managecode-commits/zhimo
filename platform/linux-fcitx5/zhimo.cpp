@@ -188,6 +188,13 @@ public:
     }
 
     bool pinyin() const { return pinyin_; }
+    bool capsLock() const { return capsLock_; }
+    bool setCapsLock(bool value) {
+        if (capsLock_ == value) return false;
+        capsLock_ = value;
+        return true;
+    }
+    std::string modeLabel() const { return capsLock_ ? "A" : pinyin_ ? "中" : "英"; }
 
 private:
     void updateInputScope() {
@@ -279,6 +286,7 @@ private:
     ImeHandle *handle_ = nullptr;
     bool composing_ = false;
     bool pinyin_ = true;
+    bool capsLock_ = false;
     std::string pinyinEngine_ = "pinyin.reference";
     unsigned scope_ = 0;
 };
@@ -295,10 +303,10 @@ ZhimoEngine::ZhimoEngine(Instance *instance)
     public:
         explicit ModeAction(FactoryFor<ZhimoState> *factory) : factory_(factory) {}
         std::string shortText(InputContext *ic) const override {
-            return ic && ic->propertyFor(factory_)->pinyin() ? "中" : "英";
+            return ic ? ic->propertyFor(factory_)->modeLabel() : "英";
         }
         std::string longText(InputContext *ic) const override {
-            return shortText(ic) + " · 点击或 Shift+Space 切换中英文";
+            return shortText(ic) + " · 点击或 Shift+Space 切换中英文；Caps Lock 独立控制大写";
         }
         std::string icon(InputContext *) const override { return {}; }
         void activate(InputContext *ic) override {
@@ -348,7 +356,7 @@ void ZhimoEngine::activate(const InputMethodEntry &, InputContextEvent &event) {
 }
 
 std::string ZhimoEngine::subMode(const InputMethodEntry &, InputContext &ic) {
-    return ic.propertyFor(&stateFactory_)->pinyin() ? "中" : "英";
+    return ic.propertyFor(&stateFactory_)->modeLabel();
 }
 
 std::string ZhimoEngine::subModeLabelImpl(const InputMethodEntry &entry, InputContext &ic) {
@@ -357,11 +365,18 @@ std::string ZhimoEngine::subModeLabelImpl(const InputMethodEntry &entry, InputCo
 
 void ZhimoEngine::keyEvent(const InputMethodEntry & /*entry*/,
                              KeyEvent &event) {
+    auto *state = event.inputContext()->propertyFor(&stateFactory_);
+    const auto raw = event.rawKey();
+    bool caps = raw.states().testAny(KeyState::CapsLock);
+    if (raw.sym() == FcitxKey_Caps_Lock && !event.isRelease()) caps = state->capsLock();
+    if (state->setCapsLock(caps)) {
+        modeAction_->update(event.inputContext());
+        event.inputContext()->updateUserInterface(UserInterfaceComponent::StatusArea);
+    }
     if (event.isRelease()) {
         return;
     }
     auto key = event.key();
-    auto *state = event.inputContext()->propertyFor(&stateFactory_);
     if (!state->acceptsInput()) {
         state->closePanel();
         return;
@@ -389,6 +404,14 @@ void ZhimoEngine::keyEvent(const InputMethodEntry & /*entry*/,
         return;
     }
     if (!state->pinyin()) return; // Native English, digits, case and symbols.
+    const bool letter = (key.sym() >= FcitxKey_a && key.sym() <= FcitxKey_z) ||
+                        (key.sym() >= FcitxKey_A && key.sym() <= FcitxKey_Z);
+    if (raw.sym() == FcitxKey_Caps_Lock || state->capsLock() ||
+        (raw.states().testAny(KeyState::Shift) && letter)) {
+        if (state->composing() && !state->command(1) && raw.sym() != FcitxKey_Caps_Lock)
+            event.filterAndAccept(); // Keep the key from overtaking a failed raw commit.
+        return; // Original key goes to the host with its native case/layout.
+    }
     if (state->composing() && key.isDigit()) {
         auto index = key.digitSelection();
         if (state->selectVisibleCandidate(index)) {

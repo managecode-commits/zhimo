@@ -6,6 +6,7 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$repo_dir/tools/android-env.sh"
 
 cd "$repo_dir"
+python3 tools/prepare-streaming-speech-runtime.py
 python3 tools/test-key-sound.py
 bash ./tools/prepare-offline-speech.sh
 ./tools/build-android-core.sh

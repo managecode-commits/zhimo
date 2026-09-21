@@ -101,13 +101,24 @@ class MainActivity : Activity() {
                 }
             })
             for ((name, label, default) in listOf(
+                Triple("speech_streaming", "实验性中英流式语音（边说边预览；关闭恢复 Whisper）", false),
                 Triple("speech_confirm", "离线语音识别后确认上屏", true),
                 Triple("speech_vad", "离线人声检测（过滤非人声，轻声漏识别时可关闭）", true),
                 Triple("speech_simplified", "中文语音输出简体（Android 10 及以上）", true),
             )) addView(Switch(this@MainActivity).apply {
                 text = label
                 isChecked = preferences.getBoolean(name, default)
+                if (name == "speech_streaming" && !BuildConfig.STREAMING_SPEECH) {
+                    isChecked = false
+                    isEnabled = false
+                    text = "实验性流式语音（此安装包未启用）"
+                }
                 setOnCheckedChangeListener { _, value -> preferences.edit().putBoolean(name, value).apply() }
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "流式开关仅在启用内置离线语音时生效。首次准备较慢，临时结果可能修订；尚未完成手机速度与准确率验收。" +
+                    "当前流式模式不使用下方 Whisper 热词或独立 VAD 开关，不保证自动标点。"
+                textSize = 14f
             })
             val speechHotwords = android.widget.EditText(this@MainActivity).apply {
                 hint = "个人语音热词：姓名、地名、术语，逗号分隔；最多 16 个"

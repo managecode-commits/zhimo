@@ -1,0 +1,9 @@
+sherpa-onnx Kotlin/JNI API, version 1.12.11
+Source: https://github.com/k2-fsa/sherpa-onnx/tree/v1.12.11/sherpa-onnx/kotlin-api
+License: Apache License 2.0 (included as LICENSE in this directory).
+Upstream copyright notices remain in the source at the address above.
+
+The generic AAR is used only as a verified source of classes.jar.
+Its ASR+TTS native libraries are NOT bundled by Zhimo.
+Experimental streaming packages additionally include an ASR-only native build,
+model card and component licenses under assets/speech-streaming/.

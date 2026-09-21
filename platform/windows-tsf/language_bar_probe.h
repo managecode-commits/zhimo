@@ -36,6 +36,16 @@ inline bool ProbeLanguageBar() {
     if (icon) DestroyIcon(icon);
   }
   good = good && (sink.updates & 7) == 7;
+  for (bool chinese : {true, false}) {
+    item->Update(chinese, true);
+    BSTR text = nullptr;
+    good = good && SUCCEEDED(item->GetText(&text)) && text && wcscmp(text, L"A") == 0;
+    SysFreeString(text);
+    item->Update(chinese, false);
+    text = nullptr;
+    good = good && SUCCEEDED(item->GetText(&text)) && text && wcscmp(text, chinese ? L"中" : L"英") == 0;
+    SysFreeString(text);
+  }
   item->OnClick(TF_LBI_CLK_RIGHT, {}, nullptr);
   good = good && clicks == 0;
   item->OnClick(TF_LBI_CLK_LEFT, {}, nullptr);

@@ -45,6 +45,11 @@ int main() {
   static_assert(zhimo::IsLiteralBoundaryKey(0xbd)); // OEM minus / underscore
   static_assert(zhimo::IsLiteralBoundaryKey(0x60)); // numeric keypad
   static_assert(!zhimo::IsLiteralBoundaryKey('A'));
+  static_assert(zhimo::UseNativeCase(true, false, true));
+  static_assert(zhimo::UseNativeCase(true, true, true)); // OS supplies lowercase.
+  static_assert(zhimo::UseNativeCase(false, true, true));
+  static_assert(!zhimo::UseNativeCase(false, false, true));
+  static_assert(!zhimo::UseNativeCase(false, true, false)); // Shift+symbols unchanged.
   static_assert(!zhimo::IsLiteralBoundaryKey(0x08)); // backspace
   static_assert(zhimo::IsEmEditorDocument(L"EmEditor.exe", L"EmEditorView", true, true, false));
   static_assert(zhimo::IsEmEditorDocument(L"EMEDITOR.EXE", L"emeditorview", true, true, false));

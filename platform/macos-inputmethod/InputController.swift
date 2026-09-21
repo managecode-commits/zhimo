@@ -13,6 +13,7 @@ final class InputController: IMKInputController {
     private var composing = false
     private var active = false
     private var pinyin = true
+    private var capsLock = false
     private var generation: UInt64 = 0
     private var hostPID: pid_t = 0
     private weak var targetClient: AnyObject?
@@ -32,6 +33,7 @@ final class InputController: IMKInputController {
     }
 
     override func activateServer(_ sender: Any!) {
+        capsLock = NSEvent.modifierFlags.contains(.capsLock)
         active = true; generation &+= 1
         targetClient = sender as AnyObject?
         hostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0
@@ -43,12 +45,20 @@ final class InputController: IMKInputController {
         active = false; generation &+= 1; targetClient = nil
         session.flush()
     }
-    override func recognizedEvents(_ sender: Any!) -> Int { Int(NSEvent.EventTypeMask.keyDown.rawValue) }
+    override func recognizedEvents(_ sender: Any!) -> Int {
+        Int(NSEvent.EventTypeMask.keyDown.rawValue | NSEvent.EventTypeMask.flagsChanged.rawValue)
+    }
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
-        guard let event, event.type == .keyDown, let client = sender as? IMKTextInput else { return false }
+        guard let event, let client = sender as? IMKTextInput else { return false }
         session.setPasswordScope(IsSecureEventInput())
         guard eligible else { cancel(to: client); return false }
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        capsLock = flags.contains(.capsLock)
+        if event.type == .flagsChanged {
+            if capsLock && composing { _ = finishRaw(to: client) }
+            return false
+        }
+        guard event.type == .keyDown else { return false }
         if flags.contains(.command) || flags.contains(.option) { return false }
         if flags.contains(.control) && flags.contains(.shift) {
             if event.keyCode == 4 { openPanel(speech: false); return true }
@@ -59,6 +69,12 @@ final class InputController: IMKInputController {
         MacInputPanel.dismiss(owner: self)
         guard pinyin else { return false }
         let text = event.characters ?? ""
+        let asciiLetter = !text.isEmpty && text.unicodeScalars.allSatisfy {
+            (65...90).contains($0.value) || (97...122).contains($0.value)
+        }
+        if capsLock || (flags.contains(.shift) && asciiLetter) {
+            return !finishRaw(to: client)
+        }
         if composing, let n = Int(text), (1...9).contains(n), page * 9 + n - 1 < choices.count {
             choose(page * 9 + n - 1); return true
         }
@@ -108,6 +124,12 @@ final class InputController: IMKInputController {
     }
     override func menu() -> NSMenu! {
         let menu = NSMenu(title: "知墨")
+        capsLock = NSEvent.modifierFlags.contains(.capsLock)
+        if capsLock {
+            let status = NSMenuItem(title: "A · 大写锁定：英文直输，关闭 Caps Lock 恢复原模式", action: nil, keyEquivalent: "")
+            status.isEnabled = false
+            menu.addItem(status)
+        }
         for (title, action) in [(pinyin ? "中文拼音 ✓ · 切换英文" : "英文直输 ✓ · 切换中文", #selector(toggleLanguage)),
                                 ("离线单字手写", #selector(handwriting)), ("离线语音", #selector(speech)),
                                 (UserDefaults.standard.bool(forKey: "LearningEnabled") ? "关闭本地词频学习" : "启用本地词频学习（默认关闭）", #selector(toggleLearning))] {
@@ -140,9 +162,20 @@ final class InputController: IMKInputController {
     override func inputText(_ string: String!, client sender: Any!) -> Bool {
         guard eligible, pinyin else { return false }
         guard let string, let client = sender as? IMKTextInput else { return false }
+        if NSEvent.modifierFlags.contains(.capsLock) || string.unicodeScalars.contains(where: { (65...90).contains($0.value) }) {
+            return !finishRaw(to: client)
+        }
         let actions = string == " " ? session.command(2) : session.feed(string)
         guard session.lastOperationSucceeded, !actions.isEmpty,
               !actions.contains(where: { ($0 as? String) == "Ignored" }) else { return false }
+        apply(actions, to: client)
+        return true
+    }
+
+    private func finishRaw(to client: IMKTextInput) -> Bool {
+        guard composing else { return true }
+        let actions = session.command(1)
+        guard session.lastOperationSucceeded else { return false }
         apply(actions, to: client)
         return true
     }

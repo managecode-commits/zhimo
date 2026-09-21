@@ -30,6 +30,7 @@ cmake --build /out/shared-speech -j2
 ctest --test-dir /out/shared-speech --output-on-failure
 DESTDIR=/out/stage cmake --install /out/shared-speech
 python3 -B platform/linux-ibus/test_keyboard.py
+python3 -B tools/test-desktop-case.py
 python3 -B platform/linux-ibus/test_desktop.py
 python3 -B platform/linux-ibus/test_desktop_support.py
 xvfb-run -a python3 -B platform/linux-ibus/test_desktop_gui.py /out/cargo/release/libime_ffi.so

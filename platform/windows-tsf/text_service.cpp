@@ -278,6 +278,7 @@ HRESULT TextService::OnSetFocus(BOOL foreground) {
 }
 HRESULT TextService::OnTestKeyDown(ITfContext* context, WPARAM key, LPARAM, BOOL* eaten) {
   if (!eaten) return E_INVALIDARG;
+  if (key == VK_CAPITAL || key == VK_SHIFT) ShowModeIndicator();
   // Even a native/pass-through key invalidates an outstanding panel result.
   if (desktop_context_) { ++generation_; CloseDesktopPanel(); }
   *eaten = ShouldEat(context, key);
@@ -290,13 +291,15 @@ HRESULT TextService::OnKeyDown(ITfContext* context, WPARAM key, LPARAM, BOOL* ea
   *eaten = ProcessKey(context, key);
   return S_OK;
 }
-HRESULT TextService::OnTestKeyUp(ITfContext*, WPARAM, LPARAM, BOOL* eaten) {
+HRESULT TextService::OnTestKeyUp(ITfContext*, WPARAM key, LPARAM, BOOL* eaten) {
   if (!eaten) return E_INVALIDARG;
+  if (key == VK_CAPITAL || key == VK_SHIFT) ShowModeIndicator();
   *eaten = FALSE;
   return S_OK;
 }
-HRESULT TextService::OnKeyUp(ITfContext*, WPARAM, LPARAM, BOOL* eaten) {
+HRESULT TextService::OnKeyUp(ITfContext*, WPARAM key, LPARAM, BOOL* eaten) {
   if (!eaten) return E_INVALIDARG;
+  if (key == VK_CAPITAL || key == VK_SHIFT) ShowModeIndicator();
   *eaten = FALSE;
   return S_OK;
 }
@@ -325,6 +328,9 @@ bool TextService::ShouldEat(ITfContext* context, WPARAM key) const {
   if (DetectScope(context) == 1) return false;
   if (key == VK_SPACE && GetKeyState(VK_SHIFT) < 0) return true;
   if (!pinyin_) return false; // Direct native English, with no auto-completion.
+  if (key == VK_CAPITAL) return composing_;
+  if (UseNativeCase((GetKeyState(VK_CAPITAL) & 1) != 0, GetKeyState(VK_SHIFT) < 0,
+                    key >= 'A' && key <= 'Z')) return composing_;
   if ((key >= 'A' && key <= 'Z') || (key == VK_OEM_7 && GetKeyState(VK_SHIFT) >= 0)) return true;
   if (composing_ && IsLiteralBoundaryKey(static_cast<unsigned>(key))) return true;
   return composing_ && (key == VK_BACK || key == VK_SPACE || key == VK_RETURN ||
@@ -410,7 +416,19 @@ HRESULT TextService::ProcessKeyLocked(TfEditCookie cookie, ITfContext* context, 
     OpenDesktopPanel(cookie, context, key==VK_F10 || key==0x10002);
     return S_OK;
   }
-  if (shift_space) {
+  if (!shift_space && (key == VK_CAPITAL ||
+      UseNativeCase((GetKeyState(VK_CAPITAL) & 1) != 0, GetKeyState(VK_SHIFT) < 0,
+                    key >= 'A' && key <= 'Z'))) {
+    // Preserve the raw spelling before returning the original key to the host.
+    // Do not choose a Chinese candidate or synthesize US-layout uppercase text.
+    if (composing_) {
+      if (!session_.command(1)) return E_FAIL;
+      const auto result = ApplyActions(cookie, context, session_.structured_actions());
+      if (FAILED(result)) return S_OK; // Never replay after a partial edit.
+    }
+    ShowModeIndicator();
+    return S_FALSE;
+  } else if (shift_space) {
     if (composing_) (void)session_.command(3);
     pinyin_ = !pinyin_;
     if (!session_.switch_engine(pinyin_ ? "pinyin.reference" : "latin")) {
@@ -618,7 +636,7 @@ void TextService::ShowModeIndicator() {
     }
     manager->Release();
   }
-  if (mode_indicator_) mode_indicator_->Update(pinyin_);
+  if (mode_indicator_) mode_indicator_->Update(pinyin_, (GetKeyState(VK_CAPITAL) & 1) != 0);
   DWORD foreground = 0;
   const DWORD foreground_thread = GetWindowThreadProcessId(GetForegroundWindow(), &foreground);
   if (keyboard_foreground_ && foreground == GetCurrentProcessId() && foreground_thread == GetCurrentThreadId()) {

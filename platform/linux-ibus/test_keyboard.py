@@ -13,10 +13,11 @@ class KeyboardTests(unittest.TestCase):
             return lambda value: events.append((name, value)) or []
         obj = SimpleNamespace(
             runtime=SimpleNamespace(feed=record('feed'), command=record('command')),
-            pinyin=pinyin, composing=composing, scope=0,
+            pinyin=pinyin, composing=composing, scope=0, caps_lock=False,
             candidates=list(range(20)),
             lookup_table=SimpleNamespace(get_page_size=lambda: 9, get_cursor_pos=lambda: cursor),
             close_handwriting=lambda: None, update_context=lambda: True,
+            publish_mode=lambda: events.append(('caps', None)),
             apply_actions=lambda _: None, toggle_mode=lambda: events.append(('toggle', None)),
             select_candidate_at=lambda i: events.append(('select', i)) or True,
         )
