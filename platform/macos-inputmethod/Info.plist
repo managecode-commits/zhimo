@@ -6,8 +6,8 @@
   <key>CFBundleDisplayName</key><string>知墨输入法</string>
   <key>CFBundleExecutable</key><string>Zhimo</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleVersion</key><string>20260915.1</string>
-  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>CFBundleVersion</key><string>20260921.1</string>
+  <key>CFBundleShortVersionString</key><string>0.1.1</string>
   <key>CFBundleIconFile</key><string>Zhimo.icns</string>
   <key>LSMinimumSystemVersion</key><string>12.0</string>
   <key>LSBackgroundOnly</key><true/>
