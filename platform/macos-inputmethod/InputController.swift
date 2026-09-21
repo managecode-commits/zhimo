@@ -214,7 +214,7 @@ final class InputController: IMKInputController {
                 let text = segments.compactMap { $0["text"] as? String }.joined()
                 composing = !text.isEmpty
                 client?.setMarkedText(text, selectionRange: NSRange(location: text.utf16.count, length: 0), replacementRange: NSRange(location: NSNotFound, length: NSNotFound))
-            } else if let values = action["UpdateCandidates"] as? [[String: Any]] {
+            } else if let values = action["ShowCandidates"] as? [[String: Any]] {
                 choices = values; page = 0; selectedIndex = 0; candidateWindow.update()
                 if values.isEmpty { candidateWindow.hide() } else { candidateWindow.show(kIMKLocateCandidatesBelowHint) }
             }

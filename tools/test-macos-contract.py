@@ -10,6 +10,14 @@ MAC = ROOT / "platform/macos-inputmethod"
 
 
 class MacContract(unittest.TestCase):
+    def test_candidate_action_matches_core(self):
+        core = (ROOT / "crates/ime-core/src/types.rs").read_text()
+        self.assertIn("ShowCandidates(Vec<Candidate>)", core)
+        for name in ("InputController.swift", "CoreProbe.swift"):
+            source = (MAC / name).read_text()
+            self.assertIn('["ShowCandidates"]', source)
+            self.assertNotIn('["UpdateCandidates"]', source)
+
     def test_metadata(self):
         info = plistlib.loads((MAC / "Info.plist").read_bytes())
         self.assertEqual(info["InputMethodServerControllerClass"], "ZhimoInputController")

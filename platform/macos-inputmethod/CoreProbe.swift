@@ -14,7 +14,7 @@ struct CoreProbe {
             _ = session.command(3)
             var last: [Any] = []
             for c in input { last = session.feed(String(c)); precondition(session.lastOperationSucceeded) }
-            let candidates = last.compactMap { ($0 as? [String: Any])?["UpdateCandidates"] as? [[String: Any]] }.flatMap { $0 }
+            let candidates = last.compactMap { ($0 as? [String: Any])?["ShowCandidates"] as? [[String: Any]] }.flatMap { $0 }
             precondition(!candidates.isEmpty, "missing candidates: \(input)")
             let id = candidates[0]["id"] as! String
             let selected = session.select(id)
