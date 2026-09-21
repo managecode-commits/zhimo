@@ -8,24 +8,25 @@
 Zhimo 是一个开源、离线优先的输入法项目。你可以用拼音打字、手写选字，
 也可以录音后在本机转成文字；开发者可以基于 Rust 核心扩展其他语种和平台。
 
-**当前为开发预览版，不是稳定正式版。** Android、Windows、Ubuntu 和 Debian 已提供测试安装包；
-macOS 与 iOS 仍在开发中。各平台功能与完成度不完全相同。
+**当前为开发预览版，不是稳定正式版。** Android、Windows、Ubuntu、Debian 和 macOS 提供测试包；
+iOS 仍是原型。各平台功能与完成度不完全相同，macOS 尚未完成 IMK 实机兼容验收。
 
-[下载安装包](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260916.1) ·
+[下载安装包](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1) ·
 [构建与安装手册](docs/构建与验收.md) ·
 [图文介绍](docs/promotion/知墨输入法图文宣传稿.md) ·
 [反馈问题](https://github.com/managecode-commits/zhimo/issues) ·
 [参与贡献](CONTRIBUTING.md)
 
-## 最新预览 · 2026-09-16
+## 最新预览 · 2026-09-21
 
-[`v0.1.1-preview.20260916.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260916.1)
-已发布重新编译的 Android、Windows、Ubuntu 24.04 和 Debian 12 安装包。
+[`v0.1.1-preview.20260921.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1)
+提供重新编译的 Android、Windows、Ubuntu 24.04、Debian 12 和 macOS 测试包。
 
-- **补充常用词**：新增 37 条设备、平台和产品分析词条，如 `diannaoduan` → 电脑端、`shebeiduan` → 设备端、`jingpin` → 竞品。
-- **手机按键反馈**：按键音默认开启，可在设置中关闭或切换音色；触觉强度支持滑条调整，实际效果取决于设备能力与系统设置。
-- **触摸操作细节**：优化滑出按键取消、连续删除和录音期间的反馈抑制。
-- **工程改进**：包含本地学习持久化与质量检查改进。完整变更和限制见[本版发布说明](release/preview-20260916.1.md)。
+- **快速输入**：后台串行处理查询、复用候选和预览控件，减少主线程开销；按键圆角缩小至 5dp。
+- **九键连拼**：新增有界词典组句和后续候选翻页，回车/完成键选择汉字，不提交内部数字编码。
+- **桌面大写**：Caps Lock 临时英文直输，关闭后恢复基础模式；Shift＋字母交给系统，状态显示同步更新。
+- **离线语音**：本次公开 APK 保留默认 Whisper，不包含尚待手机验收的实验流式模型，包体约 180 MiB。
+- **跨平台验证**：修复 Windows 原生构建与 macOS 候选协议等问题。完整变更和限制见[本版发布说明](release/preview-20260921.1.md)。
 
 ## 主要功能
 
@@ -47,16 +48,16 @@ macOS 与 iOS 仍在开发中。各平台功能与完成度不完全相同。
 
 ## 下载与平台状态
 
-当前预览版本：[`v0.1.1-preview.20260916.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260916.1)。
+当前预览版本：[`v0.1.1-preview.20260921.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1)。
 安装包、`SHA256SUMS` 和构建检查摘要均在发布页。校验和用于检查文件完整性，不等同于发布者数字签名。
 
 | 平台 | 安装包与范围 | 验证情况与限制 |
 |---|---|---|
-| Android 8.0+ | [下载 APK](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260916.1/zhimo-v0.1.1-preview.20260916.1-android-debug.apk)，约 178 MiB；arm64-v8a / armeabi-v7a / x86_64；内置 Rime、手写与语音模型 | 调试签名；JVM 测试、Lint 和包校验通过；本轮未运行设备测试 |
-| Windows 64 位系统 | [下载 ZIP](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260916.1/zhimo-v0.1.1-preview.20260916.1-windows.zip)，约 96 MiB；包含 x64 / x86 TSF 组件、模式状态栏、手写与语音面板 | 未代码签名；交叉编译与依赖检查通过，多应用兼容仍需实机测试 |
-| Ubuntu 24.04 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260916.1/zhimo-v0.1.1-preview.20260916.1-ubuntu2404-amd64.tar.gz)，约 72 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |
-| Debian 12 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260916.1/zhimo-v0.1.1-preview.20260916.1-debian12-amd64.tar.gz)，约 69 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |
-| macOS | 源码与构建脚本 | 未在 Mac 编译验收，不提供已验证安装包 |
+| Android 8.0+ | [下载 APK](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-android-debug.apk)，约 180 MiB；arm64-v8a / armeabi-v7a / x86_64；内置 Rime、手写与语音模型 | 调试签名；20 项 JVM 测试、Lint、5 项模拟器连拼/快速输入测试通过；UI 回归重跑通过，冷启动时序仍需检查 |
+| Windows 64 位系统 | [下载 ZIP](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-windows.zip)，约 96 MiB；包含 x64 / x86 TSF 组件、模式状态栏、手写与语音面板 | 未代码签名；MinGW 双架构与依赖检查、Windows CI 的 MSVC 编译和 TSF 探针通过；发行 ZIP 在 EmEditor 等宿主仍需实机测试 |
+| Ubuntu 24.04 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-ubuntu2404-amd64.tar.gz)，约 72 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |
+| Debian 12 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-debian12-amd64.tar.gz)，约 69 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |
+| macOS 12.0+ | [下载 Universal ZIP](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-macos-universal.zip)；Apple Silicon / Intel，内置手写与 Whisper | GitHub Mac runner 编译、Swift/C ABI 选词探针和 ad-hoc 签名校验通过；无 Developer ID 签名、未公证，IMK 宿主与麦克风需实机验收 |
 | iOS / iPadOS | 容器与键盘扩展原型源码 | 尚无完整可安装产品 |
 
 安装提示：
@@ -65,7 +66,9 @@ macOS 与 iOS 仍在开发中。各平台功能与完成度不完全相同。
 - **Windows**：完整解压 ZIP，以实际使用输入法的同一账户启动管理员 64 位 PowerShell，运行 `.\install.cmd`；升级使用 `.\install.cmd -Upgrade`。若提示下载脚本被阻止，核验来源后按提示确认 `UNBLOCK`；不要修改全局执行策略或绕过组织安全策略。保存文档后注销并重新登录，避免旧 DLL 仍被应用占用。
 - **Linux**：先解压 `.tar.gz`，其中有 3 个 DEB：`zhimo-core` 是必需核心，`zhimo-ibus` 和 `fcitx5-zhimo` 是两种框架适配包。使用 APT 安装核心和所选框架包，以便解析依赖；不需要安装全部三个。不要混用不同发行版的包，也不要同时启用两套框架；详细步骤见发布说明和安装手册。
 
-本次没有 macOS、iOS 或鸿蒙安装包。Linux 新字形融合实验尚未接入，本版仍使用现有单字手写链路，不能视为已完成 Android 手写能力移植。
+- **macOS**：解压后查看随包 README，运行 `install.command` 安装到当前用户；保存文档并注销登录，再在系统设置中添加知墨输入源。此包仅 ad-hoc 签名，不绕过组织安全策略；若系统阻止运行，请勿全局关闭 Gatekeeper。
+
+本次没有 iOS 或鸿蒙安装包。Linux 新字形融合实验尚未接入，本版仍使用现有单字手写链路，不能视为已完成 Android 手写能力移植。
 
 ## 离线与个人数据
 
