@@ -18,7 +18,7 @@ final class InputController: IMKInputController {
     private var hostPID: pid_t = 0
     private weak var targetClient: AnyObject?
     private var eligible: Bool {
-        active && !IsSecureEventInput() && NSWorkspace.shared.frontmostApplication?.processIdentifier == hostPID
+        active && !IsSecureEventInputEnabled() && NSWorkspace.shared.frontmostApplication?.processIdentifier == hostPID
     }
 
     override init!(server: IMKServer!, delegate: Any!, client inputClient: Any!) {
@@ -38,7 +38,7 @@ final class InputController: IMKInputController {
         targetClient = sender as AnyObject?
         hostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0
         session.setPrivacy(learning: UserDefaults.standard.bool(forKey: "LearningEnabled"))
-        session.setPasswordScope(IsSecureEventInput())
+        session.setPasswordScope(IsSecureEventInputEnabled())
     }
     override func deactivateServer(_ sender: Any!) {
         cancel(to: sender as? IMKTextInput)
@@ -50,7 +50,7 @@ final class InputController: IMKInputController {
     }
     override func handle(_ event: NSEvent!, client sender: Any!) -> Bool {
         guard let event, let client = sender as? IMKTextInput else { return false }
-        session.setPasswordScope(IsSecureEventInput())
+        session.setPasswordScope(IsSecureEventInputEnabled())
         guard eligible else { cancel(to: client); return false }
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         capsLock = flags.contains(.capsLock)
