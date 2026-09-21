@@ -49,14 +49,14 @@ private final class InkCanvas: NSView {
 
 final class MacInputPanel: NSWindowController {
     private static var current: MacInputPanel?
-    static func isOpen(owner: AnyObject) -> Bool { current?.owner === owner }
-    static func dismiss(owner: AnyObject) { if current?.owner === owner { current?.finishClose(); current = nil } }
+    static func isOpen(owner: AnyObject) -> Bool { current?.inputOwner === owner }
+    static func dismiss(owner: AnyObject) { if current?.inputOwner === owner { current?.finishClose(); current = nil } }
     static func open(owner: AnyObject, speech: Bool, eligible: @escaping () -> Bool, commit: @escaping (String) -> Void) {
         current?.finishClose()
         let value = MacInputPanel(owner: owner, speech: speech, eligible: eligible, commit: commit)
         current = value; value.show()
     }
-    private weak var owner: AnyObject?
+    private weak var inputOwner: AnyObject?
     private let eligible: () -> Bool
     private let commit: (String) -> Void
     private let speechMode: Bool
@@ -81,7 +81,7 @@ final class MacInputPanel: NSWindowController {
     private var speechText = ""
 
     init(owner: AnyObject, speech: Bool, eligible: @escaping () -> Bool, commit: @escaping (String) -> Void) {
-        self.owner = owner; self.speechMode = speech; self.eligible = eligible; self.commit = commit
+        self.inputOwner = owner; self.speechMode = speech; self.eligible = eligible; self.commit = commit
         let window = InputPanelWindow(contentRect: NSRect(x: 0, y: 0, width: 660, height: 440), styleMask: [.titled, .nonactivatingPanel], backing: .buffered, defer: false)
         window.title = speech ? "知墨 · 离线语音" : "知墨 · 离线单字手写"
         window.level = .floating; window.hidesOnDeactivate = false; window.isReleasedWhenClosed = false
