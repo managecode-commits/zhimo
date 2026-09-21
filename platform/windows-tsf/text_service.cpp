@@ -6,10 +6,9 @@
 
 #include <objbase.h>
 #include <shlobj.h>
-#ifndef _MSC_VER
-// The isolated MinGW uuid library omits these inputscope GUID definitions.
+// Instantiate inputscope GUIDs from the SDK header for both toolchains;
+// neither available uuid library supplies GUID_PROP_INPUTSCOPE.
 #include <initguid.h>
-#endif
 #include <inputscope.h>
 
 #include <algorithm>
