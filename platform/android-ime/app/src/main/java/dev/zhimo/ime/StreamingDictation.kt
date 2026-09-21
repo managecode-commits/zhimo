@@ -29,7 +29,9 @@ internal class StreamingDictation(context: Context) {
     private class Job {
         val cancelled = AtomicBoolean(false)
         val finish = AtomicBoolean(false)
-        val audio = ArrayBlockingQueue<FloatArray>(64) // <= 6.4 seconds / 400 KiB
+        // Cover the bounded 60-second recording even when a phone decodes below real time.
+        // <= 3.7 MiB PCM; do not fail merely because decoding falls 6 seconds behind.
+        val audio = ArrayBlockingQueue<FloatArray>(600)
         @Volatile var captureDone = false
         @Volatile var failure: String? = null
         @Volatile var count = 0
@@ -72,12 +74,15 @@ internal class StreamingDictation(context: Context) {
                     )).also { recognizer = it }
                 }
                 loadedAt = SystemClock.elapsedRealtime()
-                if (job.cancelled.get()) return@execute
+                if (job.cancelled.get() || job.finish.get()) {
+                    emit { current = null; result(null, "准备期间已结束，请按住等待就绪后说话") }
+                    return@execute
+                }
                 val input = model.createStream()
                 stream = input
                 val transcript = StreamingTranscript()
                 capture.execute {
-                    record(job, { emit { state(true) } }, { seconds, level -> emit { progress(seconds, level) } })
+                    record(job, { emit { if (!job.finish.get()) state(true) } }, { seconds, level -> emit { progress(seconds, level) } })
                     emit { state(false) }
                 }
                 var lastPreview = ""
@@ -125,11 +130,11 @@ internal class StreamingDictation(context: Context) {
                     "tailMs=${finishedAt-job.stoppedAt}") // No audio or recognized text.
             } catch (_: OutOfMemoryError) {
                 releaseModelAfterStream = true
-                emit { current = null; result(null, "内存不足，请切回标准语音或关闭其他应用") }
+                emit { current = null; result(null, "内存不足，请关闭其他应用后重试") }
             } catch (_: LinkageError) {
-                emit { current = null; result(null, "流式运行库不可用，请在设置中切回标准语音") }
+                emit { current = null; result(null, "流式运行库不可用，请安装完整安装包") }
             } catch (error: Exception) {
-                emit { current = null; result(null, error.message ?: "流式识别失败，请切回标准语音") }
+                emit { current = null; result(null, error.message ?: "流式识别失败，请重试") }
             } finally {
                 job.finish.set(true)
                 stream?.release()
@@ -144,7 +149,7 @@ internal class StreamingDictation(context: Context) {
     private fun record(job: Job, ready: () -> Unit, progress: (Int, Float) -> Unit) {
         var recorder: AudioRecord? = null
         try {
-            if (job.cancelled.get()) return
+            if (job.cancelled.get() || job.finish.get()) return
             check(context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
                 "麦克风权限已撤回"
             }
@@ -154,7 +159,7 @@ internal class StreamingDictation(context: Context) {
                 AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, maxOf(minimum * 2, 6400))
             recorder = recording
             check(recording.state == AudioRecord.STATE_INITIALIZED) { "麦克风初始化失败" }
-            if (job.cancelled.get()) return
+            if (job.cancelled.get() || job.finish.get()) return
             recording.startRecording()
             check(recording.recordingState == AudioRecord.RECORDSTATE_RECORDING) { "麦克风启动失败" }
             ready()
@@ -162,7 +167,7 @@ internal class StreamingDictation(context: Context) {
             val deadline = SystemClock.elapsedRealtime() + 60_000
             var lastProgress = 0
             fun enqueue(chunk: FloatArray) {
-                check(job.audio.offer(chunk)) { "设备识别速度跟不上录音，请缩短录音或切回标准语音" }
+                check(job.audio.offer(chunk)) { "设备识别速度跟不上录音，请缩短录音或关闭其他应用" }
                 if (job.count-lastProgress >= 4000) {
                     lastProgress = job.count
                     val level = kotlin.math.sqrt(chunk.sumOf { it.toDouble()*it }/chunk.size).toFloat()
@@ -180,7 +185,7 @@ internal class StreamingDictation(context: Context) {
         } catch (error: Exception) {
             job.failure = error.message ?: "录音失败"
         } catch (_: OutOfMemoryError) {
-            job.failure = "录音内存不足，请切回标准语音"
+            job.failure = "录音内存不足，请关闭其他应用后重试"
         } finally {
             recorder?.let { runCatching { it.stop() }; it.release() }
             job.stoppedAt = SystemClock.elapsedRealtime()

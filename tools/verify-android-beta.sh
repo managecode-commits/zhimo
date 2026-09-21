@@ -8,7 +8,9 @@ source "$repo_dir/tools/android-env.sh"
 cd "$repo_dir"
 python3 tools/prepare-streaming-speech-runtime.py
 python3 tools/test-key-sound.py
-bash ./tools/prepare-offline-speech.sh
+python3 tools/prepare-streaming-speech-model.py --model zipformer
+bash tools/build-streaming-speech-android.sh
+python3 tools/package-streaming-speech.py
 ./tools/build-android-core.sh
 
 cd platform/android-ime

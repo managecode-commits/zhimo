@@ -188,6 +188,9 @@ class KeyboardInteractionTest {
             // Landscape IMEs may decline an implicit auto-show; a real editor
             // interaction requests the keyboard explicitly.
             click("键盘回归输入框")
+            val readyDeadline = SystemClock.uptimeMillis() + 15000
+            while (automation.windows.none { find(it.root, "空格") != null } &&
+                SystemClock.uptimeMillis() < readyDeadline) SystemClock.sleep(100)
             assertTopRow(false)
             SystemClock.sleep(350) // Wait for IME insets animation before comparing heights.
             val keyboardBounds = keyboardBodyBounds()
@@ -437,7 +440,7 @@ class KeyboardInteractionTest {
                 assertEquals(android.content.pm.PackageManager.PERMISSION_GRANTED,
                     instrumentation.targetContext.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO))
                 fun awaitVoice(label: String) {
-                    val deadline = SystemClock.uptimeMillis() + 30000
+                    val deadline = SystemClock.uptimeMillis() + 90000
                     while (SystemClock.uptimeMillis() < deadline) {
                         if (automation.windows.any { find(it.root, label) != null }) return
                         SystemClock.sleep(100)
@@ -445,17 +448,31 @@ class KeyboardInteractionTest {
                     error("Voice state not reached: $label")
                 }
                 val beforeVoice = active.editor.text.toString()
-                click("空格", longPress = true)
+                var heldAt = 0L
+                val heldBounds = android.graphics.Rect()
+                fun touchSpace(action: Int) {
+                    if (action == android.view.MotionEvent.ACTION_DOWN) {
+                        heldAt = SystemClock.uptimeMillis()
+                        automation.windows.firstNotNullOfOrNull { find(it.root, "空格") }!!
+                            .getBoundsInScreen(heldBounds)
+                    }
+                    val event = android.view.MotionEvent.obtain(heldAt, SystemClock.uptimeMillis(), action,
+                        heldBounds.exactCenterX(), heldBounds.exactCenterY(), 0)
+                    event.source = android.view.InputDevice.SOURCE_TOUCHSCREEN
+                    try { assertTrue(automation.injectInputEvent(event, true)) } finally { event.recycle() }
+                }
+                touchSpace(android.view.MotionEvent.ACTION_DOWN)
                 awaitVoice("停止语音输入")
                 capture("offline-voice-recording")
                 SystemClock.sleep(400)
-                click("停止语音输入")
+                touchSpace(android.view.MotionEvent.ACTION_UP)
                 awaitVoice("空格")
                 instrumentation.runOnMainSync { assertEquals(beforeVoice, active.editor.text.toString()) }
-                click("空格", longPress = true)
+                touchSpace(android.view.MotionEvent.ACTION_DOWN)
                 awaitVoice("停止语音输入")
                 instrumentation.runOnMainSync { active.editor.setSelection(0) }
                 awaitVoice("空格")
+                touchSpace(android.view.MotionEvent.ACTION_CANCEL)
                 capture("offline-voice-cancelled")
             }
         } finally {

@@ -21,6 +21,6 @@ if "sherpa-onnx" not in (api_notices / "NOTICE.txt").read_text():
 subprocess.run([sys.executable, str(ROOT / "tools/prepare-streaming-speech-runtime.py"), "--check"], check=True)
 if args.native:
     subprocess.run([sys.executable, str(ROOT / "tools/package-streaming-speech.py"), "--check"], check=True)
-    print("Experimental bundle only: keep Whisper default until phone quality/latency validation")
+    print("Android streaming-only bundle verified; phone quality/latency validation is still required")
 else:
-    print("API-only build: experimental native speech is disabled; Whisper remains available")
+    print("API files verified; this check alone is insufficient for an Android build")

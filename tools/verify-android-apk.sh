@@ -40,7 +40,7 @@ if [[ -n "${ZHIMO_ANDROID_CERT_SHA256:-}" ]]; then
 fi
 
 for abi in arm64-v8a armeabi-v7a x86_64; do
-  unzip -Z1 "$apk" | grep -Fx "lib/$abi/libzhimo_speech.so" >/dev/null
+  unzip -Z1 "$apk" | grep -Fx "lib/$abi/libsherpa-onnx-jni.so" >/dev/null
   unzip -Z1 "$apk" | grep -Fx "lib/$abi/libime_ffi.so" >/dev/null
   unzip -Z1 "$apk" | grep -Fx "lib/$abi/libzhimo_android.so" >/dev/null
   case "$abi" in
@@ -65,12 +65,6 @@ for abi in arm64-v8a armeabi-v7a x86_64; do
   fi
 done
 
-speech_hash="$(unzip -p "$apk" assets/speech/ggml-base-q5_1.bin | sha256sum | cut -d ' ' -f 1)"
-vad_hash="$(unzip -p "$apk" assets/speech/ggml-silero-v5.1.2.bin | sha256sum | cut -d ' ' -f 1)"
-[[ "$vad_hash" == 29940d98d42b91fbd05ce489f3ecf7c72f0a42f027e4875919a28fb4c04ea2cf ]]
-unzip -Z1 "$apk" | grep -Fx "assets/speech/SILERO-LICENSE" >/dev/null
-[[ "$speech_hash" == 422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898 ]]
-for notice in WHISPER-MODEL-LICENSE WHISPER-CPP-LICENSE manifest.json README.md; do
-  unzip -Z1 "$apk" | grep -Fx "assets/speech/$notice" >/dev/null
-done
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+python3 "$repo_dir/tools/verify-streaming-speech-apk.py" "$apk"
 sha256sum "$apk"

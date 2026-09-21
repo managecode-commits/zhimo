@@ -11,7 +11,7 @@
     <string name="local_learning">允许在本机学习候选习惯</string>
     <string name="allow_online_speech">无端侧识别器时允许系统语音服务联网</string>
     <string name="bundled_offline_speech">使用内置离线语音模型（默认，无需系统语音服务）</string>
-    <string name="bundled_offline_speech_help">内置 Base Q5_1 和离线人声检测；中文/英文跟随键盘。长按空格，显示停止后说话；松手继续录音，轻点停止转录，识别中轻点取消。默认确认后上屏，可取消、删尾或重录。最长 60 秒，音频不落盘、不上传。关闭内置模式后才使用系统服务。热词仅作提示，数字和姓名请确认。</string>
+    <string name="bundled_offline_speech_help">内置中英 Zipformer 流式模型，不再使用 Whisper。短按空格仍为空格或选词；按住空格，显示“松开结束”后说话，松开结束录音并直接上屏；滑出按键取消。准备模型时松开不会启动麦克风。临时结果仅在键盘预览，最终结果上屏一次。最长 60 秒，音频不落盘、不上传；首次准备较慢，速度和准确率取决于手机，不保证自动标点或热词增强。</string>
     <string name="keyboard_position">键盘位置：%1$s</string>
     <string name="keyboard_size">键盘高度：%1$s</string>
     <string name="high_contrast">高对比度键盘</string>

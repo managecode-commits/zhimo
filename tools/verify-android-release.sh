@@ -18,7 +18,9 @@ test -f "$ZHIMO_ANDROID_KEYSTORE"
 command -v unzip >/dev/null
 command -v sha256sum >/dev/null
 cd "$repo_dir"
-bash ./tools/prepare-offline-speech.sh
+python3 tools/prepare-streaming-speech-model.py --model zipformer
+bash tools/build-streaming-speech-android.sh
+python3 tools/package-streaming-speech.py
 ./tools/build-android-core.sh
 
 cd platform/android-ime

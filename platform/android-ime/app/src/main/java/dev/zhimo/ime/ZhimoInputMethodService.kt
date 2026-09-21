@@ -863,20 +863,25 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun spaceKeyLabel(): String = when (voiceState) {
-        VoiceState.LISTENING -> "停止"
-        VoiceState.PROCESSING -> "取消"
+        VoiceState.LISTENING -> "松开结束"
+        VoiceState.PROCESSING -> if (speechPreparing) "准备中" else "识别中"
         else -> if (keyboardPage == KeyboardPage.TEXT && pinyin && hasComposition) "选词" else "空格"
     }
 
-    private fun dictationSpaceKey(weight: Float, size: Float, onTap: () -> Unit): Button =
-        key(spaceKeyLabel(), weight, size, secondaryLabel = "长按语音", role = KeyboardKeyRole.CHARACTER) {
+    @SuppressLint("ClickableViewAccessibility")
+    private fun dictationSpaceKey(weight: Float, size: Float, onTap: () -> Unit): Button {
+        val gesture = HoldToTalkGesture()
+        return key(spaceKeyLabel(), weight, size, secondaryLabel = "按住说话", role = KeyboardKeyRole.CHARACTER) {
             if (voiceState == VoiceState.LISTENING || voiceState == VoiceState.PROCESSING) toggleDictation()
             else onTap()
         }.apply {
             spaceKey = this
-            tooltipText = "长按开始语音输入；录音中轻点停止，识别中轻点取消"
+            tooltipText = "短按空格或选词；按住说话，松开结束并直接上屏；滑出取消"
             setOnLongClickListener {
-                inputQueue.dispatch { if (hasComposition || handwritingPanel?.canLeave() == false) {
+                val token = gesture.longPress()
+                inputQueue.dispatch {
+                    if (token != null && !gesture.begin(token)) return@dispatch
+                    if (hasComposition || handwritingPanel?.canLeave() == false) {
                     showImeMessage("请先完成当前拼音或手写，再开始语音")
                 } else {
                     this@ZhimoInputMethodService.feedback.emit(this, KeyFeedback.LONG_PRESS)
@@ -884,8 +889,56 @@ class ZhimoInputMethodService : InputMethodService() {
                 } }
                 true
             }
+            setOnTouchListener { view, event ->
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> gesture.down()
+                    MotionEvent.ACTION_UP -> {
+                        if (gesture.release()) finishHeldDictation()
+                        if (gesture.suppressTap) {
+                            view.isPressed = false
+                            view.cancelLongPress()
+                            return@setOnTouchListener true
+                        }
+                    }
+                    MotionEvent.ACTION_CANCEL -> if (gesture.cancel()) cancelHeldDictation()
+                    MotionEvent.ACTION_POINTER_DOWN -> {
+                        if (gesture.cancel()) cancelHeldDictation()
+                        view.cancelLongPress()
+                        view.isPressed = false
+                    }
+                }
+                false
+            }
+            addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+                override fun onViewAttachedToWindow(view: View) = Unit
+                override fun onViewDetachedFromWindow(view: View) {
+                    if (gesture.cancel()) cancelHeldDictation()
+                }
+            })
             updateSpaceKeyUi()
         }
+    }
+
+    private fun cancelHeldDictation() {
+        offlineDictation.cancel()
+        speechRecognizer?.cancel()
+        acceptingSpeechResults = false
+        speechPreparing = false
+        speechPartial = ""
+        voiceState = VoiceState.IDLE
+        updateVoiceUi()
+    }
+
+    private fun finishHeldDictation() {
+        if (!acceptingSpeechResults) return
+        if (speechPreparing) {
+            cancelHeldDictation() // Never open the microphone after the finger was released.
+            return
+        }
+        offlineDictation.finish()
+        voiceState = VoiceState.PROCESSING
+        updateVoiceUi()
+    }
 
     private fun updateSpaceKeyUi() {
         spaceKey?.apply {
@@ -894,9 +947,9 @@ class ZhimoInputMethodService : InputMethodService() {
             contentDescription = if (voiceState == VoiceState.LISTENING || voiceState == VoiceState.PROCESSING) voiceKeyDescription() else spaceKeyLabel()
             (this as? KeyboardKeyView)?.apply {
                 secondaryLabel = when (voiceState) {
-                    VoiceState.LISTENING -> "录音中"
-                    VoiceState.PROCESSING -> "识别中"
-                    else -> "长按语音"
+                    VoiceState.LISTENING -> "滑出取消"
+                    VoiceState.PROCESSING -> if (speechPreparing) "请保持按住" else "轻点取消"
+                    else -> "按住说话"
                 }
                 drawIcon = false
             }
@@ -1589,9 +1642,7 @@ class ZhimoInputMethodService : InputMethodService() {
             voiceState = VoiceState.IDLE
             updateVoiceUi()
         } else {
-            if (getSharedPreferences("zhimo", MODE_PRIVATE).getBoolean("bundled_offline_speech", true)) {
-                startOfflineDictation()
-            } else startSystemDictation()
+            startOfflineDictation()
         }
     }
 
@@ -1629,7 +1680,7 @@ class ZhimoInputMethodService : InputMethodService() {
         voiceState = VoiceState.PROCESSING
         updateVoiceUi()
         try {
-            offlineDictation.start(language, { listening ->
+            offlineDictation.start({ listening ->
                 speechPreparing = false
                 voiceState = if (listening) VoiceState.LISTENING else VoiceState.PROCESSING
                 updateVoiceUi()
@@ -1637,32 +1688,27 @@ class ZhimoInputMethodService : InputMethodService() {
                 if (acceptingSpeechResults && !passwordScope && editor == activeEditorIdentity && handle != 0L) {
                     if (!text.isNullOrBlank()) {
                         val normalized = SpeechText.normalize(text, language, preferences.getBoolean("speech_simplified", true))
-                        if (preferences.getBoolean("speech_confirm", true)) {
-                            pendingSpeech = normalized
-                            pendingSpeechEditor = editor
-                            renderKeyboard()
-                        } else {
-                            inputQueue.dispatch { engineEdit({
+                        inputQueue.dispatch {
+                            if (editor == activeEditorIdentity && !passwordScope && handle != 0L) engineEdit({
                                 NativeIme.speechResult(handle, normalized, language, Float.NaN, true)
-                            }) }
+                            })
                         }
                     } else showImeMessage(error ?: "未识别到语音，请靠近麦克风重试")
                 }
                 acceptingSpeechResults = false
                 voiceState = VoiceState.IDLE
                 updateVoiceUi()
-            }, useStreaming = BuildConfig.STREAMING_SPEECH && preferences.getBoolean("speech_streaming", false), partial = { text ->
+            }, partial = { text ->
                 if (acceptingSpeechResults && !passwordScope && editor == activeEditorIdentity && handle != 0L) {
                     speechPartial = text
                     updateCandidateHeader()
                 }
-            }, prompt = if (learningAllowed) SpeechText.prompt(preferences.getString("speech_hotwords", "").orEmpty()) else "",
-                useVad = preferences.getBoolean("speech_vad", true), progress = { seconds, level ->
+            }, progress = { seconds, level ->
                     speechMeter = " ${seconds}s / 60s · " + if (level < .003f) "音量偏低" else "收到声音"
                     updateCandidateHeader()
                 })
             updateVoiceUi()
-            showImeMessage("内置离线语音：显示“停止”后说话，最长 60 秒；再点停止转录，识别中点击可取消")
+            showImeMessage("按住空格，显示“松开结束”后说话；松开直接上屏，滑出取消，最长 60 秒")
         } catch (_: LinkageError) {
             acceptingSpeechResults = false
             voiceState = VoiceState.ERROR

@@ -31,6 +31,8 @@ def main():
     strip_tool = strip_match[1]
     with zipfile.ZipFile(args.apk) as archive:
         names = archive.namelist()
+        if any(n.startswith("assets/speech/") or n.endswith("/libzhimo_speech.so") for n in names):
+            raise ValueError("Legacy Whisper/VAD payload must not be packaged in Android")
         if len(names) != len(set(names)):
             raise ValueError("Duplicate APK entry")
         expected_assets = {"assets/speech-streaming/manifest.json"}

@@ -43,7 +43,19 @@ for archive in "$work/deps/"*.tar.gz; do
   tar -xzf "$archive" -C "$work/deps/extracted/$name" --strip-components=1
 done
 unzip -o "$work/deps/kissfft.zip" -d "$work/deps/extracted" >/dev/null
-ort_aar=${ZHIMO_ORT_AAR:-$(rg --files --hidden --no-ignore "${GRADLE_USER_HOME:-$HOME/.gradle}/caches/modules-2/files-2.1/com.microsoft.onnxruntime/onnxruntime-android/1.22.0" | rg '/onnxruntime-android-1.22.0.aar$' | head -1)}
+if [[ -n "${ZHIMO_ORT_AAR:-}" ]]; then
+  ort_aar="$ZHIMO_ORT_AAR"
+else
+  ort_aar="$work/deps/onnxruntime-android-1.22.0.aar"
+  ort_cache="${GRADLE_USER_HOME:-$HOME/.gradle}/caches/modules-2/files-2.1/com.microsoft.onnxruntime/onnxruntime-android/1.22.0"
+  if [[ ! -f "$ort_aar" && -d "$ort_cache" ]]; then
+    ort_candidate=$(rg --files --hidden --no-ignore "$ort_cache" | rg '/onnxruntime-android-1.22.0.aar$' | head -1 || true)
+    if [[ -n "$ort_candidate" ]]; then cp "$ort_candidate" "$ort_aar"; fi
+  fi
+  # Fresh machines cannot rely on Gradle's cache before the native preBuild gate.
+  fetch "$ort_aar" 04a4617a9c797cf49225595e45b5546081cb34c86ac817581141577d3b7dbfe2 \
+    https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.22.0/onnxruntime-android-1.22.0.aar
+fi
 echo "04a4617a9c797cf49225595e45b5546081cb34c86ac817581141577d3b7dbfe2  $ort_aar" | sha256sum -c -
 unzip -o "$ort_aar" 'headers/*' 'jni/*/libonnxruntime.so' -d "$work/ort-1.22" >/dev/null
 cmake_bin=${CMAKE:-$ANDROID_HOME/cmake/3.22.1/bin/cmake}
@@ -70,4 +82,4 @@ for abi in "${abis[@]}"; do
     -DSHERPA_ONNX_ENABLE_JNI=ON -DSHERPA_ONNX_ENABLE_PYTHON=OFF -DSHERPA_ONNX_ENABLE_TESTS=OFF
   "$cmake_bin" --build "$work/build-$abi" --target sherpa-onnx-jni -j2
 done
-echo 'ASR-only native build finished. Package/verify assets before enabling the streaming APK flag.'
+echo 'ASR-only native build finished. Package/verify assets before building Android.'

@@ -11,7 +11,7 @@ Zhimo 是一个开源、离线优先的输入法项目。你可以用拼音打�
 **当前为开发预览版，不是稳定正式版。** Android、Windows、Ubuntu、Debian 和 macOS 提供测试包；
 iOS 仍是原型。各平台功能与完成度不完全相同，macOS 尚未完成 IMK 实机兼容验收。
 
-[下载安装包](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1) ·
+[下载安装包](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.2) ·
 [构建与安装手册](docs/构建与验收.md) ·
 [图文介绍](docs/promotion/知墨输入法图文宣传稿.md) ·
 [反馈问题](https://github.com/managecode-commits/zhimo/issues) ·
@@ -19,21 +19,24 @@ iOS 仍是原型。各平台功能与完成度不完全相同，macOS 尚未完�
 
 ## 最新预览 · 2026-09-21
 
-[`v0.1.1-preview.20260921.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1)
-提供重新编译的 Android、Windows、Ubuntu 24.04、Debian 12 和 macOS 测试包。
+[`v0.1.1-preview.20260921.2`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.2)
+提供新版 Android APK（版本码 5）；桌面安装包继续使用 `20260921.1`，本轮未重新编译桌面端。
 
 - **快速输入**：后台串行处理查询、复用候选和预览控件，减少主线程开销；按键圆角缩小至 5dp。
 - **九键连拼**：新增有界词典组句和后续候选翻页，回车/完成键选择汉字，不提交内部数字编码。
 - **桌面大写**：Caps Lock 临时英文直输，关闭后恢复基础模式；Shift＋字母交给系统，状态显示同步更新。
-- **离线语音**：本次公开 APK 保留默认 Whisper，不包含尚待手机验收的实验流式模型，包体约 180 MiB。
-- **跨平台验证**：修复 Windows 原生构建与 macOS 候选协议等问题。完整变更和限制见[本版发布说明](release/preview-20260921.1.md)。
+- **离线语音**：Android 改为仅内置流式模型，移除 Whisper；按住空格录音、松开结束，最终结果直接上屏。APK 约 323 MiB。
+- **发布范围**：本轮 Android 变更与限制见[发布说明](release/preview-20260921.2.md)；桌面构建和验证见[上一版说明](release/preview-20260921.1.md)。
 
 ## 主要功能
+
+Android 流式语音的交互、构建和验收见[手机端语音说明](docs/Android流式语音与按住说话.md)。
+桌面语音链路未改变。
 
 - **拼音输入**：全拼、简拼、汉字候选与常用词条；Android 提供九键和 26 键，支持手动分词和九键拼音候选切换。
 - **本地学习**：根据选词记录调整候选排序，帮助常用词和组合更容易被找到。具体行为取决于平台、引擎和学习设置。
 - **离线手写**：书写、查看候选、点选上屏，支持撤笔和清空。桌面以单字为主，Android 的字形与连写识别仍在改进。
-- **离线语音转文字**：录音结束后在本机识别，预览并确认上屏；不是实时流式听写。识别速度与效果受设备、噪声及发音影响。
+- **离线语音转文字**：Android 边录音边识别，临时结果仅在键盘预览，松手后最终文字直接上屏；桌面仍使用原有 Whisper 链路。速度与效果受设备、噪声及发音影响。
 - **字符与常用表达**：英文、数字、标点输入；Android 提供符号与 Emoji 入口。
 
 桌面输入示例：`nihao` / `nh` 可查找“你好”；输入 `jixu` 后，空格确认汉字候选，
@@ -48,12 +51,12 @@ iOS 仍是原型。各平台功能与完成度不完全相同，macOS 尚未完�
 
 ## 下载与平台状态
 
-当前预览版本：[`v0.1.1-preview.20260921.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1)。
+Android 当前预览：[`v0.1.1-preview.20260921.2`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.2)；桌面当前预览：[`v0.1.1-preview.20260921.1`](https://github.com/managecode-commits/zhimo/releases/tag/v0.1.1-preview.20260921.1)。
 安装包、`SHA256SUMS` 和构建检查摘要均在发布页。校验和用于检查文件完整性，不等同于发布者数字签名。
 
 | 平台 | 安装包与范围 | 验证情况与限制 |
 |---|---|---|
-| Android 8.0+ | [下载 APK](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-android-debug.apk)，约 180 MiB；arm64-v8a / armeabi-v7a / x86_64；内置 Rime、手写与语音模型 | 调试签名；20 项 JVM 测试、Lint、5 项模拟器连拼/快速输入测试通过；UI 回归重跑通过，冷启动时序仍需检查 |
+| Android 8.0+ | [下载 APK](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.2/zhimo-v0.1.1-preview.20260921.2-android-debug.apk)，约 323 MiB；arm64-v8a / armeabi-v7a / x86_64；内置 Rime、手写与流式语音模型 | 调试签名；27 项 JVM 测试、Lint、3 项模拟器模型与按键 UI 测试通过；真实手机中文口语、延迟与发热仍需验收 |
 | Windows 64 位系统 | [下载 ZIP](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-windows.zip)，约 96 MiB；包含 x64 / x86 TSF 组件、模式状态栏、手写与语音面板 | 未代码签名；MinGW 双架构与依赖检查、Windows CI 的 MSVC 编译和 TSF 探针通过；发行 ZIP 在 EmEditor 等宿主仍需实机测试 |
 | Ubuntu 24.04 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-ubuntu2404-amd64.tar.gz)，约 72 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |
 | Debian 12 amd64 | [下载 DEB 压缩包](https://github.com/managecode-commits/zhimo/releases/download/v0.1.1-preview.20260921.1/zhimo-v0.1.1-preview.20260921.1-debian12-amd64.tar.gz)，约 69 MiB；提供 IBus / Fcitx5 接入 | 目标容器构建、安装／卸载和 Rime 回归通过；真实桌面、Wayland 与麦克风仍需验收 |

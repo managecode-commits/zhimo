@@ -6,16 +6,26 @@ plugins {
     id("com.android.application")
 }
 
-val streamingSpeechEnabled = providers.gradleProperty("zhimo.streamingSpeech").orNull == "true"
+// Streaming is mandatory; legacy build flags cannot produce a Whisper APK.
+check(providers.gradleProperty("zhimo.streamingSpeech").orNull != "false") {
+    "Android now requires bundled streaming speech; remove -Pzhimo.streamingSpeech=false"
+}
+val stageHandwritingAssets by tasks.registering(Sync::class) {
+    from(rootDir.resolve("../../models")) {
+        include("handwriting/**", "handwriting-image/**")
+    }
+    into(layout.buildDirectory.dir("generated/handwritingAssets"))
+}
 val verifyStreamingSpeech by tasks.registering(Exec::class) {
     commandLine("python3", rootDir.resolve("../../tools/verify-streaming-speech-build.py").absolutePath,
-        if (streamingSpeechEnabled) "--native" else "--api-only")
+        "--native")
 }
-tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(verifyStreamingSpeech) }
+tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(verifyStreamingSpeech, stageHandwritingAssets) }
 
 val verifyBundledHandwriting by tasks.registering {
     val modelRoot = rootDir.resolve("../../models/handwriting")
-    inputs.dir(rootDir.resolve("../../models"))
+    inputs.dir(rootDir.resolve("../../models/handwriting"))
+    inputs.dir(rootDir.resolve("../../models/handwriting-image"))
     doLast {
         val model = modelRoot.resolve("zh-cn/handwriting-zh_CN.model")
         check(model.length() == 26_834_816L) { "Bundled handwriting model missing or truncated" }
@@ -45,30 +55,7 @@ val verifyBundledHandwriting by tasks.registering {
         for (name in listOf("PaddleOCR-LICENSE", "RapidOCR-LICENSE", "ONNXRUNTIME-LICENSE", "ONNXRUNTIME-ThirdPartyNotices.txt", "MODEL-CARD.md", "README.md")) {
             check(imageRoot.resolve(name).isFile) { "Image model notice missing: $name" }
         }
-        val speechRoot = rootDir.resolve("../../models/speech")
-        val vad = speechRoot.resolve("ggml-silero-v5.1.2.bin")
-        check(vad.length() == 885098L && MessageDigest.getInstance("SHA-256")
-            .digest(vad.readBytes()).joinToString("") { "%02x".format(it) } ==
-            "29940d98d42b91fbd05ce489f3ecf7c72f0a42f027e4875919a28fb4c04ea2cf") {
-            "Run tools/prepare-offline-speech.sh: VAD model missing or corrupt"
-        }
-        check(speechRoot.resolve("SILERO-LICENSE").isFile)
-        val speech = speechRoot.resolve("ggml-base-q5_1.bin")
-        check(speech.length() == 59_707_625L) { "Run tools/prepare-offline-speech.sh: bundled speech model missing" }
-        val speechDigest = MessageDigest.getInstance("SHA-256")
-        speech.inputStream().use { input ->
-            val buffer = ByteArray(65536)
-            while (true) {
-                val n = input.read(buffer)
-                if (n < 0) break
-                speechDigest.update(buffer, 0, n)
-            }
-        }
-        check(speechDigest.digest().joinToString("") { "%02x".format(it) } ==
-            "422f1ae452ade6f30a004d7e5c6a43195e4433bc370bf23fac9cc591f01a8898") { "Speech model SHA-256 mismatch" }
-        for (name in listOf("WHISPER-MODEL-LICENSE", "WHISPER-CPP-LICENSE", "manifest.json", "README.md")) {
-            check(speechRoot.resolve(name).isFile) { "Speech notice missing: $name" }
-        }
+
     }
 }
 tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(verifyBundledHandwriting) }
@@ -100,24 +87,22 @@ android {
     ndkVersion = "28.2.13676358"
 
     defaultConfig {
-        buildConfigField("boolean", "STREAMING_SPEECH", streamingSpeechEnabled.toString())
+        buildConfigField("boolean", "STREAMING_SPEECH", "true")
         applicationId = "dev.zhimo.ime"
         minSdk = 26
         targetSdk = 37
         versionCode = appVersionCode
-        versionName = appVersionName + if (streamingSpeechEnabled) ".streaming-experimental" else ""
+        versionName = appVersionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
         externalNativeBuild.cmake.arguments += "-DZHIMO_ROOT=${rootDir.resolve("../..").absolutePath}"
     }
     buildFeatures.buildConfig = true
 
-    // Include the model, corresponding source and licenses for first-install offline use.
-    sourceSets.getByName("main").assets.srcDir(rootDir.resolve("../../models"))
-    if (streamingSpeechEnabled) {
-        sourceSets.getByName("main").assets.srcDir(rootDir.resolve("../../target/streaming-speech/android-assets"))
-        sourceSets.getByName("main").jniLibs.srcDir(rootDir.resolve("../../target/streaming-speech/asr-only/jni"))
-    }
+    // Whitelist handwriting assets; never package shared desktop Whisper models.
+    sourceSets.getByName("main").assets.srcDir(layout.buildDirectory.dir("generated/handwritingAssets").get().asFile)
+    sourceSets.getByName("main").assets.srcDir(rootDir.resolve("../../target/streaming-speech/android-assets"))
+    sourceSets.getByName("main").jniLibs.srcDir(rootDir.resolve("../../target/streaming-speech/asr-only/jni"))
     androidResources.noCompress += "bin"
     androidResources.noCompress += "onnx"
 

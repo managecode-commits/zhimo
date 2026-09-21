@@ -12,6 +12,8 @@ internal object StreamingSpeechModel {
         "joiner-epoch-99-avg-1.onnx", "tokens.txt")
 
     @Synchronized fun install(context: Context, cancelled: () -> Boolean): File {
+        check(!cancelled()) { "语音已取消" }
+        LegacySpeechCache.remove(context.noBackupFilesDir)
         val manifest = context.assets.open("speech-streaming/manifest.json").bufferedReader().use {
             JSONObject(it.readText())
         }
