@@ -1222,17 +1222,16 @@ mod tests {
             }
         }
         assert_eq!(
-            rime.split_once("...\n")
-                .unwrap()
-                .1
-                .lines()
+            rime.lines()
+                .skip_while(|line| *line != "...")
+                .skip(1)
                 .collect::<Vec<_>>(),
             expected_rows
         );
         let schema = include_str!(
             "../../../platform/android-ime/app/src/main/assets/rime/zhimo_pinyin.dict.yaml"
         );
-        assert!(schema.contains("  - zhimo_curated\n"));
+        assert!(schema.lines().any(|line| line == "  - zhimo_curated"));
         assert!(engine.lookup("jj").iter().any(|c| c.commit_text == "极简"));
         assert!(engine
             .lookup("jijian")

@@ -145,7 +145,7 @@ BOOL APIENTRY DllMain(HINSTANCE instance, DWORD reason, LPVOID) {
   return TRUE;
 }
 
-extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllGetClassObject(REFCLSID clsid, REFIID iid,
+STDAPI DllGetClassObject(REFCLSID clsid, REFIID iid,
                                                             void** object) {
   if (!IsEqualCLSID(clsid, CLSID_ZhimoTextService)) return CLASS_E_CLASSNOTAVAILABLE;
   auto* factory = new (std::nothrow) ClassFactory();
@@ -154,8 +154,8 @@ extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllGetClassObject(REFCLS
   factory->Release();
   return result;
 }
-extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllCanUnloadNow() { return S_FALSE; }
-extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllRegisterServer() {
+STDAPI DllCanUnloadNow() { return S_FALSE; }
+STDAPI DllRegisterServer() {
   HRESULT result = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
   const bool uninitialize = SUCCEEDED(result);
   result = RegisterComServer();
@@ -163,7 +163,7 @@ extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllRegisterServer() {
   if (uninitialize) CoUninitialize();
   return result;
 }
-extern "C" HRESULT __declspec(dllexport) STDAPICALLTYPE DllUnregisterServer() {
+STDAPI DllUnregisterServer() {
   HRESULT result = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
   const bool uninitialize = SUCCEEDED(result);
   UnregisterProfile();
