@@ -49,7 +49,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
         }
 
     fun prepare() {
-        if (closed || !preferences.getBoolean("key_sound_enabled", true)) return
+        if (closed || !preferences.getBoolean("key_sound_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED)) return
         if (preferences.getString("key_sound_style", "soft") == "system") {
             runCatching { audio?.loadSoundEffects() }
             return
@@ -85,7 +85,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
 
     fun soundHint(): String? = runCatching {
         when {
-            !preferences.getBoolean("key_sound_enabled", true) -> "按键音效已关闭。"
+            !preferences.getBoolean("key_sound_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED) -> "按键音效已关闭。"
             muted -> "录音或转录期间暂停反馈。"
             audio?.ringerMode != AudioManager.RINGER_MODE_NORMAL -> "手机处于静音或振动模式，按键音已暂停。"
             audio?.mode != AudioManager.MODE_NORMAL -> "通话或通信模式下暂停按键音。"
@@ -126,7 +126,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
         if (event == KeyFeedback.REPEAT) {
             if (!repeatLimit.accept(now)) return
         }
-        val strength = KeyboardFeedbackPolicy.strength(preferences.getBoolean("haptic_enabled", true),
+        val strength = KeyboardFeedbackPolicy.strength(preferences.getBoolean("haptic_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED),
             preferences.getInt("haptic_strength", 35))
         if (strength == 0 && event == KeyFeedback.ADJUST) runCatching { vibrator?.cancel() }
         if (strength > 0) {
@@ -156,7 +156,7 @@ class KeyboardFeedbackController(private val context: Context) : AutoCloseable {
         }
         if (event == KeyFeedback.ADJUST) return // Drag preview is tactile only.
         val allowed = runCatching {
-            KeyboardFeedbackPolicy.soundAllowed(preferences.getBoolean("key_sound_enabled", true), muted,
+            KeyboardFeedbackPolicy.soundAllowed(preferences.getBoolean("key_sound_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED), muted,
                 audio?.ringerMode == AudioManager.RINGER_MODE_NORMAL,
                 audio?.mode == AudioManager.MODE_NORMAL,
                 notifications?.currentInterruptionFilter == NotificationManager.INTERRUPTION_FILTER_ALL,

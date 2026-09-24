@@ -57,3 +57,214 @@ dui biao chan pin	对标产品	800
 hang ye fen xi	行业分析	1000
 chan pin ti yan	产品体验	1200
 gong neng dui bi	功能对比	1000
+duo ji	舵机	1500
+shu zi duo ji	数字舵机	1000
+mo ni duo ji	模拟舵机	800
+jin shu duo ji	金属舵机	800
+wei xing duo ji	微型舵机	1000
+zong xian duo ji	总线舵机	1000
+duo ji kong zhi	舵机控制	1200
+duo ji qu dong	舵机驱动	1000
+duo ji kong zhi qi	舵机控制器	1000
+duo ji jiao du	舵机角度	800
+duo ji xiao zhun	舵机校准	800
+duo pan	舵盘	800
+si fu	伺服	1500
+si fu dian ji	伺服电机	1200
+si fu qu dong qi	伺服驱动器	1000
+si fu kong zhi	伺服控制	1000
+bu jin dian ji	步进电机	1200
+bu jin qu dong qi	步进驱动器	1000
+zhi liu dian ji	直流电机	1200
+wu shua dian ji	无刷电机	1200
+jian su dian ji	减速电机	1000
+dian ji kong zhi	电机控制	1200
+dian ji qu dong	电机驱动	1200
+dian ji qu dong qi	电机驱动器	1000
+ji xie bi	机械臂	1500
+yun tai	云台	1500
+bian ma qi	编码器	1200
+mai chong kuan du	脉冲宽度	1000
+mai kuan tiao zhi	脉宽调制	1000
+zhan kong bi	占空比	1200
+bi huan kong zhi	闭环控制	1000
+kai huan kong zhi	开环控制	1000
+wei zhi fan kui	位置反馈	1000
+jiao du kong zhi	角度控制	1000
+zhuan su kong zhi	转速控制	1000
+niu ju	扭矩	1200
+# Common Chinese enterprise and brand names; not a popularity ranking.
+teng xun	腾讯	2200
+a li ba ba	阿里巴巴	2000
+zi jie tiao dong	字节跳动	1800
+bai du	百度	2000
+wang yi	网易	2000
+hua wei	华为	2200
+xiao mi	小米	1800
+jing dong	京东	1800
+mei tuan	美团	1800
+pin duo duo	拼多多	1800
+kuai shou	快手	1500
+lian xiang	联想	1500
+zhong xing tong xun	中兴通讯	1200
+da jiang	大疆	1500
+rong yao	荣耀	1200
+bi ya di	比亚迪	1800
+ning de shi dai	宁德时代	1500
+ji li qi che	吉利汽车	1200
+chang cheng qi che	长城汽车	1200
+chang an qi che	长安汽车	1200
+qi rui qi che	奇瑞汽车	1200
+wei lai	蔚来	1000
+xiao peng qi che	小鹏汽车	1200
+li xiang qi che	理想汽车	1200
+sai li si	赛力斯	1000
+mei di	美的	1200
+ge li	格力	1200
+hai er	海尔	1200
+hai xin	海信	1200
+shun feng	顺丰	1500
+zhong tong kuai di	中通快递	1200
+yuan tong su di	圆通速递	1000
+yun da kuai di	韵达快递	1000
+shen tong kuai di	申通快递	1000
+ji tu su di	极兔速递	1000
+zhong guo yi dong	中国移动	1500
+zhong guo lian tong	中国联通	1500
+zhong guo dian xin	中国电信	1500
+gong shang yin hang	工商银行	1200
+jian she yin hang	建设银行	1200
+nong ye yin hang	农业银行	1200
+zhong guo yin hang	中国银行	1200
+zhao shang yin hang	招商银行	1200
+zhong guo ping an	中国平安	1200
+mi ha you	米哈游	1200
+pao pao ma te	泡泡玛特	1000
+mi xue bing cheng	蜜雪冰城	1000
+rui xing ka fei	瑞幸咖啡	1200
+xi cha	喜茶	1000
+hai di lao	海底捞	1200
+# Common Chinese app and service names; one written Chinese name per entry.
+wei xin	微信	2200
+qi ye wei xin	企业微信	1500
+teng xun hui yi	腾讯会议	1500
+teng xun wen dang	腾讯文档	1200
+ding ding	钉钉	1500
+fei shu	飞书	1500
+zhi fu bao	支付宝	2000
+tao bao	淘宝	2000
+tian mao	天猫	1500
+xian yu	闲鱼	1500
+zhuan zhuan	转转	1000
+he ma	盒马	1000
+tao bao shan gou	淘宝闪购	1200
+mei tuan wai mai	美团外卖	1500
+da zhong dian ping	大众点评	1500
+dou yin	抖音	2200
+xiao hong shu	小红书	2000
+wei bo	微博	1800
+zhi hu	知乎	1500
+dou ban	豆瓣	1500
+bi li bi li	哔哩哔哩	1500
+tie ba	贴吧	1200
+bai du tie ba	百度贴吧	1200
+jin ri tou tiao	今日头条	1500
+xi gua shi pin	西瓜视频	1200
+teng xun shi pin	腾讯视频	1500
+ai qi yi	爱奇艺	1500
+you ku	优酷	1500
+jian ying	剪映	1500
+mei tu xiu xiu	美图秀秀	1200
+wang yi yun yin yue	网易云音乐	1500
+ku gou yin yue	酷狗音乐	1200
+ku wo yin yue	酷我音乐	1000
+xi ma la ya	喜马拉雅	1200
+qi shui yin yue	汽水音乐	1200
+fan qie xiao shuo	番茄小说	1200
+wei xin du shu	微信读书	1200
+qi dian du shu	起点读书	1000
+gao de di tu	高德地图	1500
+bai du di tu	百度地图	1500
+teng xun di tu	腾讯地图	1000
+di di chu xing	滴滴出行	1500
+ha luo chu xing	哈啰出行	1000
+xie cheng	携程	1500
+fei zhu	飞猪	1200
+qu na er	去哪儿	1200
+cai niao	菜鸟	1000
+cai niao guo guo	菜鸟裹裹	1000
+bai du wang pan	百度网盘	1500
+a li yun pan	阿里云盘	1200
+kua ke	夸克	1200
+lei dian mo ni qi	雷电模拟器	1000
+xiang ri kui yuan cheng kong zhi	向日葵远程控制	1000
+wang yi you dao ci dian	网易有道词典	1000
+jin shan ci ba	金山词霸	1000
+dou bao	豆包	1200
+teng xun yuan bao	腾讯元宝	1200
+wen xin yi yan	文心一言	1200
+tong yi qian wen	通义千问	1200
+zhi pu qing yan	智谱清言	1000
+# Everyday internet vocabulary; conservative weights, not measured usage counts.
+nei juan	内卷	1200
+tang ping	躺平	1200
+po fang	破防	1000
+gong qing	共情	1200
+qing xu jia zhi	情绪价值	1200
+song chi gan	松弛感	1000
+bian jie gan	边界感	1000
+yi shi gan	仪式感	1200
+huo ren gan	活人感	800
+da gong ren	打工人	1000
+da zi	搭子	800
+fan da zi	饭搭子	600
+dian zi zha cai	电子榨菜	600
+xian yan bao	显眼包	600
+duo ba an	多巴胺	1000
+lian ai nao	恋爱脑	800
+she kong	社恐	800
+she niu	社牛	800
+zhen xiang	真香	800
+shang tou	上头	800
+xia tou	下头	600
+zhong cao	种草	1000
+ba cao	拔草	800
+bi lei	避雷	800
+ping ti	平替	800
+xing jia bi	性价比	1500
+zhi bo dai huo	直播带货	1200
+duan shi pin	短视频	1500
+zi mei ti	自媒体	1500
+nei rong chuang zuo	内容创作	1200
+er ci chuang zuo	二次创作	1000
+er chuang	二创	800
+dan mu	弹幕	1200
+re sou	热搜	1200
+chao hua	超话	800
+hua ti biao qian	话题标签	1000
+gong zhong hao	公众号	1500
+xiao cheng xu	小程序	1500
+shi pin hao	视频号	1200
+peng you quan	朋友圈	1500
+si xin	私信	1200
+hu guan	互关	800
+dian zan	点赞	1500
+qu guan	取关	800
+qun liao	群聊	1200
+biao qing bao	表情包	1500
+dou tu	斗图	1000
+wang you	网友	1200
+wang hong	网红	1200
+chi gua	吃瓜	1000
+guan xuan	官宣	1000
+da ka	打卡	1200
+chao ji ge ti	超级个体	800
+shu zi you min	数字游民	800
+ju shen zhi neng	具身智能	1000
+zhi neng ti	智能体	1000
+da mo xing	大模型	1200
+sheng cheng shi ren gong zhi neng	生成式人工智能	1000
+ti shi ci	提示词	1200
+shen du qiu suo	深度求索	1000
+sai bo dui zhang	赛博对账	600
+gu zi jing ji	谷子经济	600

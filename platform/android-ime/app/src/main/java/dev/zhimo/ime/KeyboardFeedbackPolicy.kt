@@ -4,6 +4,7 @@ package dev.zhimo.ime
 enum class HapticBackend { NONE, AMPLITUDE, PRIMITIVE, SYSTEM }
 
 object KeyboardFeedbackPolicy {
+    const val DEFAULT_ENABLED = false
     fun backend(hasMotor: Boolean, amplitude: Boolean, primitive: Boolean): HapticBackend = when {
         !hasMotor -> HapticBackend.NONE
         amplitude -> HapticBackend.AMPLITUDE

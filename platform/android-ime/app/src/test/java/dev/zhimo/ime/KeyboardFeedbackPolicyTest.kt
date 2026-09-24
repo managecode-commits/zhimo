@@ -5,6 +5,13 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class KeyboardFeedbackPolicyTest {
+    @Test fun feedbackDefaultsOffButExplicitOptInStillWorks() {
+        assertFalse(KeyboardFeedbackPolicy.DEFAULT_ENABLED)
+        assertEquals(0, KeyboardFeedbackPolicy.strength(KeyboardFeedbackPolicy.DEFAULT_ENABLED, 35))
+        assertFalse(KeyboardFeedbackPolicy.soundAllowed(KeyboardFeedbackPolicy.DEFAULT_ENABLED, false, true, true, true, true))
+        assertEquals(35, KeyboardFeedbackPolicy.strength(true, 35))
+        assertTrue(KeyboardFeedbackPolicy.soundAllowed(true, false, true, true, true, true))
+    }
     @Test fun amplitudeDevicesDoNotRequireClickPrimitive() {
         assertEquals(HapticBackend.AMPLITUDE, KeyboardFeedbackPolicy.backend(true, true, false))
         assertEquals(HapticBackend.AMPLITUDE, KeyboardFeedbackPolicy.backend(true, true, true))

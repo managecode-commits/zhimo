@@ -158,7 +158,7 @@ class MainActivity : Activity() {
                 addView(strengthLabel)
                 addView(SeekBar(this@MainActivity).apply {
                 max = 100
-                progress = KeyboardFeedbackPolicy.strength(preferences.getBoolean("haptic_enabled", true),
+                progress = KeyboardFeedbackPolicy.strength(preferences.getBoolean("haptic_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED),
                     preferences.getInt("haptic_strength", 35))
                 strengthLabel.text = strengthText(progress)
                 contentDescription = "振动反馈强度，0为关闭，100为最强"
@@ -181,7 +181,7 @@ class MainActivity : Activity() {
                 addView(Switch(this@MainActivity).apply {
                     text = "系统触觉反馈（本机不支持调强弱）"
                     isEnabled = feedback.hapticBackend != HapticBackend.NONE
-                    isChecked = preferences.getBoolean("haptic_enabled", true) && preferences.getInt("haptic_strength", 35) > 0
+                    isChecked = preferences.getBoolean("haptic_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED) && preferences.getInt("haptic_strength", 35) > 0
                     setOnCheckedChangeListener { _, enabled ->
                         preferences.edit().putBoolean("haptic_enabled", enabled).putInt("haptic_strength", if (enabled) 35 else 0).apply()
                         feedback.emit(this, KeyFeedback.ADJUST)
@@ -194,7 +194,7 @@ class MainActivity : Activity() {
             refreshFeedbackStatus()
             addView(Switch(this@MainActivity).apply {
                 text = "按键音效（静音、勿扰与录音时不播放）"
-                isChecked = preferences.getBoolean("key_sound_enabled", true)
+                isChecked = preferences.getBoolean("key_sound_enabled", KeyboardFeedbackPolicy.DEFAULT_ENABLED)
                 setOnCheckedChangeListener { _, enabled ->
                     preferences.edit().putBoolean("key_sound_enabled", enabled).apply()
                     feedback.prepare()
