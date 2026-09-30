@@ -97,6 +97,17 @@ class MainActivity : Activity() {
                 setText(R.string.bundled_offline_speech_help)
                 textSize = 14f
             })
+            addView(Switch(this@MainActivity).apply {
+                text = "统一拼音学习（9键与26键共用个人词库）"
+                isChecked = preferences.getBoolean("unified_pinyin_learning", true)
+                setOnCheckedChangeListener { _, enabled ->
+                    preferences.edit().putBoolean("unified_pinyin_learning", enabled).apply()
+                }
+            })
+            addView(TextView(this@MainActivity).apply {
+                text = "默认统一引擎。关闭后26键恢复旧Rime兼容模式，其历史词库保留但不自动合并。切换后重新打开键盘生效。\n键盘工具→个人词库可查看、删除学习词或撤销上次学习；也可长按拼音候选管理。删除学习词不会删除系统词条。"
+                textSize = 14f
+            })
             addView(Button(this@MainActivity).apply {
                 var mode = OneHandMode.fromStored(preferences.getString("one_hand_mode", null))
                 fun modeLabel(): String = when (mode) {

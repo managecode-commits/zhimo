@@ -15,6 +15,38 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RuntimeSmokeTest {
     @Test
+    fun testPersonalWordManagementAndPrivacy() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val storage = File(context.cacheDir, "personal-words-${System.nanoTime()}").apply { mkdirs() }
+        var handle = 0L
+        try {
+            handle = NativeIme.create(storage.absolutePath, "", "")
+            assertTrue(handle != 0L)
+            assertEquals(0, NativeIme.switchEngine(handle, PlatformPolicy.engine(true, true)))
+            NativeIme.feed(handle, "ni")
+            NativeIme.select(handle, "pinyin:泥")
+            assertTrue(NativeIme.personalWords(handle).contains("泥"))
+            assertEquals(0, NativeIme.manageWord(handle, "", 2))
+            assertFalse(NativeIme.personalWords(handle).contains("泥"))
+            assertEquals(1, NativeIme.manageWord(handle, "", 2))
+            NativeIme.feed(handle, "ni")
+            NativeIme.select(handle, "pinyin:泥")
+            NativeIme.setPrivacy(handle, false, false)
+            assertFalse(NativeIme.personalWords(handle).contains("泥"))
+            assertEquals(-5, NativeIme.manageWord(handle, "泥", 1))
+            NativeIme.setPrivacy(handle, true, false)
+            assertTrue(NativeIme.personalWords(handle).contains("泥"))
+            assertEquals(0, NativeIme.manageWord(handle, "泥", 1))
+            NativeIme.destroy(handle)
+            handle = NativeIme.create(storage.absolutePath, "", "")
+            assertFalse(NativeIme.personalWords(handle).contains("泥"))
+        } finally {
+            if (handle != 0L) NativeIme.destroy(handle)
+            storage.deleteRecursively()
+        }
+    }
+
+    @Test
     fun testLearnedPhraseAndFrequencySurviveRuntimeRestart() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val directories = RimeAssets.prepare(context)
@@ -214,7 +246,8 @@ class RuntimeSmokeTest {
         assertFalse(PlatformPolicy.mayStartSpeech(false, true, false, false))
         assertTrue(PlatformPolicy.mayStartSpeech(false, true, true, false))
         assertTrue(PlatformPolicy.mayStartSpeech(false, true, false, true))
-        assertEquals("rime", PlatformPolicy.engine(true, true))
+        assertEquals("pinyin.reference", PlatformPolicy.engine(true, true))
+        assertEquals("rime", PlatformPolicy.engine(true, true, unifiedLearning = false))
         assertEquals("pinyin.reference", PlatformPolicy.engine(true, false))
         assertEquals("pinyin.reference", PlatformPolicy.engine(true, true, nineKeyPinyin = true))
         assertEquals("latin", PlatformPolicy.engine(false, true))
@@ -358,7 +391,14 @@ class RuntimeSmokeTest {
             val candidateAction = (0 until invalid.length())
                 .mapNotNull { invalid.optJSONObject(it) }
                 .first { it.has("ShowCandidates") }
-            assertEquals(0, candidateAction.getJSONArray("ShowCandidates").length())
+            val choices = candidateAction.getJSONArray("ShowCandidates")
+            val values = (0 until choices.length()).map { choices.getJSONObject(it) }
+            // An invalid suffix must not be silently swallowed as a complete "你好".
+            // Prefix character fallback is intentional and must retain the unconsumed suffix.
+            assertFalse(values.any { it.getString("commit_text") == "你好" })
+            val first = values.first { it.getString("commit_text") == "你" }
+            assertEquals(0, NativeIme.select(handle, first.getString("id")))
+            assertTrue(NativeIme.actions(handle).contains("haox"))
         } finally {
             NativeIme.destroy(handle)
         }

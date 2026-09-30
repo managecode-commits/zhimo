@@ -9,6 +9,10 @@ extern "C" {
 #endif
 
 typedef struct ImeHandle ImeHandle;
+/* Shared pinyin personal lexicon. Borrowed JSON; serialized runtime access required. */
+const char *ime_runtime_personal_words(ImeHandle *handle);
+const char *ime_runtime_learning_notice(ImeHandle *handle);
+int ime_runtime_manage_word(ImeHandle *handle, const char *word, unsigned int operation);
 typedef struct ImeSpeechHandle ImeSpeechHandle;
 typedef struct ImeHandwritingHandle ImeHandwritingHandle;
 

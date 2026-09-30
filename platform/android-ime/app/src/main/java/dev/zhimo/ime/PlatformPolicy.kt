@@ -19,9 +19,10 @@ object PlatformPolicy {
         pinyin: Boolean,
         nativeRimeAvailable: Boolean,
         nineKeyPinyin: Boolean = false,
+        unifiedLearning: Boolean = true,
     ): String = when {
         !pinyin -> "latin"
-        nineKeyPinyin -> "pinyin.reference"
+        nineKeyPinyin || unifiedLearning -> "pinyin.reference"
         nativeRimeAvailable -> "rime"
         else -> "pinyin.reference"
     }

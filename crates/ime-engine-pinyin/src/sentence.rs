@@ -30,6 +30,31 @@ pub(super) fn decode(
         return Vec::new();
     }
     let mut beams = vec![Vec::<Path>::new(); input.len() + 1];
+    // Canonical syllable records only: abbreviations must never become false word boundaries.
+    let learned: Vec<super::LexiconEntry> = learning
+        .iter_records()
+        .filter(|r| {
+            r.effective_weight() > 0
+                && r.key.value.chars().count() > 1
+                && r.key.input_signature.split('\'').count() == r.key.value.chars().count()
+                && r.key
+                    .input_signature
+                    .chars()
+                    .all(|c| c.is_ascii_lowercase() || c == '\'')
+        })
+        .map(|r| super::LexiconEntry {
+            pinyin: super::normalized_pinyin(&r.key.input_signature),
+            t9: super::t9_signature(&r.key.input_signature),
+            display_pinyin: r.key.input_signature.replace('\'', " "),
+            text: r.key.value.clone(),
+            weight: 1000,
+        })
+        .collect();
+    let mut learned_index = std::collections::HashMap::<&str, Vec<&super::LexiconEntry>>::new();
+    for entry in &learned {
+        learned_index.entry(&entry.pinyin).or_default().push(entry);
+        learned_index.entry(&entry.t9).or_default().push(entry);
+    }
     beams[0].push(Path::default());
     for start in 0..input.len() {
         if beams[start].is_empty() {
@@ -45,16 +70,23 @@ pub(super) fn decode(
             let Some(lookup) = LookupInput::new(raw) else {
                 continue;
             };
+            let signature = super::learning_signature(raw);
             let mut entries = lookup
                 .entries()
                 .iter()
                 .copied()
                 .take_while(|entry| lookup.exact(entry))
+                .chain(
+                    learned_index
+                        .get(signature.as_str())
+                        .into_iter()
+                        .flatten()
+                        .copied(),
+                )
                 .filter(|entry| {
                     reading_matches(entry, raw, if start == 0 { selected } else { None })
                 })
                 .collect::<Vec<_>>();
-            let signature = super::learning_signature(raw);
             entries.sort_by(|a, b| {
                 learning
                     .score(&signature, &b.text)
@@ -62,6 +94,8 @@ pub(super) fn decode(
                     .then_with(|| b.weight.cmp(&a.weight))
                     .then_with(|| a.text.cmp(&b.text))
             });
+            let mut seen = std::collections::HashSet::new();
+            entries.retain(|e| seen.insert((&e.pinyin, &e.text)));
             let next = if input.as_bytes().get(end) == Some(&b'\'') {
                 end + 1
             } else {

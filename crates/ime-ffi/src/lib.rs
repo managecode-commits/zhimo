@@ -732,6 +732,92 @@ pub unsafe extern "C" fn ime_runtime_speech_result(
     handle.process(&event).map_or(-4, |_| 0)
 }
 
+/// Lists shared personal pinyin words.
+/// Returned pointer is borrowed until the next mutable runtime call. Privacy-sensitive.
+/// # Safety
+/// Handle must be valid and exclusively accessed.
+#[no_mangle]
+pub unsafe extern "C" fn ime_runtime_personal_words(handle: *mut ImeHandle) -> *const c_char {
+    let Some(handle) = handle.as_mut() else {
+        return ptr::null();
+    };
+    if !handle.context.effective_learning_allowed() {
+        return handle.query_string("{\"words\":[],\"notice\":null}");
+    }
+    let mut words = std::collections::BTreeMap::<String, (String, i64)>::new();
+    for r in handle
+        .pinyin
+        .learning_records()
+        .into_iter()
+        .filter(|r| r.effective_weight() > 0)
+    {
+        let reading = &r.key.input_signature;
+        if !reading.chars().all(|c| c.is_ascii_lowercase() || c == '\'') {
+            continue;
+        }
+        let score = r.effective_weight();
+        let entry = words.entry(r.key.value).or_default();
+        if (reading.matches('\'').count(), reading.len())
+            > (entry.0.matches('\'').count(), entry.0.len())
+        {
+            entry.0 = reading.clone();
+        }
+        entry.1 = entry.1.max(score);
+    }
+    let words: Vec<_> = words.into_iter().map(|(text, (reading, count))| serde_json::json!({"text":text,"reading":reading,"count":count})).collect();
+    let json = serde_json::json!({"words":words}).to_string();
+    handle.query_string(&json)
+}
+
+/// Takes a new-phrase notice without enumerating the personal dictionary.
+/// # Safety
+/// Handle must be valid and exclusively accessed.
+#[no_mangle]
+pub unsafe extern "C" fn ime_runtime_learning_notice(handle: *mut ImeHandle) -> *const c_char {
+    let Some(handle) = handle.as_mut() else {
+        return ptr::null();
+    };
+    let notice = handle.pinyin.take_learning_notice().unwrap_or_default();
+    if !handle.context.effective_learning_allowed() {
+        return handle.query_string("");
+    }
+    handle.query_string(&notice)
+}
+
+/// 0 decreases priority, 1 deletes learned aliases, 2 undoes last selection learning only.
+/// Returns 1 when no word record or undo transaction exists; negative values indicate error.
+/// # Safety
+/// Handle valid/exclusive, word non-null UTF-8 (empty allowed for undo).
+#[no_mangle]
+pub unsafe extern "C" fn ime_runtime_manage_word(
+    handle: *mut ImeHandle,
+    word: *const c_char,
+    operation: u32,
+) -> i32 {
+    let Some(handle) = handle.as_mut() else {
+        return -1;
+    };
+    if !handle.context.effective_learning_allowed() {
+        return -5;
+    }
+    if word.is_null() {
+        return -2;
+    }
+    let Ok(word) = CStr::from_ptr(word).to_str() else {
+        return -3;
+    };
+    let result = match operation {
+        0 | 1 if !word.is_empty() => handle.pinyin.manage_word(word, operation == 1),
+        2 => handle.pinyin.undo_last_learning(&handle.session),
+        _ => return -4,
+    };
+    match result {
+        Ok(true) => handle.save_learning().map_or(-6, |()| 0),
+        Ok(false) => 1,
+        Err(_) => -6,
+    }
+}
+
 /// Records explicit positive/negative feedback. Kind: 0 selected, 1 rejected,
 /// 2 deleted, 3 undone.
 ///
@@ -1303,6 +1389,44 @@ mod tests {
             ime_runtime_free(second);
         }
         std::fs::remove_dir_all(data_dir).expect("cleanup");
+    }
+
+    #[test]
+    fn personal_word_api_respects_privacy_and_persists_deletion() {
+        let data_dir =
+            std::env::temp_dir().join(format!("zhimo-word-management-{}", std::process::id()));
+        let directory = CString::new(data_dir.to_str().unwrap()).unwrap();
+        let engine = CString::new("pinyin.reference").unwrap();
+        let ni = CString::new("ni").unwrap();
+        let mud = CString::new("泥").unwrap();
+        let candidate = CString::new("pinyin:泥").unwrap();
+        unsafe {
+            let first = ime_runtime_new_with_data_dir(engine.as_ptr(), directory.as_ptr());
+            assert!(!first.is_null());
+            assert_eq!(ime_runtime_feed_utf8(first, ni.as_ptr()), 0);
+            assert_eq!(ime_runtime_select_candidate(first, candidate.as_ptr()), 0);
+            assert!(CStr::from_ptr(ime_runtime_personal_words(first))
+                .to_str()
+                .unwrap()
+                .contains("泥"));
+            assert_eq!(ime_runtime_set_privacy_policy(first, 0, 0), 0);
+            assert!(!CStr::from_ptr(ime_runtime_personal_words(first))
+                .to_str()
+                .unwrap()
+                .contains("泥"));
+            assert_eq!(ime_runtime_manage_word(first, mud.as_ptr(), 1), -5);
+            assert_eq!(ime_runtime_set_privacy_policy(first, 1, 0), 0);
+            assert_eq!(ime_runtime_manage_word(first, mud.as_ptr(), 1), 0);
+            ime_runtime_free(first);
+            let reopened = ime_runtime_new_with_data_dir(engine.as_ptr(), directory.as_ptr());
+            assert!(!reopened.is_null());
+            assert!(!CStr::from_ptr(ime_runtime_personal_words(reopened))
+                .to_str()
+                .unwrap()
+                .contains("泥"));
+            ime_runtime_free(reopened);
+        }
+        std::fs::remove_dir_all(data_dir).unwrap();
     }
 
     #[cfg(feature = "native-librime")]

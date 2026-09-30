@@ -418,7 +418,8 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private fun selectedEngine(): String =
-        PlatformPolicy.engine(pinyin, nativeRimeAvailable && learningAllowed && !passwordScope, nineKeyPinyin)
+        PlatformPolicy.engine(pinyin, nativeRimeAvailable && learningAllowed && !passwordScope, nineKeyPinyin,
+            getSharedPreferences("zhimo", MODE_PRIVATE).getBoolean("unified_pinyin_learning", true))
 
     private fun togglePinyinLayout() {
         if (keyboardPage == KeyboardPage.HANDWRITING && handwritingPanel?.canLeave() == false) return
@@ -672,8 +673,8 @@ class ZhimoInputMethodService : InputMethodService() {
 
     private fun showKeyboardTools(anchor: View = candidateStrip.getChildAt(candidateStrip.childCount - 1)) {
         val popup = android.widget.PopupMenu(this, anchor)
-        listOf("123", "符号", "手写", if (nineKeyPinyin) "26键" else "9键", "切换中英", "表情", "切换单手键盘位置").forEachIndexed { index, label ->
-            popup.menu.add(0, index, index, label)
+        listOf("123", "符号", "手写", if (nineKeyPinyin) "26键" else "9键", "切换中英", "表情", "切换单手键盘位置", "个人词库", "撤销上次学习").forEachIndexed { index, label ->
+            popup.menu.add(0, index, if (index >= 7) index - 7 else index + 2, label)
         }
         popup.menu.findItem(3).isEnabled = pinyin
         popup.setOnMenuItemClickListener { item ->
@@ -691,6 +692,8 @@ class ZhimoInputMethodService : InputMethodService() {
                 4 -> toggleEngine()
                 5 -> showKeyboardPage(KeyboardPage.EMOJI)
                 6 -> if (keyboardPage != KeyboardPage.HANDWRITING || handwritingPanel?.canLeave() != false) cycleOneHandMode()
+                7 -> showPersonalWords(anchor)
+                8 -> changePersonalWord("", 2)
             }
             true
         }
@@ -1266,10 +1269,13 @@ class ZhimoInputMethodService : InputMethodService() {
             android.os.Trace.beginSection("Zhimo.engine.edit")
             try {
                 check(edit() == 0) { "输入引擎处理失败" }
-                InputActionDecoder.decode(NativeIme.actions(handle))
+                Pair(InputActionDecoder.decode(NativeIme.actions(handle)), NativeIme.learningNotice(handle))
             } finally { android.os.Trace.endSection() }
         }) { result ->
-            result.onSuccess { applyActions(it); after() }.onFailure {
+            result.onSuccess { (actions, notice) ->
+                applyActions(actions); after()
+                if (notice.isNotEmpty() && learningAllowed && !passwordScope) showImeMessage("已记住新词：$notice")
+            }.onFailure {
                 showImeMessage("输入处理失败，请重试")
             }
         }
@@ -1377,6 +1383,10 @@ class ZhimoInputMethodService : InputMethodService() {
         isSoundEffectsEnabled = false
         isHapticFeedbackEnabled = false
         bindCandidate(this, value, highlighted)
+        setOnLongClickListener {
+            if (!inputQueue.pending) showWordActions(this, (tag as org.json.JSONObject).optString("commit_text"))
+            true
+        }
         setOnClickListener {
             // The visible row can belong to the previous keystroke while decoding runs.
             if (!inputQueue.pending) {
@@ -1408,6 +1418,78 @@ class ZhimoInputMethodService : InputMethodService() {
     }
 
     private var learningSaveWarningShown = false
+
+    private fun personalLearningAvailable(): Boolean {
+        val available = handle != 0L && learningAllowed && !passwordScope && selectedEngine() == "pinyin.reference"
+        if (!available) showImeMessage("请在开启学习的统一拼音模式中管理词库")
+        return available
+    }
+
+    private fun showWordActions(anchor: View, word: String) {
+        if (word.isEmpty() || !personalLearningAvailable()) return
+        android.widget.PopupMenu(this, anchor).apply {
+            menu.add(0, 0, 0, "降低学习优先级：$word")
+            menu.add(0, 1, 1, "删除学习记录：$word")
+            menu.add(0, 2, 2, "撤销上次学习（不删除文字）")
+            setOnMenuItemClickListener { item -> changePersonalWord(word, item.itemId); true }
+            show()
+        }
+    }
+
+    private fun changePersonalWord(word: String, operation: Int) {
+        if (inputQueue.pending || !personalLearningAvailable()) return
+        inputQueue.dispatch {
+            if (!personalLearningAvailable()) return@dispatch
+            val refresh = hasComposition
+            inputQueue.compute({
+                val code = NativeIme.manageWord(handle, word, operation)
+                val actions = if (code == 0 && refresh && NativeIme.feed(handle, "") == 0)
+                    InputActionDecoder.decode(NativeIme.actions(handle)) else emptyList()
+                Pair(code, actions)
+            }) { result ->
+                val code = result.getOrNull()?.first ?: -1
+                result.getOrNull()?.second?.takeIf { it.isNotEmpty() }?.let { applyActions(it) }
+                showImeMessage(when {
+                    code < 0 -> "学习修改或保存失败，请检查存储空间"
+                    code == 1 -> if (operation == 2) "没有可撤销的学习记录" else "暂无该词可修改的学习记录"
+                    operation == 2 -> "已撤销上次学习，输入框文字未改变"
+                    operation == 1 -> "已删除学习记录；系统词仍可能出现"
+                    else -> "已降低学习优先级；系统词频不变"
+                })
+            }
+        }
+    }
+
+    private fun showPersonalWords(anchor: View) {
+        if (inputQueue.pending || !personalLearningAvailable()) return
+        inputQueue.dispatch {
+            inputQueue.compute({ org.json.JSONObject(NativeIme.personalWords(handle)).getJSONArray("words") }) { result ->
+                result.onSuccess { words ->
+                    if (!personalLearningAvailable() || !anchor.isAttachedToWindow) return@onSuccess
+                    if (words.length() == 0) { showImeMessage("暂无学习词；完成连拼选词后会自动记录"); return@onSuccess }
+                    fun page(start: Int) {
+                        android.widget.PopupMenu(this, anchor).apply {
+                            for (index in start until minOf(start + 30, words.length())) {
+                                val word = words.getJSONObject(index)
+                                menu.add(0, index, index - start, "${word.getString("text")} · ${word.getString("reading")} · 学习分 ${word.getLong("count")}")
+                            }
+                            if (start > 0) menu.add(0, -1, 31, "上一页")
+                            if (start + 30 < words.length()) menu.add(0, -2, 32, "下一页")
+                            setOnMenuItemClickListener { item ->
+                                when (item.itemId) {
+                                    -1 -> page(start - 30)
+                                    -2 -> page(start + 30)
+                                    else -> showWordActions(anchor, words.getJSONObject(item.itemId).getString("text"))
+                                }; true
+                            }
+                            show()
+                        }
+                    }
+                    page(0)
+                }.onFailure { showImeMessage("读取个人词库失败") }
+            }
+        }
+    }
 
     private fun scheduleLearningSave() {
         val previousFailure = NativeIme.learningStatus(handle) < 0
@@ -1465,6 +1547,10 @@ class ZhimoInputMethodService : InputMethodService() {
                     ) { if (revision == candidateRevision) selectCandidate(candidate.getString("id")) }.apply {
                         maxLines = 2
                         text = candidateLabel(display, annotation, false, onKey = true)
+                        setOnLongClickListener {
+                            if (revision == candidateRevision && !inputQueue.pending) showWordActions(this, candidate.optString("commit_text"))
+                            true
+                        }
                     })
                 } else {
                     row.addView(keySpacer(1f))

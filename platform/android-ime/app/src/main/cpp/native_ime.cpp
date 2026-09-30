@@ -118,6 +118,24 @@ Java_dev_zhimo_ime_NativeIme_actions(JNIEnv *env, jobject, jlong value) {
   return env->NewStringUTF(json ? json : "[]");
 }
 
+extern "C" JNIEXPORT jstring JNICALL
+Java_dev_zhimo_ime_NativeIme_personalWords(JNIEnv *env, jobject, jlong value) {
+  const char *json = ime_runtime_personal_words(handle(value));
+  return env->NewStringUTF(json ? json : "{\"words\":[]}");
+}
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_dev_zhimo_ime_NativeIme_learningNotice(JNIEnv *env, jobject, jlong value) {
+  const char *text = ime_runtime_learning_notice(handle(value));
+  return env->NewStringUTF(text ? text : "");
+}
+
+extern "C" JNIEXPORT jint JNICALL
+Java_dev_zhimo_ime_NativeIme_manageWord(JNIEnv *env, jobject, jlong value, jstring word, jint operation) {
+  const auto text = utf8(env, word);
+  return ime_runtime_manage_word(handle(value), text.c_str(), static_cast<unsigned int>(operation));
+}
+
 extern "C" JNIEXPORT jint JNICALL
 Java_dev_zhimo_ime_NativeIme_flush(JNIEnv *, jobject, jlong value) {
   return ime_runtime_flush(handle(value));

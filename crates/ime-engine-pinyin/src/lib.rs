@@ -50,6 +50,8 @@ pub struct PinyinEngine {
     learning: Mutex<LearningModel>,
     readings: Mutex<HashMap<SessionId, String>>,
     menus: Mutex<HashMap<SessionId, CandidateMenu>>,
+    undo_learning: Mutex<HashMap<SessionId, Vec<(String, String)>>>,
+    learning_notice: Mutex<Option<String>>,
 }
 
 #[derive(Default)]
@@ -64,7 +66,12 @@ fn learning_signature(input: &str) -> String {
     normalized_t9_input(input).unwrap_or_else(|| normalized_pinyin(input))
 }
 
-fn learn_selection(learning: &mut LearningModel, signature: &str, reading: &str, text: &str) {
+fn learn_selection(
+    learning: &mut LearningModel,
+    signature: &str,
+    reading: &str,
+    text: &str,
+) -> Vec<(String, String)> {
     let mut keys = HashSet::from([learning_signature(signature)]);
     let pinyin = normalized_pinyin(reading);
     if !pinyin.is_empty() {
@@ -78,9 +85,12 @@ fn learn_selection(learning: &mut LearningModel, signature: &str, reading: &str,
         keys.insert(t9_signature(&pinyin));
         keys.insert(pinyin);
     }
+    let mut changes = Vec::new();
     for key in keys.into_iter().filter(|key| !key.is_empty()) {
         learning.selected(&key, text);
+        changes.push((key, text.to_owned()));
     }
+    changes
 }
 
 impl Default for PinyinEngine {
@@ -103,6 +113,8 @@ impl PinyinEngine {
             learning: Mutex::new(learning),
             readings: Mutex::new(HashMap::new()),
             menus: Mutex::new(HashMap::new()),
+            undo_learning: Mutex::new(HashMap::new()),
+            learning_notice: Mutex::new(None),
         }
     }
 
@@ -112,6 +124,58 @@ impl PinyinEngine {
             .lock()
             .unwrap_or_else(std::sync::PoisonError::into_inner)
             .records()
+    }
+
+    pub fn take_learning_notice(&self) -> Option<String> {
+        self.learning_notice.lock().ok()?.take()
+    }
+
+    /// Explicit word-wide management affects all stored spelling aliases, not the system lexicon.
+    pub fn manage_word(&self, word: &str, delete: bool) -> Result<bool, EngineError> {
+        let mut learning = self.learning.lock().map_err(lock_error)?;
+        let mut keys: HashSet<_> = learning
+            .iter_records()
+            .filter(|r| r.key.value == word && !r.deleted)
+            .map(|r| r.key.input_signature.clone())
+            .collect();
+        if !delete {
+            for entry in lexicon().iter().filter(|e| e.text == word) {
+                keys.insert(entry.pinyin.clone());
+                keys.insert(entry.t9.clone());
+                keys.insert(entry.display_pinyin.replace(' ', "'"));
+            }
+        }
+        if keys.is_empty() {
+            return Ok(false);
+        }
+        for key in keys {
+            if delete {
+                learning.delete(&key, word);
+            } else {
+                learning.rejected(&key, word);
+            }
+        }
+        self.undo_learning.lock().map_err(lock_error)?.clear();
+        Ok(true)
+    }
+
+    /// Undo only the most recent confirmed learning transaction, never editor content.
+    pub fn undo_last_learning(&self, session: &SessionId) -> Result<bool, EngineError> {
+        let changes = self
+            .undo_learning
+            .lock()
+            .map_err(lock_error)?
+            .remove(session);
+        let Some(changes) = changes else {
+            return Ok(false);
+        };
+        self.phrases.lock().map_err(lock_error)?.remove(session);
+        self.learning_notice.lock().map_err(lock_error)?.take();
+        let mut learning = self.learning.lock().map_err(lock_error)?;
+        for (key, word) in changes {
+            learning.rejected(&key, &word);
+        }
+        Ok(true)
     }
 
     #[cfg(test)]
@@ -364,6 +428,7 @@ impl PinyinEngine {
         if context.effective_learning_allowed() {
             let mut progress = self.phrases.lock().map_err(lock_error)?;
             let phrase = progress.entry(session.clone()).or_default();
+            let phrase_is_continuing = phrase.parts > 0;
             phrase.signature.push_str(&learning_signature(&signature));
             phrase
                 .reading
@@ -372,23 +437,45 @@ impl PinyinEngine {
             phrase.text.push_str(&candidate.commit_text);
             phrase.parts += 1;
             let mut learning = self.learning.lock().map_err(lock_error)?;
-            learn_selection(
+            let is_new_sentence = candidate.id.0.starts_with("pinyin-sentence:")
+                && learning.score(&learning_signature(&signature), &candidate.commit_text) <= 0;
+            let mut changes = learn_selection(
                 &mut learning,
                 &signature,
                 candidate.annotation.as_deref().unwrap_or(""),
                 &candidate.commit_text,
             );
+            if is_new_sentence && input.is_empty() {
+                *self.learning_notice.lock().map_err(lock_error)? =
+                    Some(candidate.commit_text.clone());
+            }
             if input.is_empty() {
                 if phrase.parts > 1 {
-                    learn_selection(
+                    changes.extend(learn_selection(
                         &mut learning,
                         &phrase.signature,
                         &phrase.reading,
                         &phrase.text,
-                    );
+                    ));
+                    if learning.score(&learning_signature(&phrase.signature), &phrase.text) == 1 {
+                        *self.learning_notice.lock().map_err(lock_error)? =
+                            Some(phrase.text.clone());
+                    }
                 }
                 progress.remove(session);
             }
+            self.undo_learning
+                .lock()
+                .map_err(lock_error)?
+                .entry(session.clone())
+                .and_modify(|previous| {
+                    if phrase_is_continuing {
+                        previous.extend(changes.clone());
+                    } else {
+                        *previous = changes.clone();
+                    }
+                })
+                .or_insert(changes);
         }
         let mut actions = vec![Action::CommitText(candidate.commit_text.clone())];
         self.readings.lock().map_err(lock_error)?.remove(session);
@@ -650,6 +737,9 @@ impl InputEngine for PinyinEngine {
     }
 
     fn close_session(&self, session: &SessionId) {
+        if let Ok(mut undo) = self.undo_learning.lock() {
+            undo.remove(session);
+        }
         if let Ok(mut menus) = self.menus.lock() {
             menus.remove(session);
         }
@@ -932,6 +1022,78 @@ fn t9_signature(pinyin: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn learn_test_phrase(engine: &PinyinEngine, session: &SessionId) {
+        engine.create_session(session).unwrap();
+        let context = InputContext::default();
+        engine
+            .process(session, &InputEvent::Text("maolvbei".into()), &context)
+            .unwrap();
+        for (input, word) in [("maolvbei", "猫"), ("lvbei", "驴"), ("bei", "杯")] {
+            let candidate = engine
+                .lookup(input)
+                .into_iter()
+                .find(|c| c.commit_text == word)
+                .unwrap();
+            engine
+                .process(
+                    session,
+                    &InputEvent::SelectCandidate(candidate.id),
+                    &context,
+                )
+                .unwrap();
+        }
+    }
+
+    #[test]
+    fn learned_phrase_notice_management_and_undo_cover_all_aliases() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("manage".into());
+        learn_test_phrase(&engine, &session);
+        assert_eq!(engine.take_learning_notice().as_deref(), Some("猫驴杯"));
+        assert!(engine.take_learning_notice().is_none());
+        assert!(engine.undo_last_learning(&session).unwrap());
+        assert!(!engine.undo_last_learning(&session).unwrap());
+        assert!(engine
+            .learning_records()
+            .iter()
+            .all(|r| r.effective_weight() == 0));
+        learn_test_phrase(&engine, &session);
+        engine.manage_word("猫驴杯", false).unwrap();
+        assert!(engine
+            .learning_records()
+            .iter()
+            .filter(|r| r.key.value == "猫驴杯")
+            .all(|r| r.effective_weight() == 0));
+        learn_test_phrase(&engine, &session);
+        engine.manage_word("猫驴杯", true).unwrap();
+        assert!(engine
+            .learning_records()
+            .iter()
+            .filter(|r| r.key.value == "猫驴杯")
+            .all(|r| r.deleted));
+        assert!(!engine.undo_last_learning(&session).unwrap());
+        assert!(engine
+            .lookup("nihao")
+            .iter()
+            .any(|c| c.commit_text == "你好"));
+    }
+
+    #[test]
+    fn learned_phrases_are_reused_inside_longer_sentences_in_both_layouts() {
+        let engine = PinyinEngine::new();
+        let session = SessionId("sentence-learned".into());
+        learn_test_phrase(&engine, &session);
+        let learning = engine.learning.lock().unwrap();
+        for input in ["maolvbeinihao", "mao'lv'bei'ni'hao", "6265823464426"] {
+            assert!(
+                sentence::decode(input, None, &learning)
+                    .iter()
+                    .any(|c| c.commit_text == "猫驴杯你好"),
+                "{input}"
+            );
+        }
+    }
 
     #[test]
     fn composed_sentences_cover_full_input_and_learn_after_selection() {

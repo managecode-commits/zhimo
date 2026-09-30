@@ -159,6 +159,8 @@ class KeyboardInteractionTest {
         val oldPosition = preferences.getString("one_hand_mode", null)
         val oldEmojiRecent = preferences.getString("emoji_recent", null)
         val oldLearning = preferences.getBoolean("learning_enabled", true)
+        val hadUnified = preferences.contains("unified_pinyin_learning")
+        val oldUnified = preferences.getBoolean("unified_pinyin_learning", true)
         val oldHandwriting = preferences.getBoolean("handwriting_enabled", false)
         val oldInkLanguage = preferences.getString("handwriting_language", null)
         val realInk = InstrumentationRegistry.getArguments().getString("runRealInk") == "true"
@@ -170,6 +172,7 @@ class KeyboardInteractionTest {
         var activity: KeyboardTestActivity? = null
         try {
             preferences.edit().remove("emoji_recent").putBoolean("learning_enabled", true).commit()
+            preferences.edit().putBoolean("unified_pinyin_learning", true).commit()
             preferences.edit().putString("handwriting_character_mode", "MIXED").commit()
             preferences.edit().putBoolean("handwriting_image_experimental",
                 InstrumentationRegistry.getArguments().getString("runImageInk") == "true").commit()
@@ -433,7 +436,22 @@ class KeyboardInteractionTest {
             click("清空")
             click("拼音")
             "nihao".forEach { click(it.toString()) }
-            click("选词")
+            click("候选词 你好", longPress = true)
+            click("降低学习优先级：你好")
+            click("候选词 你好")
+            instrumentation.runOnMainSync { assertTrue(active.editor.text.toString().endsWith("你好")) }
+            click("表情键盘", longPress = true)
+            click("个人词库")
+            fun hasPersonalWord(node: AccessibilityNodeInfo?): Boolean {
+                if (node == null) return false
+                if (node.isVisibleToUser && node.text?.toString()?.contains(" · 学习分 ") == true) return true
+                return (0 until node.childCount).any { hasPersonalWord(node.getChild(it)) }
+            }
+            assertTrue("个人词库列表应显示学习分", automation.windows.any { hasPersonalWord(it.root) })
+            capture("personal-words")
+            shell("input keyevent 4")
+            click("表情键盘", longPress = true)
+            click("撤销上次学习")
             instrumentation.runOnMainSync { assertTrue(active.editor.text.toString().endsWith("你好")) }
             if (InstrumentationRegistry.getArguments().getString("runOfflineMic") == "true") {
                 preferences.edit().putBoolean("bundled_offline_speech", true).commit()
@@ -477,6 +495,9 @@ class KeyboardInteractionTest {
             }
         } finally {
             preferences.edit().putString("emoji_recent", oldEmojiRecent).putBoolean("learning_enabled", oldLearning).commit()
+            preferences.edit().apply {
+                if (hadUnified) putBoolean("unified_pinyin_learning", oldUnified) else remove("unified_pinyin_learning")
+            }.commit()
             preferences.edit().apply {
                 if (hadOfflineSpeech) putBoolean("bundled_offline_speech", oldOfflineSpeech) else remove("bundled_offline_speech")
             }.commit()
